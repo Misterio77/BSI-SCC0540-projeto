@@ -8,21 +8,30 @@ edition = "2018"
 license = "MIT"
 
 [dependencies.rocket]
+git = "https://github.com/Misterio77/Rocket"
+branch = "context-namespace-result"
 version = "0.5.0-rc.1"
 
 [dependencies.rocket_db_pools]
+git = "https://github.com/Misterio77/Rocket"
+branch = "context-namespace-result"
 version = "0.1.0-rc"
 features = ["deadpool_postgres"]
 
 [dependencies.rocket_dyn_templates]
+git = "https://github.com/Misterio77/Rocket"
+branch = "context-namespace-result"
 version = "0.1.0-rc.1"
 features = ["tera"]
 
 [dependencies.sass-rocket-fairing]
+git = "https://github.com/SyedAhkam/sass-rocket-fairing"
 version = "0.1"
 
+[dependencies.chrono]
+version = "0.4"
+features = ["serde"]
 
-[patch.crates-io]
-rocket = { git = "https://github.com/Misterio77/Rocket", branch = "context-namespace-result"}
-rocket_db_pools = { git = "https://github.com/Misterio77/Rocket", branch = "context-namespace-result"}
-rocket_dyn_templates = { git = "https://github.com/Misterio77/Rocket", branch = "context-namespace-result"}
+[dependencies.rust_decimal]
+version = "1.17"
+features = ["tokio-postgres"]

@@ -1,8 +1,8 @@
 use rocket::http::Status;
 
 use std::error::Error as StdError;
-use std::result::Result as StdResult;
 use std::fmt;
+use std::result::Result as StdResult;
 
 /// Alias para facilitar o uso de Result
 pub type Result<T> = StdResult<T, ServerError>;
@@ -10,8 +10,11 @@ pub type Result<T> = StdResult<T, ServerError>;
 /// Possível erro do nosso servidor
 #[derive(Debug)]
 pub struct ServerError {
+    /// Código de status http
     code: Status,
+    /// Erro originário, se existir
     source: Option<Box<dyn StdError + Sync + Send>>,
+    /// Mensagem amigável, se existir
     message: Option<String>,
 }
 
@@ -76,7 +79,7 @@ impl From<rocket::error::Error> for ServerError {
     }
 }
 
-/// Construtor para o ServerError, adiciona ergonomia
+/// Builder para o ServerError, adiciona ergonomia
 pub struct ServerErrorBuilder {
     inner: ServerError,
 }
@@ -90,10 +93,7 @@ impl ServerErrorBuilder {
     /// Adiciona código de erro ao builder
     pub fn code(self, code: Status) -> ServerErrorBuilder {
         ServerErrorBuilder {
-            inner: ServerError {
-                code,
-                ..self.inner
-            }
+            inner: ServerError { code, ..self.inner },
         }
     }
     /// Adiciona fonte do erro ao builder
@@ -102,7 +102,7 @@ impl ServerErrorBuilder {
             inner: ServerError {
                 source: Some(source),
                 ..self.inner
-            }
+            },
         }
     }
     /// Adiciona mensagem de erro ao builder
@@ -111,7 +111,7 @@ impl ServerErrorBuilder {
             inner: ServerError {
                 message: Some(message.into()),
                 ..self.inner
-            }
+            },
         }
     }
 }

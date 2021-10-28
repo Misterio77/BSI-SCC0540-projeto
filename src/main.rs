@@ -1,31 +1,30 @@
-use rocket::{get, routes};
-use rocket::fs::{FileServer, relative};
-use rocket_db_pools::{deadpool_postgres, Database};
-use rocket_dyn_templates::{context, Template};
+use rocket::fs::{relative, FileServer};
+use rocket_dyn_templates::Template;
 use sass_rocket_fairing::SassFairing;
 
-use projeto_bd::error::Result;
-
-#[derive(Database)]
-#[database("database")]
-struct Data(deadpool_postgres::Pool);
+use projeto_bd::{
+    // Alias para retornar nossos error customizados
+    error::Result,
+    // Rotas do servidor
+    routes::routes,
+    // Nosso banco de dados
+    Database,
+};
 
 #[rocket::main]
 async fn main() -> Result<()> {
     rocket::build()
-        .attach(Data::init())
+        // Middleware pra conexões de database
+        .attach(Database::init())
+        // Middleware pra gerir templates html
         .attach(Template::fairing())
+        // Middleware pra automaticamente compilar SASS
         .attach(SassFairing)
+        // Servir assets da pasta assets (style.css)
         .mount("/assets", FileServer::from(relative!("assets")))
-        .mount("/", routes![render_teste])
+        // Servir rotas
+        .mount("/", routes())
         .launch()
         .await?;
     Ok(())
-}
-
-#[get("/")]
-fn render_teste() -> Template {
-    let ctx = context! {
-    };
-    Template::render("base", ctx)
 }
