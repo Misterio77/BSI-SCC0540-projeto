@@ -14,6 +14,7 @@ pub struct Doacao {
 }
 
 impl Doacao {
+    /*
     /// Obtém doação, dado id
     pub fn obter(id: i32) -> Result<Doacao> {}
 
@@ -30,4 +31,5 @@ impl Doacao {
     pub fn candidatura(&self) -> Result<Candidatura> {}
     /// Retorna o indivíduo que fez a doação
     pub fn doador(&self) -> Result<Individuo> {}
+    */
 }

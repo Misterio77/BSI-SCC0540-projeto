@@ -14,6 +14,7 @@ pub enum Poder {
 }
 
 impl Cargo {
+    /*
     /// Retorna um cargo, dado o tipo de poder e local
     pub fn obter(poder: Poder, local: &str) -> Result<Cargo> {}
 
@@ -28,4 +29,5 @@ impl Cargo {
         partido: Option<Partido>,
     ) -> Result<Vec<Candidatura>> {
     }
+    */
 }

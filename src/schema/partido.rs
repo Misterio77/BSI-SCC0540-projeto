@@ -10,6 +10,7 @@ pub struct Partido {
 }
 
 impl Partido {
+    /*
     /// Obtém um partido, dado seu número
     pub fn obter(numero: u8) -> Result<Partido> {}
     /// Obtém um partido, dado seu nome
@@ -21,4 +22,5 @@ impl Partido {
     // === Obter entidades relacionadas ===
     /// Retorna as candidaturas filiadas ao partido
     pub fn candidaturas(&self) -> Result<Vec<Candidatura>> {}
+    */
 }

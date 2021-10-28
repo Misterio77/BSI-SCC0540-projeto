@@ -78,6 +78,15 @@ impl From<rocket::error::Error> for ServerError {
             .build()
     }
 }
+/// Converte erro do banco de dados
+impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerError {
+    fn from(e: rocket_db_pools::deadpool_postgres::tokio_postgres::Error) -> Self {
+        ServerError::builder()
+            .source(Box::new(e))
+            .message("Não foi possível completar operação na base de dados")
+            .build()
+    }
+}
 
 /// Builder para o ServerError, adiciona ergonomia
 pub struct ServerErrorBuilder {

@@ -16,6 +16,7 @@ pub struct Processo {
 }
 
 impl Processo {
+    /*
     /// Obtém um processo, dado seu id
     pub fn obter(id: i32) -> Result<Processo> {}
 
@@ -30,4 +31,5 @@ impl Processo {
     // === Obter entidades relacionadas ===
     /// Retorna o réu do processo
     pub fn reu(&self) -> Result<Individuo> {}
+    */
 }

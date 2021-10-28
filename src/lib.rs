@@ -6,4 +6,8 @@ use rocket_db_pools::{deadpool_postgres, Database as DatabaseTrait};
 
 #[derive(DatabaseTrait)]
 #[database("database")]
-struct Database(deadpool_postgres::Pool);
+pub struct Database(deadpool_postgres::Pool);
+pub use deadpool_postgres::{
+    ClientWrapper as DatabaseClient,
+    tokio_postgres::row::Row as DatabaseRow,
+};

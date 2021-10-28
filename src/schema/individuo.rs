@@ -15,6 +15,7 @@ pub struct Individuo {
 }
 
 impl Individuo {
+    /*
     /// Obter indivíduo
     pub fn obter(id: &str) -> Result<Individuo> {}
 
@@ -35,4 +36,5 @@ impl Individuo {
     pub fn candidaturas_equipe(&self, ano: Option<i16>) -> Result<Vec<Candidatura>> {}
     /// Retorna as candidaturas onde é doador, opcionalmente filtrando por ano
     pub fn candidaturas_doador(&self, ano: Option<i16>) -> Result<Vec<Candidatura>> {}
+    */
 }
