@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Eleição{% endblock %}</title>
+    <link
+      rel="preload"
+      href="https://code.iconify.design/1/1.0.6/iconify.min.js"
+      as="script"
+    />
+    <link rel="stylesheet" href="/assets/style.css" />
+    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+  </head>
+  <body>
+
+    <header>
+      <nav class="fixed inverted">
+        <a href="/" class="logo" aria-label="Votações">
+          <span class="iconify nav-icon" data-icon="fa-solid:vote-yea"></span>
+          <span class="title">Votações</span>
+        </a>
+        <ul>
+          <li><a href = "/"><strong>Test</strong></a></li>
+        </ul>
+    </header>
+
+    <main>
+      {% block content %}
+      {% endblock content %}
+    </main>
+
+    <footer>
+      {% block footer %}
+      <p>
+        <small>
+          Copyleft, 2021 -
+          <a href="https://git.sr.ht/~misterio/BSI-SCC0540-projeto">código fonte</a>
+        </small>
+      </p>
+      {% endblock footer %}
+    </footer>
+
+  </body>
+</html>
+
+{#
+  vim: filetype=htmldjango
+#}
