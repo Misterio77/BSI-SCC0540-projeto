@@ -1,10 +1,13 @@
+use std::error::Error as StdError;
+use std::fmt;
+use std::result::Result as StdResult;
+
 use rocket::http::Status;
 use rocket_dyn_templates::Template;
-use serde::{Serialize, ser::{Serializer, SerializeStruct}};
-
-use std::error::Error as StdError;
-use std::result::Result as StdResult;
-use std::fmt;
+use serde::{
+    ser::{SerializeStruct, Serializer},
+    Serialize,
+};
 
 /// Alias para facilitar o uso de Result
 pub type Result<T> = StdResult<T, ServerError>;
@@ -94,7 +97,10 @@ impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerE
 /// transformar o erro (e consequentemente, um result que pode conter um erro) diretamente em
 /// uma resposta HTTP
 impl<'r> rocket::response::Responder<'r, 'static> for ServerError {
-    fn respond_to(self, req: &'r rocket::request::Request<'_>) -> rocket::response::Result<'static> {
+    fn respond_to(
+        self,
+        req: &'r rocket::request::Request<'_>,
+    ) -> rocket::response::Result<'static> {
         let code = self.code;
         let template = Template::render("error", self);
         rocket::response::Response::build()

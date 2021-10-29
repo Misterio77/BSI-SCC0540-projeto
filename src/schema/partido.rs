@@ -1,12 +1,11 @@
-use crate::error::Result;
-
-use super::candidatura::Candidatura;
+use serde::Serialize;
 
 /// Partido político
+#[derive(Debug, Serialize)]
 pub struct Partido {
-    pub numero: u8,
-    pub nome: String,
-    pub programa: String,
+    numero: u8,
+    nome: String,
+    programa: String,
 }
 
 impl Partido {

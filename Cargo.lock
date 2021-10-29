@@ -179,15 +179,15 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "chrono"
-version = "0.4.19"
+version = "0.4.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "670ad68c9088c2a963aaa298cb369688cf3f9465ce5e2d4ca10e6e0098a1ce73"
+checksum = "9942f5f46d88ae2926edcd93a8a5b24151133cf6dc4e5f4c3fadb1c532ac8041"
 dependencies = [
  "libc",
  "num-integer",
  "num-traits",
  "serde",
- "time 0.1.43",
+ "time 0.1.44",
  "winapi 0.3.9",
 ]
 
@@ -620,15 +620,6 @@ name = "hashbrown"
 version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
-
-[[package]]
-name = "heck"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d621efb26863f0e9924c6ac577e8275e5e6b77455db64ffa6c65c904e9e132c"
-dependencies = [
- "unicode-segmentation",
-]
 
 [[package]]
 name = "hermit-abi"
@@ -1234,6 +1225,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12295df4f294471248581bc09bef3c38a5e46f1e36d6a37353621a0c6c357e1f"
 
 [[package]]
+name = "postgres-derive"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c857dd221cb0e7d8414b894a0ce29eae44d453dda0baa132447878e75e701477"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "postgres-protocol"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1258,7 +1260,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "04619f94ba0cc80999f4fc7073607cb825bc739a883cb6d20900fc5e009d6b0d"
 dependencies = [
  "bytes",
+ "chrono",
  "fallible-iterator",
+ "postgres-derive",
  "postgres-protocol",
 ]
 
@@ -1307,13 +1311,13 @@ name = "projeto-bd"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "postgres-types",
  "rocket",
  "rocket_db_pools",
  "rocket_dyn_templates",
  "rust_decimal",
  "sass-rocket-fairing",
  "serde",
- "strum",
 ]
 
 [[package]]
@@ -1432,7 +1436,7 @@ dependencies = [
 [[package]]
 name = "rocket"
 version = "0.5.0-rc.1"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "async-stream",
  "async-trait",
@@ -1469,7 +1473,7 @@ dependencies = [
 [[package]]
 name = "rocket_codegen"
 version = "0.5.0-rc.1"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "devise",
  "glob",
@@ -1484,7 +1488,7 @@ dependencies = [
 [[package]]
 name = "rocket_db_pools"
 version = "0.1.0-rc"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "deadpool",
  "deadpool-postgres",
@@ -1496,7 +1500,7 @@ dependencies = [
 [[package]]
 name = "rocket_db_pools_codegen"
 version = "0.1.0-rc"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "devise",
  "quote",
@@ -1505,7 +1509,7 @@ dependencies = [
 [[package]]
 name = "rocket_dyn_templates"
 version = "0.1.0-rc.1"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "glob",
  "normpath",
@@ -1517,7 +1521,7 @@ dependencies = [
 [[package]]
 name = "rocket_http"
 version = "0.5.0-rc.1"
-source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#b5d379467f24cbdada73107c1132e094f4165e20"
+source = "git+https://github.com/Misterio77/Rocket?branch=context-namespace-result#e04b27ddb4a0ce9a17d97fec67fa0982a37fca6a"
 dependencies = [
  "cookie",
  "either",
@@ -1764,27 +1768,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "strum"
-version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f7ac893c7d471c8a21f31cfe213ec4f6d9afeed25537c772e08ef3f005f8729e"
-dependencies = [
- "strum_macros",
-]
-
-[[package]]
-name = "strum_macros"
-version = "0.22.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "339f799d8b549e3744c7ac7feb216383e4005d94bdb22561b3ab8f3b808ae9fb"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "subtle"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1848,11 +1831,12 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.1.43"
+version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
+checksum = "6db9e6914ab8b1ae1c260a4ae7a49b6c5611b40328a735b21862567685e73255"
 dependencies = [
  "libc",
+ "wasi",
  "winapi 0.3.9",
 ]
 
@@ -2175,12 +2159,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "unicode-segmentation"
-version = "1.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8895849a949e7845e06bd6dc1aa51731a103c42707010a5b591c0038fb73385b"
-
-[[package]]
 name = "unicode-xid"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2215,9 +2193,9 @@ dependencies = [
 
 [[package]]
 name = "wasi"
-version = "0.10.2+wasi-snapshot-preview1"
+version = "0.10.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd6fbd9a79829dd1ad0cc20627bf1ed606756a7f77edff7b66b7064f9cb327c6"
+checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
 
 [[package]]
 name = "winapi"

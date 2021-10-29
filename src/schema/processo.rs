@@ -1,18 +1,16 @@
-use crate::error::Result;
-
-use super::individuo::Individuo;
-
-use chrono::{Date, Utc};
+use chrono::NaiveDate;
+use serde::Serialize;
 
 /// Processo judicial
+#[derive(Debug, Serialize)]
 pub struct Processo {
-    pub id: i32,
-    pub crime: String,
-    pub julgado: bool,
-    pub data_julgamento: Option<Date<Utc>>,
-    pub procedente: Option<bool>,
-    pub pena: Option<i16>,
-    pub multa: Option<i32>,
+    id: i32,
+    crime: String,
+    julgado: bool,
+    data_julgamento: Option<NaiveDate>,
+    procedente: Option<bool>,
+    pena: Option<i16>,
+    multa: Option<i32>,
 }
 
 impl Processo {

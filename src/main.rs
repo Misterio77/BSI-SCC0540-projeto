@@ -1,6 +1,6 @@
 use rocket::fs::{relative, FileServer};
-use rocket_dyn_templates::Template;
 use rocket_db_pools::Database as DatabaseTrait;
+use rocket_dyn_templates::Template;
 use sass_rocket_fairing::SassFairing;
 
 use projeto_bd::{
@@ -9,7 +9,7 @@ use projeto_bd::{
     // Rotas do servidor
     routes::routes,
     // Nosso banco de dados
-    Database,
+    database::Database,
 };
 
 #[rocket::main]

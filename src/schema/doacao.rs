@@ -1,16 +1,14 @@
-use crate::error::Result;
-
-use super::{candidatura::Candidatura, individuo::Individuo};
-
 use rust_decimal::Decimal;
+use serde::Serialize;
 
 /// Doação para candidatura
+#[derive(Debug, Serialize)]
 pub struct Doacao {
     /// Identificador da doação
-    pub id: i32,
+    id: i32,
     /// Valor (decimal garante precisão esperada para dinheiro)
     /// (Equivale ao NUMERIC do postgres)
-    pub valor: Decimal,
+    valor: Decimal,
 }
 
 impl Doacao {

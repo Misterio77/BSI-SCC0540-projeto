@@ -1,0 +1,12 @@
+{% extends "base" %}
+{% block content %}
+<h1>Cargos</h1>
+<hr />
+{% for cargo in cargos %}
+  <h2>{{ cargo.tipo }} - {{ cargo.local }} ({{ cargo.cadeiras }})</h2>
+{% endfor %}
+{% endblock content %}
+
+{#
+  vim: filetype=htmldjango
+#}
