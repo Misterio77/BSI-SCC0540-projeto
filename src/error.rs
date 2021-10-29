@@ -1,8 +1,10 @@
 use rocket::http::Status;
+use rocket_dyn_templates::Template;
+use serde::{Serialize, ser::{Serializer, SerializeStruct}};
 
 use std::error::Error as StdError;
-use std::fmt;
 use std::result::Result as StdResult;
+use std::fmt;
 
 /// Alias para facilitar o uso de Result
 pub type Result<T> = StdResult<T, ServerError>;
@@ -85,6 +87,40 @@ impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerE
             .source(Box::new(e))
             .message("Não foi possível completar operação na base de dados")
             .build()
+    }
+}
+
+/// Permite que o erro seja diretamente retornado de uma rota, ou seja, esse traço serve para
+/// transformar o erro (e consequentemente, um result que pode conter um erro) diretamente em
+/// uma resposta HTTP
+impl<'r> rocket::response::Responder<'r, 'static> for ServerError {
+    fn respond_to(self, req: &'r rocket::request::Request<'_>) -> rocket::response::Result<'static> {
+        let code = self.code;
+        let template = Template::render("error", self);
+        rocket::response::Response::build()
+            .status(code)
+            .header(rocket::http::ContentType::HTML)
+            .join(template.respond_to(req)?)
+            .ok()
+    }
+}
+
+impl Serialize for ServerError {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("ServerError", 2)?;
+        state.serialize_field("code", &format!("{}", &self.code))?;
+        state.serialize_field("description", &self.message)?;
+        state.serialize_field(
+            "reason",
+            &self
+                .source
+                .as_ref()
+                .map(|s| format!("{:?}", s).replace("\"", "'")),
+        )?;
+        state.end()
     }
 }
 

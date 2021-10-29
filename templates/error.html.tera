@@ -1,0 +1,13 @@
+{% extends "base" %}
+
+{% block content %}
+    <h1>Erro - {{ code | as_str }}</h1>
+    <p>{{ description }}</p>
+    <p><small>{{ reason }}</small></p>
+    <hr />
+    <p>Talvez você queira <a href="#" onclick="history.go(-1)">voltar</a> ou retornar à <a href="/">home</a>.</p>
+{% endblock content %}
+
+{#
+  vim: filetype=htmldjango
+#}

@@ -15,12 +15,12 @@ use projeto_bd::{
 #[rocket::main]
 async fn main() -> Result<()> {
     rocket::build()
-        // Middleware pra automaticamente compilar SASS
-        .attach(SassFairing)
         // Middleware pra conexões de database
         .attach(Database::init())
         // Middleware pra gerir templates html
         .attach(Template::fairing())
+        // Middleware pra automaticamente compilar SASS
+        .attach(SassFairing)
         // Servir assets da pasta assets (style.css)
         .mount("/assets", FileServer::from(relative!("assets")))
         // Servir rotas

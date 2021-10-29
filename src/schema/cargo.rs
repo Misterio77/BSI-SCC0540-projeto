@@ -2,16 +2,28 @@ use crate::error::Result;
 
 use super::{candidatura::Candidatura, partido::Partido};
 
+use serde::Serialize;
+
+#[derive(Debug, Clone, Serialize)]
 pub struct Cargo {
-    poder: Poder,
-    local: String,
-    cadeiras: i16,
+    pub tipo: TipoCargo,
+    pub local: String,
+    pub cadeiras: i16,
 }
 
-pub enum Poder {
-    Executivo,
-    Legislativo,
+#[derive(Debug, Clone, strum::Display, Serialize)]
+pub enum TipoCargo {
+    Prefeito,
+    Governador,
+    Presidente,
+    Vereador,
+    #[serde(rename = "Deputado Estadual")]
+    DeputadoEstadual,
+    #[serde(rename = "Deputado Federal")]
+    DeputadoFederal,
+    Senador,
 }
+
 
 impl Cargo {
     /*

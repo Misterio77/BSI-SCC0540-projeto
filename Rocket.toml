@@ -4,4 +4,4 @@ sass_dir = "assets"
 css_dir = "assets"
 
 [default.databases.database]
-url = "postgres://localhost"
+url = "postgresql:///misterio?user=misterio&host=/var/run/postgresql"
