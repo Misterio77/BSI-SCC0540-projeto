@@ -62,17 +62,7 @@ impl Candidatura {
     }
 
     /// Lista as candidaturas, com filtros opcionais
-    pub async fn listar(
-        db: &Client,
-        candidato: Option<&str>,
-        vice_candidato: Option<&str>,
-        ano: Option<i16>,
-        cargo_tipo: Option<&TipoCargo>,
-        cargo_local: Option<&str>,
-        numero: Option<i32>,
-        partido: Option<i16>,
-        votos: Option<i32>,
-    ) -> Result<Vec<Candidatura>> {
+    pub async fn listar(db: &Client, filtro: CandidaturaFiltro) -> Result<Vec<Candidatura>> {
         db.query(
             "
             SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
@@ -87,20 +77,24 @@ impl Candidatura {
                 ($7::INT IS NULL OR votos = $7)
             ",
             &[
-                &candidato,
-                &vice_candidato,
-                &ano,
-                &cargo_tipo,
-                &cargo_local,
-                &numero,
-                &partido,
-                &votos,
+                &filtro.candidato,
+                &filtro.vice_candidato,
+                &filtro.ano,
+                &filtro.cargo_tipo,
+                &filtro.cargo_local,
+                &filtro.numero,
+                &filtro.partido,
+                &filtro.votos,
             ],
         )
         .await?
         .into_iter()
         .map(Candidatura::try_from)
         .collect()
+    }
+    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
+    pub fn filtro() -> CandidaturaFiltro {
+        CandidaturaFiltro::default()
     }
 
     // === Obter entidades relacionadas ===
@@ -145,5 +139,70 @@ impl TryFrom<Row> for Candidatura {
             partido: row.try_get("partido")?,
             votos: row.try_get("votos")?,
         })
+    }
+}
+
+/// Representa um filtro de listagem de candidaturas
+/// Funciona como um builder
+#[derive(Default)]
+pub struct CandidaturaFiltro {
+    candidato: Option<String>,
+    vice_candidato: Option<String>,
+    ano: Option<i16>,
+    cargo_tipo: Option<TipoCargo>,
+    cargo_local: Option<String>,
+    numero: Option<i32>,
+    partido: Option<i16>,
+    votos: Option<i32>,
+}
+
+impl CandidaturaFiltro {
+    pub fn candidato(self, candidato: &str) -> Self {
+        Self {
+            candidato: Some(candidato.into()),
+            ..self
+        }
+    }
+    pub fn vice_candidato(self, vice_candidato: &str) -> Self {
+        Self {
+            vice_candidato: Some(vice_candidato.into()),
+            ..self
+        }
+    }
+    pub fn ano(self, ano: i16) -> Self {
+        Self {
+            ano: Some(ano),
+            ..self
+        }
+    }
+    pub fn cargo_tipo(self, cargo_tipo: TipoCargo) -> Self {
+        Self {
+            cargo_tipo: Some(cargo_tipo),
+            ..self
+        }
+    }
+    pub fn cargo_local(self, cargo_local: &str) -> Self {
+        Self {
+            cargo_local: Some(cargo_local.into()),
+            ..self
+        }
+    }
+    pub fn numero(self, numero: i32) -> Self {
+        Self {
+            numero: Some(numero),
+            ..self
+        }
+    }
+    pub fn partido(self, partido: i16) -> Self {
+        Self {
+            partido: Some(partido),
+            ..self
+        }
+    }
+    pub fn votos(self, votos: i32) -> Self {
+        Self {
+            votos: Some(votos),
+            ..self
+        }
     }
 }

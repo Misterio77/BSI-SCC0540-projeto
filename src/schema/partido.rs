@@ -57,17 +57,7 @@ impl Partido {
     // === Obter entidades relacionadas ===
     /// Retorna as candidaturas filiadas ao partido
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(
-            db,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            Some(self.numero),
-            None,
-        )
+        Candidatura::listar(db, Candidatura::filtro().partido(self.numero))
         .await
     }
 }

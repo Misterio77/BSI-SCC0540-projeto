@@ -58,29 +58,13 @@ impl Individuo {
     // === Obter entidades relacionadas ===
     /// Retorna todas as candidaturas do individuo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db,
-            Some(&self.id),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-        ).await
+        Candidatura::listar(db, Candidatura::filtro().candidato(&self.id))
+        .await
     }
     /// Retorna todas as vice candidaturas do individuo
     pub async fn vice_candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db,
-            None,
-            Some(&self.id),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-        ).await
+        Candidatura::listar(db, Candidatura::filtro().vice_candidato(&self.id))
+        .await
     }
     /*
     /// Retorna os processos do idividuo, opcionalmente filtrando por procedente

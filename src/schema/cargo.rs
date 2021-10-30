@@ -14,7 +14,7 @@ pub struct Cargo {
     cadeiras: i16,
 }
 
-#[derive(Debug, Serialize, ToSql, FromSql)]
+#[derive(Debug, Serialize, ToSql, FromSql, Clone, Copy)]
 #[postgres(name = "tipo_cargo")]
 pub enum TipoCargo {
     Prefeito,
@@ -69,17 +69,7 @@ impl Cargo {
     // === Obter entidades relacionadas ===
     /// Retorna as candidaturas pleiteando este cargo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(
-            db,
-            None,
-            None,
-            None,
-            Some(&self.tipo),
-            Some(&self.local),
-            None,
-            None,
-            None,
-        )
+        Candidatura::listar(db, Candidatura::filtro().cargo_local(&self.local).cargo_tipo(self.tipo))
         .await
     }
 }
