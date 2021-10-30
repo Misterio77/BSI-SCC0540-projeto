@@ -1,5 +1,9 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
+use std::convert::TryFrom;
+
+use crate::database::{Client, Row};
+use crate::error::{Result, ServerError};
 
 /// Doação para candidatura
 #[derive(Debug, Serialize)]
@@ -12,10 +16,20 @@ pub struct Doacao {
 }
 
 impl Doacao {
-    /*
     /// Obtém doação, dado id
-    pub fn obter(id: i32) -> Result<Doacao> {}
+    pub async fn obter(db: &Client, id: i32) -> Result<Doacao> {
+        db.query_one(
+            "
+            SELECT id, valor
+            FROM doacao
+            WHERE id = #1",
+            &[&id],
+        )
+        .await
+        .map(Doacao::try_from)?
+    }
 
+    /*
     /// Lista as doações, com filtros opcionais
     pub fn listar(
         candidatura: Option<i16>,
@@ -30,4 +44,15 @@ impl Doacao {
     /// Retorna o indivíduo que fez a doação
     pub fn doador(&self) -> Result<Individuo> {}
     */
+}
+
+/// Converte da linha para o nosso tipo
+impl TryFrom<Row> for Doacao {
+    type Error = ServerError;
+    fn try_from(row: Row) -> Result<Doacao> {
+        Ok(Doacao {
+            id: row.try_get("id")?,
+            valor: row.try_get("valor")?,
+        })
+    }
 }

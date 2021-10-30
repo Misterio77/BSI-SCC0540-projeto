@@ -1,4 +1,4 @@
-DROP TABLE candidatura, cargo, individuo;
+DROP TABLE candidatura, cargo, individuo, partido;
 DROP TYPE tipo_cargo;
 
 CREATE TYPE tipo_cargo AS ENUM (
@@ -20,6 +20,16 @@ CREATE TABLE individuo (
     CONSTRAINT individuo_pk PRIMARY KEY (id)
 );
 
+CREATE TABLE partido (
+    numero SMALLINT NOT NULL,
+    nome VARCHAR NOT NULL,
+    programa VARCHAR NOT NULL,
+
+    CONSTRAINT partido_pk PRIMARY KEY (numero),
+    CONSTRAINT partido_un UNIQUE (nome),
+    CONSTRAINT partido_ck CHECK (numero >= 10)
+);
+
 CREATE TABLE cargo (
     tipo tipo_cargo NOT NULL,
     local VARCHAR NOT NULL,
@@ -36,6 +46,7 @@ CREATE TABLE candidatura (
     cargo_tipo tipo_cargo NOT NULL,
     cargo_local VARCHAR NOT NULL,
     numero INT NOT NULL,
+    partido SMALLINT NOT NULL,
     votos INT DEFAULT NULL,
 
     CONSTRAINT candidatura_pk PRIMARY KEY (candidato, ano),
@@ -56,5 +67,8 @@ CREATE TABLE candidatura (
         REFERENCES individuo (id) ON DELETE CASCADE ON UPDATE CASCADE,
     -- Referencia o cargo da candidatura
     CONSTRAINT candidatura_fk3 FOREIGN KEY (cargo_tipo, cargo_local)
-        REFERENCES cargo (tipo, local) ON DELETE CASCADE ON UPDATE CASCADE
+        REFERENCES cargo (tipo, local) ON DELETE CASCADE ON UPDATE CASCADE,
+    -- Referencia o partido
+    CONSTRAINT candidatura_fk4 FOREIGN KEY (partido)
+        REFERENCES partido (numero) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -2,10 +2,10 @@ use chrono::NaiveDate;
 use serde::Serialize;
 use std::convert::TryFrom;
 
-use crate::error::{Result, ServerError};
 use crate::database::{Client, Row};
+use crate::error::{Result, ServerError};
 
-use super::candidatura::Candidatura;
+use super::Candidatura;
 
 /// Indivíduo cadastrado no sistema
 #[derive(Debug, Serialize)]
@@ -32,12 +32,22 @@ impl Individuo {
     }
 
     /// Lista os indivíduos, com filtros opcionais
-    pub async fn listar(db: &Client) -> Result<Vec<Individuo>> {
+    pub async fn listar(
+        db: &Client,
+        nome: Option<&str>,
+        nascimento: Option<&NaiveDate>,
+        ficha_limpa: Option<bool>,
+    ) -> Result<Vec<Individuo>> {
         db.query(
             "
             SELECT id, nome, nascimento, ficha_limpa
-            FROM individuo",
-            &[],
+            FROM individuo
+            WHERE
+                ($1::VARCHAR IS NULL OR nome = $1) AND
+                ($2::DATE IS NULL OR nascimento = $2) AND
+                ($3::BOOLEAN IS NULL OR ficha_limpa = $3)
+            ",
+            &[&nome, &nascimento, &ficha_limpa],
         )
         .await?
         .into_iter()
@@ -48,11 +58,31 @@ impl Individuo {
     // === Obter entidades relacionadas ===
     /// Retorna todas as candidaturas do individuo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Some(&self.id), None, None, None, None, None, None).await
+        Candidatura::listar(db,
+            Some(&self.id),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ).await
+    }
+    /// Retorna todas as vice candidaturas do individuo
+    pub async fn vice_candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
+        Candidatura::listar(db,
+            None,
+            Some(&self.id),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ).await
     }
     /*
-    /// Retorna todas as vice candidaturas do individuo
-    pub async fn vice_candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {}
     /// Retorna os processos do idividuo, opcionalmente filtrando por procedente
     pub fn processos(&self, procedente: Option<bool>) -> Result<Vec<Processo>> {}
     /// Retorna as candidaturas onde é membro da equipe, opcionalmente filtrando por ano

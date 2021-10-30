@@ -4,12 +4,12 @@ use rocket_dyn_templates::Template;
 use sass_rocket_fairing::SassFairing;
 
 use projeto_bd::{
+    // Nosso banco de dados
+    database::Database,
     // Alias para retornar nossos error customizados
     error::Result,
     // Rotas do servidor
     routes::routes,
-    // Nosso banco de dados
-    database::Database,
 };
 
 #[rocket::main]

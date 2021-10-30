@@ -24,7 +24,7 @@ features = ["serde"]
 
 [dependencies.rust_decimal]
 version = "1.17"
-features = ["tokio-postgres"]
+features = ["db-tokio-postgres"]
 
 [dependencies.serde]
 version = "1.0"

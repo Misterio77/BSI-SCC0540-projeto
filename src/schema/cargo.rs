@@ -2,10 +2,10 @@ use postgres_types::{FromSql, ToSql};
 use serde::Serialize;
 use std::convert::TryFrom;
 
-use crate::error::{Result, ServerError};
 use crate::database::{Client, Row};
+use crate::error::{Result, ServerError};
 
-use super::candidatura::Candidatura;
+use super::Candidatura;
 
 #[derive(Debug, Serialize)]
 pub struct Cargo {
@@ -43,12 +43,22 @@ impl Cargo {
     }
 
     /// Lista os cargos
-    pub async fn listar(db: &Client) -> Result<Vec<Cargo>> {
+    pub async fn listar(
+        db: &Client,
+        tipo: Option<&TipoCargo>,
+        local: Option<&str>,
+        cadeiras: Option<i16>,
+    ) -> Result<Vec<Cargo>> {
         db.query(
             "
             SELECT tipo, local, cadeiras
-            FROM cargo",
-            &[],
+            FROM cargo
+            WHERE
+                ($1::tipo_cargo IS NULL OR tipo = $1) AND
+                ($2::VARCHAR IS NULL OR local = $2) AND
+                ($3::SMALLINT IS NULL OR cadeiras = $3)
+            ",
+            &[&tipo, &local, &cadeiras],
         )
         .await?
         .into_iter()
@@ -59,17 +69,18 @@ impl Cargo {
     // === Obter entidades relacionadas ===
     /// Retorna as candidaturas pleiteando este cargo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        db.query(
-            "
-            SELECT numero, ano, votos
-            FROM candidatura
-            WHERE cargo_tipo = $1 AND cargo_local = $2",
-            &[&self.tipo, &self.local],
+        Candidatura::listar(
+            db,
+            None,
+            None,
+            None,
+            Some(&self.tipo),
+            Some(&self.local),
+            None,
+            None,
+            None,
         )
-        .await?
-        .into_iter()
-        .map(Candidatura::try_from)
-        .collect()
+        .await
     }
 }
 

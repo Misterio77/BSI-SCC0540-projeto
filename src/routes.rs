@@ -1,19 +1,19 @@
 use rocket::{get, routes, Route};
 use rocket_db_pools::Connection;
 
-use crate::{
-    error::Result,
-    schema::Individuo,
-    database::Database
-};
+use crate::schema::cargo::{Cargo, TipoCargo};
+use crate::{database::Database, error::Result};
 
 #[get("/")]
 async fn candidaturas(db: Connection<Database>) -> Result<()> {
-    let individuo = Individuo::obter(&db, "23858708860").await?;
-    println!("{:?}", individuo);
-
-    let candidaturas = individuo.candidaturas(&db).await?;
-    println!("{:?}", candidaturas);
+    let cargos = Cargo::listar(
+        &db,
+        Some(&TipoCargo::DeputadoFederal),
+        Some("São Paulo"),
+        None,
+    )
+    .await?;
+    println!("{:?}", cargos);
     Ok(())
 }
 
