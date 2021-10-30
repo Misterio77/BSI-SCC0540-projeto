@@ -1,5 +1,5 @@
-DROP TABLE candidatura, cargo, individuo, partido;
-DROP TYPE tipo_cargo;
+DROP TABLE IF EXISTS candidatura, cargo, individuo, partido;
+DROP TYPE IF EXISTS tipo_cargo;
 
 CREATE TYPE tipo_cargo AS ENUM (
     'Prefeito',

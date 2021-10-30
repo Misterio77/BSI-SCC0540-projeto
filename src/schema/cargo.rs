@@ -1,6 +1,6 @@
 use postgres_types::{FromSql, ToSql};
 use serde::Serialize;
-use std::convert::TryFrom;
+use std::convert::{TryInto, TryFrom};
 
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
@@ -38,8 +38,8 @@ impl Cargo {
             WHERE tipo = $1 AND local = $2",
             &[&tipo, &local],
         )
-        .await
-        .map(Cargo::try_from)?
+        .await?
+        .try_into()
     }
 
     /// Lista os cargos
@@ -62,7 +62,7 @@ impl Cargo {
         )
         .await?
         .into_iter()
-        .map(Cargo::try_from)
+        .map(TryInto::try_into)
         .collect()
     }
 

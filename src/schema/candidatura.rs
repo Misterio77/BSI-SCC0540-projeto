@@ -1,5 +1,5 @@
 use serde::Serialize;
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
@@ -28,8 +28,8 @@ impl Candidatura {
             WHERE candidato = $1 AND ano = $2",
             &[&candidato, &ano],
         )
-        .await
-        .map(Candidatura::try_from)?
+        .await?
+        .try_into()
     }
     /// Obtém uma candidatura, dado vice candidato e ano
     pub async fn obter_do_vice(db: &Client, vice_candidato: &str, ano: i16) -> Result<Candidatura> {
@@ -39,8 +39,8 @@ impl Candidatura {
             WHERE vice_candidato = $1 AND ano = $2",
             &[&vice_candidato, &ano],
         )
-        .await
-        .map(Candidatura::try_from)?
+        .await?
+        .try_into()
     }
 
     /// Obtém uma candidatura, dado cargo, número, e ano
@@ -57,8 +57,8 @@ impl Candidatura {
             WHERE cargo_tipo = $1 AND cargo_local = $2 AND numero = $3 AND ano = $4",
             &[&cargo_tipo, &cargo_local, &numero, &ano],
         )
-        .await
-        .map(Candidatura::try_from)?
+        .await?
+        .try_into()
     }
 
     /// Lista as candidaturas, com filtros opcionais
@@ -89,7 +89,7 @@ impl Candidatura {
         )
         .await?
         .into_iter()
-        .map(Candidatura::try_from)
+        .map(TryInto::try_into)
         .collect()
     }
     /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele

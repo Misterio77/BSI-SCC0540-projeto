@@ -1,5 +1,5 @@
 use serde::Serialize;
-use std::convert::TryFrom;
+use std::convert::{TryInto, TryFrom};
 
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
@@ -24,8 +24,8 @@ impl Partido {
             WHERE numero = $1",
             &[&numero],
         )
-        .await
-        .map(Partido::try_from)?
+        .await?
+        .try_into()
     }
     /// Obtém um partido, dado seu nome
     pub async fn obter_do_nome(db: &Client, nome: &str) -> Result<Partido> {
@@ -36,8 +36,8 @@ impl Partido {
             WHERE nome = $1",
             &[&nome],
         )
-        .await
-        .map(Partido::try_from)?
+        .await?
+        .try_into()
     }
 
     /// Lista os partidos (esse não tem filtros, pois todos os atributos são efetivamente únicos)
@@ -50,7 +50,7 @@ impl Partido {
         )
         .await?
         .into_iter()
-        .map(Partido::try_from)
+        .map(TryInto::try_into)
         .collect()
     }
 

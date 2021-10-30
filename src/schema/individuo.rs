@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 use serde::Serialize;
-use std::convert::TryFrom;
+use std::convert::{TryInto, TryFrom};
 
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
@@ -27,8 +27,8 @@ impl Individuo {
             WHERE id = $1",
             &[&id],
         )
-        .await
-        .map(Individuo::try_from)?
+        .await?
+        .try_into()
     }
 
     /// Lista os indivíduos, com filtros opcionais
@@ -51,7 +51,7 @@ impl Individuo {
         )
         .await?
         .into_iter()
-        .map(Individuo::try_from)
+        .map(TryInto::try_into)
         .collect()
     }
 

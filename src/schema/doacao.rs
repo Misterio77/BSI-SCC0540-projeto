@@ -1,6 +1,6 @@
 use rust_decimal::Decimal;
 use serde::Serialize;
-use std::convert::TryFrom;
+use std::convert::{TryInto, TryFrom};
 
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
@@ -25,8 +25,8 @@ impl Doacao {
             WHERE id = #1",
             &[&id],
         )
-        .await
-        .map(Doacao::try_from)?
+        .await?
+        .try_into()
     }
 
     /*
