@@ -1,5 +1,6 @@
 use postgres_types::{FromSql, ToSql};
 use serde::Serialize;
+use rust_decimal::Decimal;
 use std::convert::{TryInto, TryFrom};
 
 use crate::database::{Client, Row};
@@ -12,10 +13,11 @@ pub struct Cargo {
     tipo: TipoCargo,
     local: String,
     cadeiras: i16,
+    salario: Decimal,
 }
 
 #[derive(Debug, Serialize, ToSql, FromSql, Clone, Copy)]
-#[postgres(name = "tipo_cargo")]
+#[postgres(name = "TIPO_CARGO")]
 pub enum TipoCargo {
     Prefeito,
     Governador,
@@ -33,7 +35,7 @@ impl Cargo {
     pub async fn obter(db: &Client, tipo: TipoCargo, local: &str) -> Result<Cargo> {
         db.query_one(
             "
-            SELECT tipo, local, cadeiras
+            SELECT tipo, local, cadeiras, salario
             FROM cargo
             WHERE tipo = $1 AND local = $2",
             &[&tipo, &local],
@@ -51,7 +53,7 @@ impl Cargo {
     ) -> Result<Vec<Cargo>> {
         db.query(
             "
-            SELECT tipo, local, cadeiras
+            SELECT tipo, local, cadeiras, salario
             FROM cargo
             WHERE
                 ($1::tipo_cargo IS NULL OR tipo = $1) AND
@@ -69,7 +71,7 @@ impl Cargo {
     // === Obter entidades relacionadas ===
     /// Retorna as candidaturas pleiteando este cargo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().cargo_local(&self.local).cargo_tipo(self.tipo))
+        Candidatura::listar(db, Candidatura::filtro().local(&self.local).tipo(self.tipo))
         .await
     }
 }
@@ -82,6 +84,7 @@ impl TryFrom<Row> for Cargo {
             tipo: row.try_get("tipo")?,
             local: row.try_get("local")?,
             cadeiras: row.try_get("cadeiras")?,
+            salario: row.try_get("salario")?,
         })
     }
 }

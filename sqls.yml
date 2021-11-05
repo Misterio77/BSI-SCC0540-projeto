@@ -1,0 +1,5 @@
+connections:
+  - driver: postgresql
+    proto: unix
+    path: /run/postgresql
+    user: misterio

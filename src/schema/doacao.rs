@@ -10,6 +10,8 @@ use crate::error::{Result, ServerError};
 pub struct Doacao {
     /// Identificador da doação
     id: i32,
+    /// CPF ou CNPJ do doador
+    doador: String,
     /// Valor (decimal garante precisão esperada para dinheiro)
     /// (Equivale ao NUMERIC do postgres)
     valor: Decimal,
@@ -52,6 +54,7 @@ impl TryFrom<Row> for Doacao {
     fn try_from(row: Row) -> Result<Doacao> {
         Ok(Doacao {
             id: row.try_get("id")?,
+            doador: row.try_get("doador")?,
             valor: row.try_get("valor")?,
         })
     }

@@ -10,8 +10,7 @@ use super::Candidatura;
 /// Indivíduo cadastrado no sistema
 #[derive(Debug, Serialize)]
 pub struct Individuo {
-    /// CPF ou CNPJ
-    id: String,
+    cpfcnpj: String,
     nome: String,
     nascimento: NaiveDate,
     ficha_limpa: bool,
@@ -19,13 +18,13 @@ pub struct Individuo {
 
 impl Individuo {
     /// Obter indivíduo
-    pub async fn obter(db: &Client, id: &str) -> Result<Individuo> {
+    pub async fn obter(db: &Client, cpfcnpj: &str) -> Result<Individuo> {
         db.query_one(
             "
-            SELECT id, nome, nascimento, ficha_limpa
+            SELECT cpfcnpj, nome, nascimento, ficha_limpa
             FROM individuo
-            WHERE id = $1",
-            &[&id],
+            WHERE cpfcnpj = $1",
+            &[&cpfcnpj],
         )
         .await?
         .try_into()
@@ -40,7 +39,7 @@ impl Individuo {
     ) -> Result<Vec<Individuo>> {
         db.query(
             "
-            SELECT id, nome, nascimento, ficha_limpa
+            SELECT cpfcnpj, nome, nascimento, ficha_limpa
             FROM individuo
             WHERE
                 ($1::VARCHAR IS NULL OR nome = $1) AND
@@ -58,12 +57,12 @@ impl Individuo {
     // === Obter entidades relacionadas ===
     /// Retorna todas as candidaturas do individuo
     pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().candidato(&self.id))
+        Candidatura::listar(db, Candidatura::filtro().candidato(&self.cpfcnpj))
         .await
     }
     /// Retorna todas as vice candidaturas do individuo
     pub async fn vice_candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().vice_candidato(&self.id))
+        Candidatura::listar(db, Candidatura::filtro().vice_candidato(&self.cpfcnpj))
         .await
     }
     /*
@@ -81,7 +80,7 @@ impl TryFrom<Row> for Individuo {
     type Error = ServerError;
     fn try_from(row: Row) -> Result<Individuo> {
         Ok(Individuo {
-            id: row.try_get("id")?,
+            cpfcnpj: row.try_get("cpfcnpj")?,
             nome: row.try_get("nome")?,
             nascimento: row.try_get("nascimento")?,
             ficha_limpa: row.try_get("ficha_limpa")?,
