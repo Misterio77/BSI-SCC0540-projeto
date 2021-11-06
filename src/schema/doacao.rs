@@ -8,44 +8,11 @@ use crate::error::{Result, ServerError};
 /// Doação para candidatura
 #[derive(Debug, Serialize)]
 pub struct Doacao {
-    /// Identificador da doação
-    id: i32,
-    /// CPF ou CNPJ do doador
-    doador: String,
-    /// Valor (decimal garante precisão esperada para dinheiro)
-    /// (Equivale ao NUMERIC do postgres)
-    valor: Decimal,
-}
-
-impl Doacao {
-    /// Obtém doação, dado id
-    pub async fn obter(db: &Client, id: i32) -> Result<Doacao> {
-        db.query_one(
-            "
-            SELECT id, valor
-            FROM doacao
-            WHERE id = #1",
-            &[&id],
-        )
-        .await?
-        .try_into()
-    }
-
-    /*
-    /// Lista as doações, com filtros opcionais
-    pub fn listar(
-        candidatura: Option<i16>,
-        ano: Option<i16>,
-        valor: Option<Decimal>,
-    ) -> Result<Vec<Doacao>> {
-    }
-
-    // === Obter entidades relacionadas ===
-    /// Retorna a candidatura cuja doação foi destinada
-    pub fn candidatura(&self) -> Result<Candidatura> {}
-    /// Retorna o indivíduo que fez a doação
-    pub fn doador(&self) -> Result<Individuo> {}
-    */
+    pub id: i32,
+    pub valor: Decimal,
+    pub doador: String,
+    pub candidato: String,
+    pub ano: i16,
 }
 
 /// Converte da linha para o nosso tipo
@@ -54,8 +21,110 @@ impl TryFrom<Row> for Doacao {
     fn try_from(row: Row) -> Result<Doacao> {
         Ok(Doacao {
             id: row.try_get("id")?,
-            doador: row.try_get("doador")?,
             valor: row.try_get("valor")?,
+            doador: row.try_get("doador")?,
+            candidato: row.try_get("candidato")?,
+            ano: row.try_get("ano")?,
         })
+    }
+}
+
+impl Doacao {
+    /// Obtém doação, dado id
+    pub async fn obter(db: &Client, id: i32) -> Result<Doacao> {
+        db.query_one(
+            "
+            SELECT id, valor, doador, candidato, ano
+            FROM doacao
+            WHERE id = #1",
+            &[&id],
+        )
+        .await?
+        .try_into()
+    }
+
+    /// Lista as doações, com filtros opcionais
+    pub async fn listar(db: &Client, filtro: DoacaoFiltro) -> Result<Vec<Doacao>> {
+        db.query(
+            "
+            SELECT id, valor, doador, candidato, ano
+            FROM doacao
+            WHERE
+                ($1::INTEGER IS NULL OR id = $1) AND
+                ($2::NUMERIC IS NULL OR valor = $2) AND
+                ($3::VARCHAR IS NULL OR doador = $3) AND
+                ($4::VARCHAR IS NULL OR candidato = $4) AND
+                ($5::SMALLINT IS NULL OR ano >= $5) AND
+                ($6::SMALLINT IS NULL OR ano <= $6)
+            ",
+            &[
+                &filtro.id,
+                &filtro.valor,
+                &filtro.doador,
+                &filtro.candidato,
+                &filtro.min_ano,
+                &filtro.max_ano,
+            ],
+        )
+        .await?
+        .into_iter()
+        .map(TryInto::try_into)
+        .collect()
+    }
+
+    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
+    pub fn filtro() -> DoacaoFiltro {
+        DoacaoFiltro::default()
+    }
+}
+
+/// Filtro de listagem de doações
+/// Funciona como um builder
+#[derive(Default)]
+pub struct DoacaoFiltro {
+    id: Option<i32>,
+    valor: Option<Decimal>,
+    doador: Option<String>,
+    candidato: Option<String>,
+    min_ano: Option<i16>,
+    max_ano: Option<i16>,
+}
+
+impl DoacaoFiltro {
+    pub fn id(self, id: i32) -> Self {
+        Self {
+            id: Some(id),
+            ..self
+        }
+    }
+    pub fn valor(self, valor: &Decimal) -> Self {
+        Self {
+            valor: Some(valor.clone()),
+            ..self
+        }
+    }
+    pub fn doador(self, doador: &str) -> Self {
+        Self {
+            doador: Some(doador.into()),
+            ..self
+        }
+    }
+    pub fn candidato(self, candidato: &str) -> Self {
+        Self {
+            candidato: Some(candidato.into()),
+            ..self
+        }
+    }
+    pub fn min_ano(self, min_ano: i16) -> Self {
+        Self {
+            min_ano: Some(min_ano),
+            ..self
+        }
+    }
+    pub fn max_ano(self, max_ano: i16) -> Self {
+        Self {
+            max_ano: Some(max_ano),
+            ..self
+        }
     }
 }

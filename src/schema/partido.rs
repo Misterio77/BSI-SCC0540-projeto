@@ -4,14 +4,24 @@ use std::convert::{TryInto, TryFrom};
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
 
-use super::Candidatura;
-
 /// Partido político
 #[derive(Debug, Serialize)]
 pub struct Partido {
-    numero: i16,
-    nome: String,
-    programa: String,
+    pub numero: i16,
+    pub nome: String,
+    pub programa: String,
+}
+
+/// Converte da linha para o nosso tipo
+impl TryFrom<Row> for Partido {
+    type Error = ServerError;
+    fn try_from(row: Row) -> Result<Partido> {
+        Ok(Partido {
+            numero: row.try_get("numero")?,
+            nome: row.try_get("nome")?,
+            programa: row.try_get("programa")?,
+        })
+    }
 }
 
 impl Partido {
@@ -40,36 +50,55 @@ impl Partido {
         .try_into()
     }
 
-    /// Lista os partidos (esse não tem filtros, pois todos os atributos são efetivamente únicos)
-    pub async fn listar(db: &Client) -> Result<Vec<Partido>> {
+    /// Lista os partidos
+    pub async fn listar(db: &Client, filtro: PartidoFiltro) -> Result<Vec<Partido>> {
         db.query(
             "
             SELECT numero, nome, programa
-            FROM partido",
-            &[],
+            FROM partido
+            WHERE
+                ($1::SMALLINT IS NULL OR numero = $1) AND
+                ($2::VARCHAR IS NULL OR nome LIKE '%$2%') AND
+                ($3::VARCHAR IS NULL OR programa LIKE '%$3%')",
+            &[
+                &filtro.numero,
+                &filtro.nome,
+                &filtro.programa,
+            ],
         )
         .await?
         .into_iter()
         .map(TryInto::try_into)
         .collect()
     }
-
-    // === Obter entidades relacionadas ===
-    /// Retorna as candidaturas filiadas ao partido
-    pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().partido(self.numero))
-        .await
-    }
 }
 
-/// Converte da linha para o nosso tipo
-impl TryFrom<Row> for Partido {
-    type Error = ServerError;
-    fn try_from(row: Row) -> Result<Partido> {
-        Ok(Partido {
-            numero: row.try_get("numero")?,
-            nome: row.try_get("nome")?,
-            programa: row.try_get("programa")?,
-        })
+/// Filtro de listagem de partido
+/// Funciona como um builder
+#[derive(Default)]
+pub struct PartidoFiltro {
+    numero: Option<i16>,
+    nome: Option<String>,
+    programa: Option<String>,
+}
+
+impl PartidoFiltro {
+    pub fn numero(self, numero: i16) -> Self {
+        Self {
+            numero: Some(numero),
+            ..self
+        }
+    }
+    pub fn nome(self, nome: &str) -> Self {
+        Self {
+            nome: Some(nome.into()),
+            ..self
+        }
+    }
+    pub fn programa(self, programa: &str) -> Self {
+        Self {
+            programa: Some(programa.into()),
+            ..self
+        }
     }
 }

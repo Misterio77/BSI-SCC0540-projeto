@@ -5,15 +5,26 @@ use std::convert::{TryInto, TryFrom};
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
 
-use super::Candidatura;
-
 /// Indivíduo cadastrado no sistema
 #[derive(Debug, Serialize)]
 pub struct Individuo {
-    cpfcnpj: String,
-    nome: String,
-    nascimento: NaiveDate,
-    ficha_limpa: bool,
+    pub cpfcnpj: String,
+    pub nome: String,
+    pub nascimento: NaiveDate,
+    pub ficha_limpa: bool,
+}
+
+/// Converte da linha para o nosso tipo
+impl TryFrom<Row> for Individuo {
+    type Error = ServerError;
+    fn try_from(row: Row) -> Result<Individuo> {
+        Ok(Individuo {
+            cpfcnpj: row.try_get("cpfcnpj")?,
+            nome: row.try_get("nome")?,
+            nascimento: row.try_get("nascimento")?,
+            ficha_limpa: row.try_get("ficha_limpa")?,
+        })
+    }
 }
 
 impl Individuo {
@@ -31,22 +42,23 @@ impl Individuo {
     }
 
     /// Lista os indivíduos, com filtros opcionais
-    pub async fn listar(
-        db: &Client,
-        nome: Option<&str>,
-        nascimento: Option<&NaiveDate>,
-        ficha_limpa: Option<bool>,
-    ) -> Result<Vec<Individuo>> {
+    pub async fn listar(db: &Client, filtro: IndividuoFiltro) -> Result<Vec<Individuo>> {
         db.query(
             "
             SELECT cpfcnpj, nome, nascimento, ficha_limpa
             FROM individuo
             WHERE
-                ($1::VARCHAR IS NULL OR nome = $1) AND
-                ($2::DATE IS NULL OR nascimento = $2) AND
-                ($3::BOOLEAN IS NULL OR ficha_limpa = $3)
+                ($1::VARCHAR IS NULL OR cpfcnpj = $1) AND
+                ($2::VARCHAR IS NULL OR nome LIKE '%$2%') AND
+                ($3::DATE IS NULL OR nascimento = $3) AND
+                ($4::BOOLEAN IS NULL OR ficha_limpa = $4)
             ",
-            &[&nome, &nascimento, &ficha_limpa],
+            &[
+                &filtro.cpfcnpj,
+                &filtro.nome,
+                &filtro.nascimento,
+                &filtro.ficha_limpa
+            ],
         )
         .await?
         .into_iter()
@@ -54,36 +66,45 @@ impl Individuo {
         .collect()
     }
 
-    // === Obter entidades relacionadas ===
-    /// Retorna todas as candidaturas do individuo
-    pub async fn candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().candidato(&self.cpfcnpj))
-        .await
+    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
+    pub fn filtro() -> IndividuoFiltro {
+        IndividuoFiltro::default()
     }
-    /// Retorna todas as vice candidaturas do individuo
-    pub async fn vice_candidaturas(&self, db: &Client) -> Result<Vec<Candidatura>> {
-        Candidatura::listar(db, Candidatura::filtro().vice_candidato(&self.cpfcnpj))
-        .await
-    }
-    /*
-    /// Retorna os processos do idividuo, opcionalmente filtrando por procedente
-    pub fn processos(&self, procedente: Option<bool>) -> Result<Vec<Processo>> {}
-    /// Retorna as candidaturas onde é membro da equipe, opcionalmente filtrando por ano
-    pub fn candidaturas_equipe(&self, ano: Option<i16>) -> Result<Vec<Candidatura>> {}
-    /// Retorna as candidaturas onde é doador, opcionalmente filtrando por ano
-    pub fn candidaturas_doador(&self, ano: Option<i16>) -> Result<Vec<Candidatura>> {}
-    */
 }
 
-/// Converte da linha para o nosso tipo
-impl TryFrom<Row> for Individuo {
-    type Error = ServerError;
-    fn try_from(row: Row) -> Result<Individuo> {
-        Ok(Individuo {
-            cpfcnpj: row.try_get("cpfcnpj")?,
-            nome: row.try_get("nome")?,
-            nascimento: row.try_get("nascimento")?,
-            ficha_limpa: row.try_get("ficha_limpa")?,
-        })
+/// Filtro de listagem de indivíduo
+/// Funciona como um builder
+#[derive(Default)]
+pub struct IndividuoFiltro {
+    cpfcnpj: Option<String>,
+    nome: Option<String>,
+    nascimento: Option<NaiveDate>,
+    ficha_limpa: Option<bool>,
+}
+
+impl IndividuoFiltro {
+    pub fn cpfcnpj(self, cpfcnpj: &str) -> Self {
+        Self {
+            cpfcnpj: Some(cpfcnpj.into()),
+            ..self
+        }
+    }
+    pub fn nome(self, nome: &str) -> Self {
+        Self {
+            nome: Some(nome.into()),
+            ..self
+        }
+    }
+    pub fn nascimento(self, nascimento: &NaiveDate) -> Self {
+        Self {
+            nascimento: Some(nascimento.clone()),
+            ..self
+        }
+    }
+    pub fn ficha_limpa(self, ficha_limpa: bool) -> Self {
+        Self {
+            ficha_limpa: Some(ficha_limpa),
+            ..self
+        }
     }
 }

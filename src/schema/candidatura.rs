@@ -4,19 +4,19 @@ use std::convert::{TryFrom, TryInto};
 use crate::database::{Client, Row};
 use crate::error::{Result, ServerError};
 
-use super::{Cargo, Individuo, Partido, TipoCargo};
+use super::TipoCargo;
 
 /// Candidatura política
 #[derive(Debug, Serialize)]
 pub struct Candidatura {
-    candidato: String,
-    vice_candidato: Option<String>,
-    ano: i16,
-    cargo_tipo: TipoCargo,
-    cargo_local: String,
-    numero: i32,
-    partido: i16,
-    votos: Option<i32>,
+    pub candidato: String,
+    pub vice_candidato: Option<String>,
+    pub ano: i16,
+    pub cargo_tipo: TipoCargo,
+    pub cargo_local: String,
+    pub numero: i32,
+    pub partido: i16,
+    pub votos: Option<i32>,
 }
 
 /// Converte da linha para o nosso cargo_tipo
@@ -36,7 +36,6 @@ impl TryFrom<Row> for Candidatura {
     }
 }
 
-/// Métodos e construtores
 impl Candidatura {
     /// Obtém uma candidatura, dado candidato e ano
     pub async fn obter(db: &Client, candidato: &str, ano: i16) -> Result<Candidatura> {
@@ -78,40 +77,6 @@ impl Candidatura {
         .try_into()
     }
 
-    /// Retorna o candidato da candidatura
-    pub async fn candidato(&self, db: &Client) -> Result<Individuo> {
-        Individuo::obter(db, &self.candidato).await
-    }
-    /// Retorna o vice candidato da candidatura, caso exista
-    pub async fn vice_candidato(&self, db: &Client) -> Result<Option<Individuo>> {
-        // Caso tenha um vice candidato
-        if let Some(vice) = &self.vice_candidato {
-            // Obter ele da base de dados
-            Some(Individuo::obter(db, vice).await)
-        } else {
-            None
-        }
-        .transpose()
-    }
-    /// Retorna informações do cargo
-    pub async fn cargo(&self, db: &Client) -> Result<Cargo> {
-        Cargo::obter(db, self.cargo_tipo, &self.cargo_local).await
-    }
-    /// Retorna o partido da candidatura
-    pub async fn partido(&self, db: &Client) -> Result<Partido> {
-        Partido::obter(db, self.partido).await
-    }
-
-    /*
-    /// Retorna as doações da candidatura
-    pub fn doacoes(&self) -> Result<Vec<Doacao>> {
-        Doacao::listar
-    }
-    /// Retorna os membros da equipe da candidatura
-    pub fn equipe(&self) -> Result<Vec<Individuo>> {
-        Individuo::listar
-    }
-    */
 
     /// Lista as candidaturas, com filtros opcionais
     pub async fn listar(db: &Client, filtro: CandidaturaFiltro) -> Result<Vec<Candidatura>> {
@@ -123,11 +88,12 @@ impl Candidatura {
                 ($1::VARCHAR IS NULL OR candidato = $1) AND
                 ($2::VARCHAR IS NULL OR vice_candidato = $2) AND
                 ($3::SMALLINT IS NULL OR ano = $3) AND
-                ($4::TIPO_CARGO IS NULL OR cargo_tipo = $4) AND
-                ($5::VARCHAR IS NULL OR cargo_local = $5) AND
-                ($6::INT IS NULL OR numero = $6) AND
-                ($7::INT IS NULL OR votos >= $7) AND
-                ($8::INT IS NULL OR votos <= $8)
+                ($4::tipo_cargo IS NULL OR cargo_tipo = $4) AND
+                ($5::VARCHAR IS NULL OR cargo_local ILIKE $5) AND
+                ($6::INTEGER IS NULL OR numero = $6) AND
+                ($7::SMALLINT IS NULL OR partido = $7) AND
+                ($8::INTEGER IS NULL OR votos >= $8) AND
+                ($9::INTEGER IS NULL OR votos <= $9)
             ",
             &[
                 &filtro.candidato,
@@ -153,7 +119,7 @@ impl Candidatura {
 
 }
 
-/// Representa um filtro de listagem de candidaturas
+/// Filtro de listagem de candidaturas
 /// Funciona como um builder
 #[derive(Default)]
 pub struct CandidaturaFiltro {
