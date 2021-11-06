@@ -65,9 +65,9 @@ impl Cargo {
                 ($1::tipo_cargo IS NULL OR tipo = $1) AND
                 ($2::VARCHAR IS NULL OR local LIKE '%$2%') AND
                 ($3::SMALLINT IS NULL OR cadeiras >= $3) AND
-                ($4::SMALLINT IS NULL OR cadeiras <= $3) AND
-                ($5::NUMERIC IS NULL OR salario >= $3) AND
-                ($6::NUMERIC IS NULL OR salario <= $3)
+                ($4::SMALLINT IS NULL OR cadeiras <= $4) AND
+                ($5::NUMERIC IS NULL OR salario >= $5) AND
+                ($6::NUMERIC IS NULL OR salario <= $6)
             ",
             &[
                 &filtro.tipo,

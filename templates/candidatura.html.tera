@@ -1,12 +1,11 @@
 {% extends "base" %}
 {% block content %}
 
-<p>
-{{ candidatura.cargo_tipo }},
+<h1>{{ candidatura.cargo_tipo }},
 {{ candidatura.cargo_local }} - 
 {{ candidatura.ano }} - 
 {{ candidatura.numero }}
-</p>
+</h1>
 
 {% endblock content %}
 

@@ -1,9 +1,7 @@
 BEGIN;
 
 DROP TABLE IF EXISTS doacao, membro_equipe, candidatura, processo, cargo, partido, individuo;
-DROP TYPE IF EXISTS TIPO_CARGO;
-
--- Tabelas --
+DROP TYPE IF EXISTS tipo_cargo;
 
 -- Representa um indivíduo
 CREATE TABLE individuo (
@@ -12,7 +10,10 @@ CREATE TABLE individuo (
     nascimento DATE NOT NULL,
     ficha_limpa BOOLEAN NOT NULL DEFAULT true,
 
-    CONSTRAINT individuo_pk PRIMARY KEY (cpfcnpj)
+    CONSTRAINT individuo_pk PRIMARY KEY (cpfcnpj),
+
+    -- CPFs têm 11 dígitos, e CNPJs têm 14. Ambos devem ser numéricos
+    CONSTRAINT individuo_ck_cpfcnpj CHECK (cpfcnpj SIMILAR TO '[0-9]{11}' OR cpfcnpj SIMILAR TO '[0-9]{14}')
 );
 
 
@@ -24,12 +25,12 @@ CREATE TABLE partido (
 
     CONSTRAINT partido_pk PRIMARY KEY (numero),
     CONSTRAINT partido_un UNIQUE (nome),
-    CONSTRAINT partido_ck CHECK (numero >= 10)
+    CONSTRAINT partido_numero CHECK (numero >= 10)
 );
 
 
 -- Enumera os possíveis tipos de cargo
-CREATE TYPE TIPO_CARGO AS ENUM (
+CREATE TYPE tipo_cargo AS ENUM (
     -- Esses tem vice
     'Prefeito',
     'Governador',
@@ -42,14 +43,14 @@ CREATE TYPE TIPO_CARGO AS ENUM (
 );
 -- Representa um cargo a ser pleiteado
 CREATE TABLE cargo (
-    tipo TIPO_CARGO NOT NULL,
+    tipo tipo_cargo NOT NULL,
     local VARCHAR NOT NULL,
-    cadeiras SMALLINT NOT NULL DEFAULT 1,
+    cadeiras SMALLINT NOT NULL,
     salario NUMERIC NOT NULL,
 
     CONSTRAINT cargo_pk PRIMARY KEY (tipo, local),
-    CONSTRAINT cargo_ck1 CHECK (cadeiras > 0),
-    CONSTRAINT cargo_ck2 CHECK (salario > 0)
+    CONSTRAINT cargo_ck_cadeiras CHECK (cadeiras > 0),
+    CONSTRAINT cargo_ck_salario CHECK (salario > 0)
 );
 
 
@@ -93,7 +94,7 @@ CREATE TABLE candidatura (
     candidato VARCHAR NOT NULL,
     vice_candidato VARCHAR DEFAULT NULL,
     ano SMALLINT NOT NULL,
-    cargo_tipo TIPO_CARGO NOT NULL,
+    cargo_tipo tipo_cargo NOT NULL,
     cargo_local VARCHAR NOT NULL,
     numero INTEGER NOT NULL,
     partido SMALLINT NOT NULL,
@@ -108,10 +109,28 @@ CREATE TABLE candidatura (
     CONSTRAINT candidatura_un2
         UNIQUE (cargo_tipo, cargo_local, numero, ano),
 
-    CONSTRAINT candidatura_ck1
+    -- Verifica que o número na urna é positivo, e que o numero de digitos é correto
+    -- vereador: 5, dep estadual: 5, dep federal: 4, senador: 3, prefeito: 2, governador: 2, presidente: 2
+    CONSTRAINT candidatura_ck_numero
+        CHECK (numero > 0 AND CASE
+            WHEN (cargo_tipo = 'Vereador' OR cargo_tipo = 'DeputadoEstadual') THEN (FLOOR(LOG(numero)+1) = 5)
+            WHEN (cargo_tipo = 'DeputadoFederal') THEN (FLOOR(LOG(numero)+1) = 4)
+            WHEN (cargo_tipo = 'Senador') THEN (FLOOR(LOG(numero)+1) = 3)
+            ELSE (FLOOR(LOG(numero)+1) = 2)
+        END),
+
+    -- Verifica se a candidatura cumpre requisito de vice do cargo
+    -- E também que o candidato e vice são distintos
+    CONSTRAINT candidatura_ck_vice_candidato
+        CHECK (CASE
+            WHEN (cargo_tipo = 'Presidente' OR cargo_tipo = 'Governador' OR cargo_tipo = 'Prefeito')
+                THEN (vice_candidato IS NOT NULL)
+            ELSE (vice_candidato IS NULL)
+        END
+        AND vice_candidato != candidato),
+
+    CONSTRAINT candidatura_ck_votos
         CHECK (votos >= 0),
-    CONSTRAINT candidatura_ck2
-        CHECK (numero >= 0),
 
     CONSTRAINT candidatura_fk1
         FOREIGN KEY (candidato)
@@ -170,7 +189,7 @@ CREATE TABLE doacao (
     ano SMALLINT NOT NULL,
 
     CONSTRAINT doacao_pk PRIMARY KEY (id),
-    CONSTRAINT doacao_ck CHECK (valor > 0),
+    CONSTRAINT doacao_ck_valor CHECK (valor > 0),
 
     CONSTRAINT doacao_fk1
         FOREIGN KEY (doador)
@@ -189,7 +208,5 @@ CREATE TABLE doacao (
 
 );
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
-
--- Triggers --
 
 COMMIT;
