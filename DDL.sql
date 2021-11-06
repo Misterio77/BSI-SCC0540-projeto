@@ -3,6 +3,7 @@ BEGIN;
 DROP TABLE IF EXISTS doacao, membro_equipe, candidatura, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS TIPO_CARGO;
 
+-- Tabelas --
 
 -- Representa um indivíduo
 CREATE TABLE individuo (
@@ -68,7 +69,21 @@ CREATE TABLE processo (
     CONSTRAINT processo_fk
         FOREIGN KEY (reu)
         REFERENCES individuo (cpfcnpj)
-        ON DELETE CASCADE ON UPDATE CASCADE
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    -- Caso o processo já tenha sido julgado,
+    -- ele PRECISA ter data_julgamento e procedente NOT NULLs.
+    CONSTRAINT processo_ck1 CHECK (
+        julgado = false OR (
+            data_julgamento IS NOT NULL AND
+            procedente IS NOT NULL
+        )
+    ),
+    -- Caso o processo tenha procedente culpado (true)
+    -- ele PRECISA ter pena NOT NULL
+    CONSTRAINT processo_ck2 CHECK (
+        procedente = false OR pena IS NOT NULL
+    )
 );
 ALTER SEQUENCE processo_id_seq OWNED BY processo.id;
 
@@ -175,5 +190,6 @@ CREATE TABLE doacao (
 );
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
 
+-- Triggers --
 
 COMMIT;
