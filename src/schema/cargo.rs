@@ -1,10 +1,10 @@
 use postgres_types::{FromSql, ToSql};
-use serde::Serialize;
 use rust_decimal::Decimal;
-use std::convert::{TryInto, TryFrom};
+use serde::Serialize;
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
-use crate::error::{Result, ServerError};
+use crate::error::ServerError;
 
 #[derive(Debug, Serialize)]
 pub struct Cargo {
@@ -31,7 +31,7 @@ pub enum TipoCargo {
 /// Converte da linha para o nosso tipo
 impl TryFrom<Row> for Cargo {
     type Error = ServerError;
-    fn try_from(row: Row) -> Result<Cargo> {
+    fn try_from(row: Row) -> Result<Cargo, ServerError> {
         Ok(Cargo {
             tipo: row.try_get("tipo")?,
             local: row.try_get("local")?,
@@ -43,7 +43,7 @@ impl TryFrom<Row> for Cargo {
 
 impl Cargo {
     /// Retorna um cargo, dado o tipo de cargo e local
-    pub async fn obter(db: &Client, tipo: TipoCargo, local: &str) -> Result<Cargo> {
+    pub async fn obter(db: &Client, tipo: TipoCargo, local: &str) -> Result<Cargo, ServerError> {
         db.query_one(
             "
             SELECT tipo, local, cadeiras, salario
@@ -56,7 +56,7 @@ impl Cargo {
     }
 
     /// Lista os cargos
-    pub async fn listar(db: &Client, filtro: CargoFiltro) -> Result<Vec<Cargo>> {
+    pub async fn listar(db: &Client, filtro: CargoFiltro) -> Result<Vec<Cargo>, ServerError> {
         db.query(
             "
             SELECT tipo, local, cadeiras, salario

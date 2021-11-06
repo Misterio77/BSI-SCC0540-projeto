@@ -1,16 +1,15 @@
 use std::error::Error as StdError;
 use std::fmt;
-use std::result::Result as StdResult;
 
-use rocket::http::Status;
+use rocket::{
+    http::Status,
+    response::{Flash, Redirect},
+};
 use rocket_dyn_templates::Template;
 use serde::{
     ser::{SerializeStruct, Serializer},
     Serialize,
 };
-
-/// Alias para facilitar o uso de Result
-pub type Result<T> = StdResult<T, ServerError>;
 
 /// Possível erro do nosso servidor
 #[derive(Debug)]
@@ -37,6 +36,13 @@ impl ServerError {
     pub fn builder_from<T: Into<ServerError>>(source: T) -> ServerErrorBuilder {
         let error = source.into();
         error.edit()
+    }
+
+    /// Converte em um Flash<Redirect>, que é um redirecionamento contendo um cookie para
+    /// exibir uma pequena mensagem de erro na tela.
+    pub fn flash_redirect(&self, url: &str) -> Flash<Redirect> {
+        let message = self.message.as_deref().unwrap_or("Erro desconhecido.");
+        Flash::error(Redirect::to(url.to_string()), message)
     }
 }
 
@@ -86,10 +92,45 @@ impl From<rocket::error::Error> for ServerError {
 /// Converte erro do banco de dados
 impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerError {
     fn from(e: rocket_db_pools::deadpool_postgres::tokio_postgres::Error) -> Self {
+        let initial_message = match e.as_db_error() {
+            // Caso seja erro levantado pelo postgres, fazer downcast para pegar mensagem detalhada
+            Some(db_e) => {
+                // Pegar a mensagem dele
+                db_e.message().into()
+            },
+            // Caso seja erro levantado pela biblioteca
+            None => {
+                // Pegar a representação textual dele
+                format!("{}", e)
+            }
+        };
+
+        // Obter mensagem e status bonitinhos
+        let (message, status) = pretty_db_error(&initial_message);
+
         ServerError::builder()
+            .message(&message)
+            .code(status)
             .source(Box::new(e))
-            .message("Não foi possível completar operação na base de dados")
             .build()
+    }
+}
+
+/// Baseado numa mensagem inicial de erro, deixar traduzida e bonitinha
+fn pretty_db_error(initial: &str) -> (String, Status) {
+    match initial {
+        "new row for relation \"processo\" violates check constraint \"processo_ck_pena\"" => {
+            ("Um processo com procedente 'culpado' precisa ter uma pena definida.".into(), Status::BadRequest)
+        },
+        "new row for relation \"processo\" violates check constraint \"processo_ck_data_e_procedente\"" => {
+            ("Um processo julgado precisa ter uma data de julgamento e procedente definidos.".into(), Status::BadRequest)
+        },
+        "query returned an unexpected number of rows" => {
+            ("Entidade não encontrada na base de dados.".into(), Status::NotFound)
+        },
+        m => {
+            (format!("Erro na base de dados: {}", m), Status::InternalServerError)
+        }
     }
 }
 
@@ -112,7 +153,7 @@ impl<'r> rocket::response::Responder<'r, 'static> for ServerError {
 }
 
 impl Serialize for ServerError {
-    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
@@ -124,7 +165,7 @@ impl Serialize for ServerError {
             &self
                 .source
                 .as_ref()
-                .map(|s| format!("{:?}", s).replace("\"", "'")),
+                .map(|s| format!("{:?}", s).replace("\"", "'").replace("\\'", "'")),
         )?;
         state.end()
     }

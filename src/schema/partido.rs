@@ -1,8 +1,8 @@
 use serde::Serialize;
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
-use crate::error::{Result, ServerError};
+use crate::error::ServerError;
 
 /// Partido político
 #[derive(Debug, Serialize)]
@@ -15,7 +15,7 @@ pub struct Partido {
 /// Converte da linha para o nosso tipo
 impl TryFrom<Row> for Partido {
     type Error = ServerError;
-    fn try_from(row: Row) -> Result<Partido> {
+    fn try_from(row: Row) -> Result<Partido, ServerError> {
         Ok(Partido {
             numero: row.try_get("numero")?,
             nome: row.try_get("nome")?,
@@ -26,7 +26,7 @@ impl TryFrom<Row> for Partido {
 
 impl Partido {
     /// Obtém um partido, dado seu número
-    pub async fn obter(db: &Client, numero: i16) -> Result<Partido> {
+    pub async fn obter(db: &Client, numero: i16) -> Result<Partido, ServerError> {
         db.query_one(
             "
             SELECT numero, nome, programa
@@ -38,7 +38,7 @@ impl Partido {
         .try_into()
     }
     /// Obtém um partido, dado seu nome
-    pub async fn obter_do_nome(db: &Client, nome: &str) -> Result<Partido> {
+    pub async fn obter_do_nome(db: &Client, nome: &str) -> Result<Partido, ServerError> {
         db.query_one(
             "
             SELECT numero, nome, programa
@@ -51,7 +51,7 @@ impl Partido {
     }
 
     /// Lista os partidos
-    pub async fn listar(db: &Client, filtro: PartidoFiltro) -> Result<Vec<Partido>> {
+    pub async fn listar(db: &Client, filtro: PartidoFiltro) -> Result<Vec<Partido>, ServerError> {
         db.query(
             "
             SELECT numero, nome, programa
@@ -60,11 +60,7 @@ impl Partido {
                 ($1::SMALLINT IS NULL OR numero = $1) AND
                 ($2::VARCHAR IS NULL OR nome LIKE '%$2%') AND
                 ($3::VARCHAR IS NULL OR programa LIKE '%$3%')",
-            &[
-                &filtro.numero,
-                &filtro.nome,
-                &filtro.programa,
-            ],
+            &[&filtro.numero, &filtro.nome, &filtro.programa],
         )
         .await?
         .into_iter()

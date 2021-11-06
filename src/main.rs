@@ -1,27 +1,33 @@
-use rocket::fs::{relative, FileServer};
+use rocket::{
+    catchers,
+    routes,
+};
 use rocket_db_pools::Database as DatabaseTrait;
 use rocket_dyn_templates::Template;
 
 use projeto_bd::{
     // Nosso banco de dados
     database::Database,
-    // Alias para retornar nossos error customizados
-    error::Result,
+    // Nosso tipo personalizado de erro
+    error::ServerError,
     // Rotas do servidor
-    routes::routes,
+    routes::{candidaturas, index, not_found, css},
 };
 
 #[rocket::main]
-async fn main() -> Result<()> {
+async fn main() -> Result<(), ServerError> {
     rocket::build()
         // Middleware pra conexões de database
         .attach(Database::init())
         // Middleware pra gerir templates html
         .attach(Template::fairing())
         // Servir assets da pasta assets (style.css)
-        .mount("/assets", FileServer::from(relative!("assets")))
+        .mount("/assets", routes![css])
+        // Páginas de erro
+        .register("/", catchers![not_found])
         // Servir rotas
-        .mount("/", routes())
+        .mount("/", routes![index])
+        .mount("/candidaturas", candidaturas::routes())
         .launch()
         .await?;
     Ok(())

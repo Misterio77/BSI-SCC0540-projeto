@@ -1,0 +1,56 @@
+/* Tema claro */
+[data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --primary: #8e24aa;
+  --primary-hover: #7b1fa2;
+  --primary-focus: rgba(142, 36, 170, 0.125);
+  --primary-inverse: #FFF;
+}
+
+/* Tema noturno */
+@media only screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --primary: #d989ef;
+    --primary-hover: #a248b2;
+    --primary-focus: rgba(142, 36, 170, 0.25);
+    --primary-inverse: #000;
+  }
+}
+[data-theme="dark"] {
+  --primary: #d989ef;
+  --primary-hover: #a248b2;
+  --primary-focus: rgba(142, 36, 170, 0.25);
+  --primary-inverse: #000;
+}
+
+/* Adicionar cor e padding nos flashs */
+sup#flash {
+  background-color: var(--primary);
+  color: var(--primary-inverse);
+  font-weight: bold;
+  border-radius: 0.6rem;
+  margin: 0.2rem;
+  padding: 0.3rem 0.4rem;
+}
+
+/* Fixar e adicionar padding na primeira navegação */
+body>nav {
+  z-index: 99;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  backdrop-filter: saturate(180%) blur(10px);
+  background-color: var(--nav-background-color);
+  box-shadow: 0 1px 0 var(--nav-border-color);
+  padding-right: var(--spacing);
+  padding-left: var(--spacing);
+}
+
+/* Desabilitar link da página atual */
+[aria-current="page"] {
+  pointer-events: none;
+  cursor: default;
+  text-decoration: none;
+  color: unset;
+}

@@ -1,9 +1,9 @@
 use chrono::NaiveDate;
 use serde::Serialize;
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
-use crate::error::{Result, ServerError};
+use crate::error::ServerError;
 
 /// Indivíduo cadastrado no sistema
 #[derive(Debug, Serialize)]
@@ -17,7 +17,7 @@ pub struct Individuo {
 /// Converte da linha para o nosso tipo
 impl TryFrom<Row> for Individuo {
     type Error = ServerError;
-    fn try_from(row: Row) -> Result<Individuo> {
+    fn try_from(row: Row) -> Result<Individuo, ServerError> {
         Ok(Individuo {
             cpfcnpj: row.try_get("cpfcnpj")?,
             nome: row.try_get("nome")?,
@@ -29,7 +29,7 @@ impl TryFrom<Row> for Individuo {
 
 impl Individuo {
     /// Obter indivíduo
-    pub async fn obter(db: &Client, cpfcnpj: &str) -> Result<Individuo> {
+    pub async fn obter(db: &Client, cpfcnpj: &str) -> Result<Individuo, ServerError> {
         db.query_one(
             "
             SELECT cpfcnpj, nome, nascimento, ficha_limpa
@@ -42,7 +42,10 @@ impl Individuo {
     }
 
     /// Lista os indivíduos, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: IndividuoFiltro) -> Result<Vec<Individuo>> {
+    pub async fn listar(
+        db: &Client,
+        filtro: IndividuoFiltro,
+    ) -> Result<Vec<Individuo>, ServerError> {
         db.query(
             "
             SELECT cpfcnpj, nome, nascimento, ficha_limpa
@@ -57,7 +60,7 @@ impl Individuo {
                 &filtro.cpfcnpj,
                 &filtro.nome,
                 &filtro.nascimento,
-                &filtro.ficha_limpa
+                &filtro.ficha_limpa,
             ],
         )
         .await?

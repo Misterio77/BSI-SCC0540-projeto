@@ -4,14 +4,46 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Eleição{% endblock %}</title>
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.classless.min.css">
+    <link rel="preload" href="/assets/style.css" as="style" />
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.4.1/css/pico.classless.min.css" />
     <link rel="stylesheet" href="/assets/style.css" />
   </head>
   <body>
+
+    {% set o = origin | default (value="") %}
+    <nav>
+      <ul>
+        <li><a {% if o == "/" %}aria-current="page"{% endif %} href="/">Justiça Eleitoral</a></li>
+      </ul>
+
+      <ul>
+        <li><a {% if o == "/candidaturas" %}aria-current="page"{% endif %} href="/candidaturas">Candidaturas</a></li>
+        <li><a {% if o == "/cargos" %}aria-current="page"{% endif %} href="/cargos">Cargos</a></li>
+        <li><a {% if o == "/doacoes" %}aria-current="page"{% endif %} href="/doacoes">Doações</a></li>
+        <li><a {% if o == "/individuos" %}aria-current="page"{% endif %} href="/individuos">Indivíduos</a></li>
+        <li><a {% if o == "/partidos" %}aria-current="page"{% endif %} href="/partidos">Partidos</a></li>
+        <li><a {% if o == "/processos" %}aria-current="page"{% endif %} href="/processos">Processos</a></li>
+      </ul>
+    </nav>
+
     <main>
-    {% block content %}
-    {% endblock content %}
+      {% block content %}
+      {% endblock content %}
     </main>
+
+    <footer>
+      <hr />
+        <p>
+          <small>Projeto para a disciplina de Bases de Dados</small>
+        </p>
+        <p>
+          <small><a href="https://git.sr.ht/~misterio/BSI-SCC0540-projeto">
+            Código fonte
+          </a></small>
+        </p>
+      </small>
+    </footer>
+
   </body>
 </html>
 

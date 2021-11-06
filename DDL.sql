@@ -73,7 +73,7 @@ CREATE TABLE processo (
 
     -- Caso o processo já tenha sido julgado,
     -- ele PRECISA ter data_julgamento e procedente NOT NULLs.
-    CONSTRAINT processo_ck1 CHECK (
+    CONSTRAINT processo_ck_data_e_procedente CHECK (
         julgado = false OR (
             data_julgamento IS NOT NULL AND
             procedente IS NOT NULL
@@ -81,7 +81,7 @@ CREATE TABLE processo (
     ),
     -- Caso o processo tenha procedente culpado (true)
     -- ele PRECISA ter pena NOT NULL
-    CONSTRAINT processo_ck2 CHECK (
+    CONSTRAINT processo_ck_pena CHECK (
         procedente = false OR pena IS NOT NULL
     )
 );

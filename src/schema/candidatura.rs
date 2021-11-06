@@ -2,7 +2,7 @@ use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
-use crate::error::{Result, ServerError};
+use crate::error::ServerError;
 
 use super::TipoCargo;
 
@@ -22,7 +22,7 @@ pub struct Candidatura {
 /// Converte da linha para o nosso cargo_tipo
 impl TryFrom<Row> for Candidatura {
     type Error = ServerError;
-    fn try_from(row: Row) -> Result<Candidatura> {
+    fn try_from(row: Row) -> Result<Candidatura, ServerError> {
         Ok(Candidatura {
             candidato: row.try_get("candidato")?,
             vice_candidato: row.try_get("vice_candidato")?,
@@ -38,7 +38,7 @@ impl TryFrom<Row> for Candidatura {
 
 impl Candidatura {
     /// Obtém uma candidatura, dado candidato e ano
-    pub async fn obter(db: &Client, candidato: &str, ano: i16) -> Result<Candidatura> {
+    pub async fn obter(db: &Client, candidato: &str, ano: i16) -> Result<Candidatura, ServerError> {
         db.query_one(
             "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
             FROM candidatura
@@ -49,7 +49,11 @@ impl Candidatura {
         .try_into()
     }
     /// Obtém uma candidatura, dado vice candidato e ano
-    pub async fn obter_do_vice(db: &Client, vice_candidato: &str, ano: i16) -> Result<Candidatura> {
+    pub async fn obter_do_vice(
+        db: &Client,
+        vice_candidato: &str,
+        ano: i16,
+    ) -> Result<Candidatura, ServerError> {
         db.query_one(
             "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
             FROM candidatura
@@ -66,7 +70,7 @@ impl Candidatura {
         cargo_tipo: &TipoCargo,
         cargo_local: &str,
         ano: i16,
-    ) -> Result<Candidatura> {
+    ) -> Result<Candidatura, ServerError> {
         db.query_one(
             "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
             FROM candidatura
@@ -77,9 +81,11 @@ impl Candidatura {
         .try_into()
     }
 
-
     /// Lista as candidaturas, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: CandidaturaFiltro) -> Result<Vec<Candidatura>> {
+    pub async fn listar(
+        db: &Client,
+        filtro: CandidaturaFiltro,
+    ) -> Result<Vec<Candidatura>, ServerError> {
         db.query(
             "
             SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
@@ -116,7 +122,6 @@ impl Candidatura {
     pub fn filtro() -> CandidaturaFiltro {
         CandidaturaFiltro::default()
     }
-
 }
 
 /// Filtro de listagem de candidaturas

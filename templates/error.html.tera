@@ -2,10 +2,24 @@
 
 {% block content %}
     <h1>Erro - {{ code | as_str }}</h1>
+
     <p>{{ description }}</p>
-    <p><small>{{ reason }}</small></p>
+
+    {% if reason %}
+    <details>
+      <summary>Erro detalhado:</summary>
+      <small><code>{{ reason }}</code></small>
+    </details>
+    {% endif %}
+
     <hr />
-    <p>Talvez você queira <a href="#" onclick="history.go(-1)">voltar</a> ou retornar à <a href="/">home</a>.</p>
+
+    <p>
+      Talvez você queira
+      <a href="#" onclick="history.go(-1)">voltar</a>
+      ou retornar à <a href="/">home</a>.
+    </p>
+
 {% endblock content %}
 
 {#

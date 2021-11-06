@@ -1,0 +1,15 @@
+{% extends "base" %}
+{% block content %}
+
+<p>
+{{ candidatura.cargo_tipo }},
+{{ candidatura.cargo_local }} - 
+{{ candidatura.ano }} - 
+{{ candidatura.numero }}
+</p>
+
+{% endblock content %}
+
+{#
+  vim: filetype=htmldjango
+#}

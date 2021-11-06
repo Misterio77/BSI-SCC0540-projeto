@@ -1,9 +1,9 @@
 use chrono::NaiveDate;
 use serde::Serialize;
-use std::convert::{TryInto, TryFrom};
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
-use crate::error::{Result, ServerError};
+use crate::error::ServerError;
 
 /// Processo judicial
 #[derive(Debug, Serialize)]
@@ -20,7 +20,7 @@ pub struct Processo {
 /// Converte da linha para o nosso tipo
 impl TryFrom<Row> for Processo {
     type Error = ServerError;
-    fn try_from(row: Row) -> Result<Processo> {
+    fn try_from(row: Row) -> Result<Processo, ServerError> {
         Ok(Processo {
             id: row.try_get("id")?,
             reu: row.try_get("reu")?,
@@ -35,20 +35,20 @@ impl TryFrom<Row> for Processo {
 
 impl Processo {
     /// Obtém um processo, dado seu id
-    pub async fn obter(db: &Client, id: i32) -> Result<Processo> {
+    pub async fn obter(db: &Client, id: i32) -> Result<Processo, ServerError> {
         db.query_one(
             "
             SELECT id, reu, crime, julgado, data_julgamento, procedente, pena
             FROM processo
             WHERE id = $1",
-            &[&id]
+            &[&id],
         )
         .await?
         .try_into()
     }
 
     /// Lista os processos, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: ProcessoFiltro) -> Result<Vec<Processo>> {
+    pub async fn listar(db: &Client, filtro: ProcessoFiltro) -> Result<Vec<Processo>, ServerError> {
         db.query(
             "
             SELECT id, reu, crime, julgado, data_julgamento, procedente, pena
