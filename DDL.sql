@@ -8,6 +8,7 @@ CREATE TABLE individuo (
     cpfcnpj VARCHAR NOT NULL,
     nome VARCHAR NOT NULL,
     nascimento DATE NOT NULL,
+    -- TODO: trigger para manter atualizado
     ficha_limpa BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT individuo_pk PRIMARY KEY (cpfcnpj),
@@ -25,6 +26,7 @@ CREATE TABLE partido (
 
     CONSTRAINT partido_pk PRIMARY KEY (numero),
     CONSTRAINT partido_un UNIQUE (nome),
+
     CONSTRAINT partido_numero CHECK (numero >= 10)
 );
 
@@ -49,6 +51,7 @@ CREATE TABLE cargo (
     salario NUMERIC NOT NULL,
 
     CONSTRAINT cargo_pk PRIMARY KEY (tipo, local),
+
     CONSTRAINT cargo_ck_cadeiras CHECK (cadeiras > 0),
     CONSTRAINT cargo_ck_salario CHECK (salario > 0)
 );
@@ -103,51 +106,63 @@ CREATE TABLE candidatura (
     CONSTRAINT candidatura_pk PRIMARY KEY (candidato, ano),
 
     -- Garante que, para cada ano, a pessoa só é vice de uma candidatura
-    CONSTRAINT candidatura_un1
+    CONSTRAINT candidatura_un_vice_ano
         UNIQUE (vice_candidato, ano),
     -- Garante que, para cada ano e cargo, só existe 1 candidatura com dado número
-    CONSTRAINT candidatura_un2
+    CONSTRAINT candidatura_un_numero_ano_cargo
         UNIQUE (cargo_tipo, cargo_local, numero, ano),
 
     -- Verifica que o número na urna é positivo, e que o numero de digitos é correto
-    -- vereador: 5, dep estadual: 5, dep federal: 4, senador: 3, prefeito: 2, governador: 2, presidente: 2
     CONSTRAINT candidatura_ck_numero
-        CHECK (numero > 0 AND CASE
-            WHEN (cargo_tipo = 'Vereador' OR cargo_tipo = 'DeputadoEstadual') THEN (FLOOR(LOG(numero)+1) = 5)
-            WHEN (cargo_tipo = 'DeputadoFederal') THEN (FLOOR(LOG(numero)+1) = 4)
-            WHEN (cargo_tipo = 'Senador') THEN (FLOOR(LOG(numero)+1) = 3)
-            ELSE (FLOOR(LOG(numero)+1) = 2)
-        END),
+        CHECK (numero > 0 AND
+            CASE
+                WHEN (cargo_tipo = 'Vereador' OR cargo_tipo = 'DeputadoEstadual')
+                    -- 5 dígitos
+                    THEN (FLOOR(LOG(numero)+1) = 5)
+                WHEN (cargo_tipo = 'DeputadoFederal') THEN
+                    -- 4 dígitos
+                    (FLOOR(LOG(numero)+1) = 4)
+                WHEN (cargo_tipo = 'Senador') THEN
+                    -- 3 dígitos
+                    (FLOOR(LOG(numero)+1) = 3)
+                ELSE
+                    -- 2 dígitos
+                    (FLOOR(LOG(numero)+1) = 2)
+            END
+        ),
 
     -- Verifica se a candidatura cumpre requisito de vice do cargo
     -- E também que o candidato e vice são distintos
     CONSTRAINT candidatura_ck_vice_candidato
         CHECK (CASE
+            -- Cargos executives requerem um vice na chapa
             WHEN (cargo_tipo = 'Presidente' OR cargo_tipo = 'Governador' OR cargo_tipo = 'Prefeito')
                 THEN (vice_candidato IS NOT NULL)
+            -- Legislativos não
             ELSE (vice_candidato IS NULL)
         END
         AND vice_candidato != candidato),
 
+    -- Verifica que votos não são negativos
     CONSTRAINT candidatura_ck_votos
         CHECK (votos >= 0),
 
-    CONSTRAINT candidatura_fk1
+    CONSTRAINT candidatura_fk_candidato
         FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT candidatura_fk2
+    CONSTRAINT candidatura_fk_vice_candidato
         FOREIGN KEY (vice_candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT candidatura_fk3
+    CONSTRAINT candidatura_fk_cargo
         FOREIGN KEY (cargo_tipo, cargo_local)
         REFERENCES cargo (tipo, local)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT candidatura_fk4
+    CONSTRAINT candidatura_fk_partido
         FOREIGN KEY (partido)
         REFERENCES partido (numero)
         ON DELETE CASCADE ON UPDATE CASCADE
@@ -162,17 +177,17 @@ CREATE TABLE membro_equipe (
 
     CONSTRAINT membro_equipe_pk PRIMARY KEY (membro, ano),
 
-    CONSTRAINT membro_equipe_fk1
+    CONSTRAINT membro_equipe_fk_membro
         FOREIGN KEY (membro)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT membro_equipe_fk2
+    CONSTRAINT membro_equipe_fk_candidato
         FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT membro_equipe_fk3
+    CONSTRAINT membro_equipe_fk_candidatura
         FOREIGN KEY (candidato, ano)
         REFERENCES candidatura (candidato, ano)
         ON DELETE CASCADE ON UPDATE CASCADE
@@ -191,22 +206,24 @@ CREATE TABLE doacao (
     CONSTRAINT doacao_pk PRIMARY KEY (id),
     CONSTRAINT doacao_ck_valor CHECK (valor > 0),
 
-    CONSTRAINT doacao_fk1
+    CONSTRAINT doacao_fk_doador
         FOREIGN KEY (doador)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT doacao_fk2
+    CONSTRAINT doacao_fk_candidato
         FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT doacao_fk3
+    CONSTRAINT doacao_fk_candidatura
         FOREIGN KEY (candidato, ano)
         REFERENCES candidatura (candidato, ano)
         ON DELETE CASCADE ON UPDATE CASCADE
 
 );
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
+-- 1 doação por indivíduo com cnpj por candidatura
+CREATE UNIQUE INDEX doacao_un_juridica ON doacao (doador, candidato, ano) WHERE (doador SIMILAR TO '[0-9]{14}');
 
 COMMIT;

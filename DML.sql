@@ -220,26 +220,26 @@ INSERT INTO cargo VALUES
     ('Vereador', 'Belém', 35, 15031),
     ('Vereador', 'Boa Vista', 23, 10012),
     ('Vereador', 'Campo Grande', 29, 15031),
-    ('Vereador', 'Cuiabá', 25, 15031)
+    ('Vereador', 'Cuiabá', 25, 15031),
     ('Vereador', 'Curitiba', 38, 15594),
     ('Vereador', 'Florianópolis', 23, 15193),
     ('Vereador', 'Fortaleza', 43, 16393),
     ('Vereador', 'Goiânia', 35, 13634),
-    ('Vereador', 'João Pessoa', 27, 18991)
+    ('Vereador', 'João Pessoa', 27, 18991),
     ('Vereador', 'Maceió', 25, 15031),
     ('Vereador', 'Manaus', 41, 15031),
-    ('Vereador', 'Natal', 29, 17000)
+    ('Vereador', 'Natal', 29, 17000),
     ('Vereador', 'Palmas', 19, 12661),
     ('Vereador', 'Porto Alegre', 36, 14573),
     ('Vereador', 'Porto Velho', 21, 13951),
-    ('Vereador', 'Recife', 39, 14635)
+    ('Vereador', 'Recife', 39, 14635),
     ('Vereador', 'Rio Branco', 17, 12025),
     ('Vereador', 'Rio de Janeiro', 51, 18991),
     ('Vereador', 'Salvador', 43, 18732),
     ('Vereador', 'São Luís', 31, 15031),
     ('Vereador', 'São Paulo', 55, 18991),
-    ('Vereador', 'Teresina', 29, 18881)
-    ('Vereador', 'Vitória', 15, 17932),
+    ('Vereador', 'Teresina', 29, 18881),
+    ('Vereador', 'Vitória', 15, 17932);
 
 INSERT INTO partido VALUES
     (10, 'Republicanos', ''),
@@ -273,8 +273,8 @@ INSERT INTO partido VALUES
     (65, 'Partido Comunista do Brasil', ''),
     (70, 'Avante', ''),
     (77, 'Solidariedade', ''),
-    (80, 'Unidade Popular', '');
-    (90, 'Partido Republicano da Ordem Social', ''),
+    (80, 'Unidade Popular', ''),
+    (90, 'Partido Republicano da Ordem Social', '');
 
 -- TODO: candidaturas, doacoes, equipes, processos
 
