@@ -63,10 +63,6 @@ CREATE TABLE processo (
     id INTEGER NOT NULL DEFAULT nextval('processo_id_seq'),
     reu VARCHAR NOT NULL,
     crime VARCHAR NOT NULL,
-    julgado BOOLEAN NOT NULL DEFAULT false,
-    data_julgamento DATE,
-    procedente BOOLEAN,
-    pena VARCHAR,
 
     CONSTRAINT processo_pk PRIMARY KEY (id),
 
@@ -74,22 +70,20 @@ CREATE TABLE processo (
         FOREIGN KEY (reu)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
-
-    -- Caso o processo já tenha sido julgado,
-    -- ele PRECISA ter data_julgamento e procedente NOT NULLs.
-    CONSTRAINT processo_ck_data_e_procedente CHECK (
-        julgado = false OR (
-            data_julgamento IS NOT NULL AND
-            procedente IS NOT NULL
-        )
-    ),
-    -- Caso o processo tenha procedente culpado (true)
-    -- ele PRECISA ter pena NOT NULL
-    CONSTRAINT processo_ck_pena CHECK (
-        procedente = false OR pena IS NOT NULL
-    )
 );
 ALTER SEQUENCE processo_id_seq OWNED BY processo.id;
+
+-- Representa o julgamento de um processo
+CREATE TABLE julgamento (
+    processo INTEGER NOT NULL,
+    -- Qual órgão judiciário julgou
+    instancia VARCHAR NOT NULL,
+    data DATE NOT NULL,
+    procedente BOOLEAN NOT NULL,
+
+    -- Cada processo só pode ser julgado uma vez no órgão, podendo recorrer para outro órgão superior
+    CONSTRAINT julgamento_pk PRIMARY KEY (processo, instancia),
+)
 
 
 -- Representa uma candidatura
@@ -225,5 +219,7 @@ CREATE TABLE doacao (
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
 -- 1 doação por indivíduo com cnpj por candidatura
 CREATE UNIQUE INDEX doacao_un_juridica ON doacao (doador, candidato, ano) WHERE (doador SIMILAR TO '[0-9]{14}');
+
+-- TODO: só permitir adicionar candidatura caso no ano da eleição seja ficha limpa
 
 COMMIT;

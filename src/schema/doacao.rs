@@ -97,9 +97,9 @@ impl DoacaoFiltro {
             ..self
         }
     }
-    pub fn valor(self, valor: &Decimal) -> Self {
+    pub fn valor(self, valor: Decimal) -> Self {
         Self {
-            valor: Some(valor.clone()),
+            valor: Some(valor),
             ..self
         }
     }

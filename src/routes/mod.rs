@@ -1,7 +1,13 @@
 pub mod candidaturas;
 
 use crate::error::ServerError;
-use rocket::{catch, get, http::{Status, uri::Origin}, request::FlashMessage, fs::NamedFile};
+use rocket::{
+    catch,
+    fs::NamedFile,
+    get,
+    http::{uri::Origin, Status},
+    request::FlashMessage,
+};
 use rocket_dyn_templates::{context, Template};
 use std::path::Path;
 
@@ -28,8 +34,10 @@ impl<'r> rocket::response::Responder<'r, 'static> for CachedFile {
     }
 }
 
-
 #[get("/style.css")]
 pub async fn css() -> Option<CachedFile> {
-    NamedFile::open(Path::new("assets/style.css")).await.ok().map(|nf| CachedFile(nf))
+    NamedFile::open(Path::new("assets/style.css"))
+        .await
+        .ok()
+        .map(CachedFile)
 }

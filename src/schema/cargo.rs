@@ -126,15 +126,15 @@ impl CargoFiltro {
             ..self
         }
     }
-    pub fn min_salario(self, min_salario: &Decimal) -> Self {
+    pub fn min_salario(self, min_salario: Decimal) -> Self {
         Self {
-            min_salario: Some(min_salario.clone()),
+            min_salario: Some(min_salario),
             ..self
         }
     }
-    pub fn max_salario(self, max_salario: &Decimal) -> Self {
+    pub fn max_salario(self, max_salario: Decimal) -> Self {
         Self {
-            max_salario: Some(max_salario.clone()),
+            max_salario: Some(max_salario),
             ..self
         }
     }

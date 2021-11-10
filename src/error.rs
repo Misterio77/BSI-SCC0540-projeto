@@ -97,7 +97,7 @@ impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerE
             Some(db_e) => {
                 // Pegar a mensagem dele
                 db_e.message().into()
-            },
+            }
             // Caso seja erro levantado pela biblioteca
             None => {
                 // Pegar a representação textual dele

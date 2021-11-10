@@ -98,9 +98,9 @@ impl IndividuoFiltro {
             ..self
         }
     }
-    pub fn nascimento(self, nascimento: &NaiveDate) -> Self {
+    pub fn nascimento(self, nascimento: NaiveDate) -> Self {
         Self {
-            nascimento: Some(nascimento.clone()),
+            nascimento: Some(nascimento),
             ..self
         }
     }

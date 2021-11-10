@@ -1,7 +1,4 @@
-use rocket::{
-    catchers,
-    routes,
-};
+use rocket::{catchers, routes};
 use rocket_db_pools::Database as DatabaseTrait;
 use rocket_dyn_templates::Template;
 
@@ -11,7 +8,7 @@ use projeto_bd::{
     // Nosso tipo personalizado de erro
     error::ServerError,
     // Rotas do servidor
-    routes::{candidaturas, index, not_found, css},
+    routes::{candidaturas, css, index, not_found},
 };
 
 #[rocket::main]

@@ -1,10 +1,4 @@
-use rocket::{
-    response::{Flash, Redirect},
-    http::uri::Origin,
-    Route,
-    get,
-    routes,
-};
+use rocket::{get, http::uri::Origin, routes, Route};
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
 
