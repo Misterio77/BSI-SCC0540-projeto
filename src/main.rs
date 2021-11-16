@@ -9,8 +9,8 @@ use projeto_bd::{
     error::ServerError,
     // Rotas do servidor
     routes::{
-        assets, home, errors,
-        candidaturas, cargos, doacoes, individuos, partidos, pleitos, processos, julgamentos
+        assets, candidaturas, cargos, doacoes, errors, home, individuos, julgamentos, partidos,
+        pleitos, processos,
     },
 };
 
@@ -27,7 +27,10 @@ async fn main() -> Result<(), ServerError> {
         .register("/", catchers![errors::not_found])
         // Servir rotas
         .mount("/", routes![home::index])
-        .mount("/candidaturas", routes![candidaturas::get, candidaturas::list])
+        .mount(
+            "/candidaturas",
+            routes![candidaturas::get, candidaturas::list],
+        )
         .mount("/cargos", routes![cargos::get])
         .mount("/doacoes", routes![doacoes::get])
         .mount("/individuos", routes![individuos::get])

@@ -9,10 +9,10 @@ pub mod processo;
 
 pub use candidatura::{Candidatura, CandidaturaFiltro};
 pub use cargo::{Cargo, CargoFiltro, TipoCargo};
-pub use doacao::{DoacaoFiltro, Doacao};
-pub use individuo::{IndividuoFiltro, Individuo};
-pub use julgamento::{JulgamentoFiltro, Julgamento};
-pub use partido::{PartidoFiltro, Partido};
-pub use pleito::{PleitoFiltro, Pleito};
-pub use processo::{ProcessoFiltro, Processo};
+pub use doacao::{Doacao, DoacaoFiltro};
+pub use individuo::{Individuo, IndividuoFiltro};
+pub use julgamento::{Julgamento, JulgamentoFiltro};
+pub use partido::{Partido, PartidoFiltro};
+pub use pleito::{Pleito, PleitoFiltro};
+pub use processo::{Processo, ProcessoFiltro};
 // TODO: membro equipe

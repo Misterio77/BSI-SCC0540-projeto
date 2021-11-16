@@ -129,12 +129,14 @@ impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerE
 /// Baseado numa mensagem inicial de erro, deixar traduzida e bonitinha
 fn pretty_db_error(initial: &str) -> (String, Status) {
     match initial {
-        "query returned an unexpected number of rows" => {
-            ("Fileira não encontrada na base de dados.".into(), Status::NotFound)
-        },
-        m => {
-            (format!("Erro na base de dados: {}", m), Status::InternalServerError)
-        }
+        "query returned an unexpected number of rows" => (
+            "Fileira não encontrada na base de dados.".into(),
+            Status::NotFound,
+        ),
+        m => (
+            format!("Erro na base de dados: {}", m),
+            Status::InternalServerError,
+        ),
     }
 }
 

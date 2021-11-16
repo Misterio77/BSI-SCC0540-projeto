@@ -1,6 +1,6 @@
+use rocket::{fs::NamedFile, get};
 /// Servir assets na página. No caso, CSS.
 use std::path::Path;
-use rocket::{get, fs::NamedFile};
 
 pub struct CachedFile(NamedFile);
 

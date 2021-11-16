@@ -46,10 +46,7 @@ impl Pleito {
     }
 
     /// Lista os pleitos, com filtros opcionais
-    pub async fn listar(
-        db: &Client,
-        filtro: PleitoFiltro,
-    ) -> Result<Vec<Pleito>, ServerError> {
+    pub async fn listar(db: &Client, filtro: PleitoFiltro) -> Result<Vec<Pleito>, ServerError> {
         db.query(
             "
             SELECT candidato, ano, turno, votos
