@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS doacao, membro_equipe, candidatura, julgamento, processo, cargo, partido, individuo;
+DROP TABLE IF EXISTS doacao, membro_equipe, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
 
 -- Representa um indivíduo
@@ -95,7 +95,6 @@ CREATE TABLE candidatura (
     cargo_local VARCHAR NOT NULL,
     numero INTEGER NOT NULL,
     partido SMALLINT NOT NULL,
-    votos INTEGER DEFAULT NULL,
 
     CONSTRAINT candidatura_pk PRIMARY KEY (candidato, ano),
 
@@ -135,10 +134,6 @@ CREATE TABLE candidatura (
         END
         AND vice_candidato != candidato),
 
-    -- Verifica que votos não são negativos
-    CONSTRAINT candidatura_ck_votos
-        CHECK (votos >= 0),
-
     CONSTRAINT candidatura_fk_candidato
         FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
@@ -161,6 +156,25 @@ CREATE TABLE candidatura (
 );
 
 
+-- Representa um pleito
+CREATE TABLE pleito (
+    candidato VARCHAR NOT NULL,
+    ano SMALLINT NOT NULL,
+    turno SMALLINT NOT NULL DEFAULT 1,
+    votos INTEGER NOT NULL,
+
+    CONSTRAINT pleito_pk PRIMARY KEY (candidato, ano, turno),
+
+    CONSTRAINT pleito_ck_turno CHECK (turno > 0),
+    CONSTRAINT pleito_ck_votos CHECK (votos >= 0),
+
+    CONSTRAINT pleito_fk_candidatura
+        FOREIGN KEY (candidato, ano)
+        REFERENCES candidatura (candidato, ano)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
 -- Representa cada membro da equipe
 CREATE TABLE membro_equipe (
     membro VARCHAR NOT NULL,
@@ -171,11 +185,6 @@ CREATE TABLE membro_equipe (
 
     CONSTRAINT membro_equipe_fk_membro
         FOREIGN KEY (membro)
-        REFERENCES individuo (cpfcnpj)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-
-    CONSTRAINT membro_equipe_fk_candidato
-        FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
@@ -200,11 +209,6 @@ CREATE TABLE doacao (
 
     CONSTRAINT doacao_fk_doador
         FOREIGN KEY (doador)
-        REFERENCES individuo (cpfcnpj)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-
-    CONSTRAINT doacao_fk_candidato
-        FOREIGN KEY (candidato)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
