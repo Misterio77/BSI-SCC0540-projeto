@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Home{% endblock %} | Justiça Eleitoral</title>
     <link rel="preload" href="/assets/style.css" as="style" />
-    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.4.1/css/pico.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@1.4.1/css/pico.min.css"
+    />
     <link rel="stylesheet" href="/assets/style.css" />
   </head>
   <body>
-
     <nav>
       <ul>
         <li><a href="/">Justiça Eleitoral</a></li>
       </ul>
-
     </nav>
 
     <nav>
@@ -31,10 +32,7 @@
       </ul>
     </nav>
 
-    <main class="container">
-      {% block content %}
-      {% endblock content %}
-    </main>
+    <main class="container">{% block content %} {% endblock content %}</main>
 
     <footer class="container">
       <p>
@@ -44,6 +42,5 @@
         </a>
       </p>
     </footer>
-
   </body>
 </html>

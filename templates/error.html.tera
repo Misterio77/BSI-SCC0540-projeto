@@ -1,25 +1,22 @@
-{% extends "base" %}
+{% extends "base" %} {% block title %}Erro{% endblock title %} {% block content
+%}
+<h1>Erro - {{ code | as_str }}</h1>
 
-{% block title %}Erro{% endblock title %}
+<p><strong>{{ description }}</strong></p>
 
-{% block content %}
-    <h1>Erro - {{ code | as_str }}</h1>
+{% if reason %}
+<details open>
+  <summary><small>Erro detalhado:</small></summary>
+  <small><code>{{ reason }}</code></small>
+</details>
+{% endif %}
 
-    <p><strong>{{ description }}</strong></p>
-
-    {% if reason %}
-    <details open>
-      <summary><small>Erro detalhado:</small></summary>
-      <small><code>{{ reason }}</code></small>
-    </details>
-    {% endif %}
-
-    <p>
-      <small>
-      Talvez você queira
-      <a href="#" onclick="history.go(-1)">voltar</a>
-      ou retornar à <a href="/">home</a>.
-      </small>
-    </p>
+<p>
+  <small>
+    Talvez você queira
+    <a href="#" onclick="history.go(-1)">voltar</a>
+    ou retornar à <a href="/">home</a>.
+  </small>
+</p>
 
 {% endblock content %}

@@ -1,22 +1,14 @@
-{% extends "base" %}
-
-{% block title %}{{ candidatura.numero }}{% endblock title %}
-
-{% block content %}
+{% extends "base" %} {% block title %}{{ candidatura.numero }}{% endblock title
+%} {% block content %}
 
 <h1>
-  Candidatura: {{ candidatura.numero }} ({{ candidatura.ano }}) - {{ candidatura.cargo_tipo }} ({{ candidatura.cargo_local }}) 
+  Candidatura: {{ candidatura.numero }} ({{ candidatura.ano }}) - {{
+  candidatura.cargo_tipo }} ({{ candidatura.cargo_local }})
 </h1>
 
 <h2>Informações:</h2>
-<p>
-  <strong>Número</strong>:
-    {{ candidatura.numero }}
-</p>
-<p>
-  <strong>Ano</strong>:
-    {{ candidatura.ano }}
-</p>
+<p><strong>Número</strong>: {{ candidatura.numero }}</p>
+<p><strong>Ano</strong>: {{ candidatura.ano }}</p>
 <p>
   <strong>Cargo</strong>:
   <a href="/cargos/{{ candidatura.cargo_tipo }}/{{ candidatura.cargo_local }}">
@@ -26,32 +18,34 @@
 <p>
   <strong>Candidato</strong>:
   <a href="/individuos/{{ candidatura.candidato}}">
-      {{ candidatura.candidato }}
+    {{ candidatura.candidato }}
   </a>
 </p>
 {% if candidatura.vice_candidato %}
 <p>
   <strong>Vice-Candidato</strong>:
   <a href="/individuos/{{ candidatura.vice_candidato}}">
-      {{ candidatura.vice_candidato }}
+    {{ candidatura.vice_candidato }}
   </a>
 </p>
 {% endif %}
 <p>
   <strong>Partido</strong>:
-  <a href="/partidos/{{ candidatura.partido}}">
-      {{ candidatura.partido }}
-  </a>
+  <a href="/partidos/{{ candidatura.partido}}"> {{ candidatura.partido }} </a>
 </p>
 
 <h2>Referenciado em:</h2>
 <p>
-  <a href="/doacoes?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}">
+  <a
+    href="/doacoes?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}"
+  >
     Doações recebidas
   </a>
 </p>
 <p>
-  <a href="/membros_equipe?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}">
+  <a
+    href="/membros_equipe?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}"
+  >
     Membros da equipe de campanha
   </a>
 </p>

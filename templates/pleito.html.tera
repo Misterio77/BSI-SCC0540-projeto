@@ -1,25 +1,18 @@
-{% extends "base" %}
+{% extends "base" %} {% block title %}{{ pleito.candidato }} {{ pleito.ano}} {{
+pleito.turno }}{% endblock title %} {% block content %}
 
-{% block title %}{{ pleito.candidato }} {{ pleito.ano}} {{ pleito.turno }}{% endblock title %}
-
-{% block content %}
-
-<h1>Pleito: {{ pleito.turno }}º turno - {{ pleito.candidato }} - {{ pleito.ano }}</h1>
+<h1>
+  Pleito: {{ pleito.turno }}º turno - {{ pleito.candidato }} - {{ pleito.ano }}
+</h1>
 
 <h2>Informações:</h2>
-<p>
-  <strong>Votação</strong>:
-  {{ pleito.turno }}º turno
-</p>
+<p><strong>Votação</strong>: {{ pleito.turno }}º turno</p>
 <p>
   <strong>Candidatura</strong>:
   <a href="/candidaturas/{{ pleito.candidato}}/{{ pleito.ano }}">
     {{ pleito.candidato }} - {{ pleito.ano }}
   </a>
 </p>
-<p>
-  <strong>Votos</strong>:
-  {{ pleito.votos }}
-</p>
+<p><strong>Votos</strong>: {{ pleito.votos }}</p>
 
 {% endblock content %}

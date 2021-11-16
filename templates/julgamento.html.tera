@@ -1,33 +1,20 @@
-{% extends "base" %}
+{% extends "base" %} {% block title %}Julgamento #{{ julgamento.processo }} - {{
+julgamento.instancia }}{% endblock title %} {% block content %}
 
-{% block title %}Julgamento #{{ julgamento.processo }} - {{ julgamento.instancia }}{% endblock title %}
+<h1>Julgamento: #{{ julgamento.processo }} - {{ julgamento.instancia }}</h1>
 
-  {% block content %}
-
-  <h1>
-    Julgamento: #{{ julgamento.processo }} - {{ julgamento.instancia }}
-  </h1>
-
-  <h2>Informações:</h2>
-  <p>
-    <strong>Processo</strong>:
-      <a href="/processos/{{ julgamento.processo }}">
-        #{{ julgamento.processo }}
-      </a>
-  </p>
-  <p>
-    <strong>Instância</strong>:
-      {{ julgamento.instancia }}
-  </p>
-  <p>
-    <strong>Data</strong>:
-      {{ julgamento.data | date(format="%d/%m/%Y") }}
-  </p>
-  <p>
-    <strong>Procedente</strong>:
-      {% if julgamento.procedente %}Culpado
-      {% else %}Inocente
-      {% endif %}
-  </p>
+<h2>Informações:</h2>
+<p>
+  <strong>Processo</strong>:
+  <a href="/processos/{{ julgamento.processo }}">
+    #{{ julgamento.processo }}
+  </a>
+</p>
+<p><strong>Instância</strong>: {{ julgamento.instancia }}</p>
+<p><strong>Data</strong>: {{ julgamento.data | date(format="%d/%m/%Y") }}</p>
+<p>
+  <strong>Procedente</strong>: {% if julgamento.procedente %}Culpado {% else
+  %}Inocente {% endif %}
+</p>
 
 {% endblock content %}

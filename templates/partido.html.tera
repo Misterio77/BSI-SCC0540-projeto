@@ -1,26 +1,12 @@
-{% extends "base" %}
-
-{% block title %}{{ partido.nome }}{% endblock title %}
-
-{% block content %}
+{% extends "base" %} {% block title %}{{ partido.nome }}{% endblock title %} {%
+block content %}
 
 <h1>Partido: {{ partido.nome }} ({{ partido.numero }})</h1>
 
 <h2>Informações:</h2>
-<p>
-  <strong>Número</strong>:
-  {{ partido.numero }}
-</p>
-<p>
-  <strong>Nome</strong>:
-  {{ partido.nome }}
-</p>
-<p>
-  <strong>Programa</strong>:
-  <pre>
-{{ partido.programa }}
-  </pre>
-</p>
+<p><strong>Número</strong>: {{ partido.numero }}</p>
+<p><strong>Nome</strong>: {{ partido.nome }}</p>
+<p><strong>Programa</strong>: {{ partido.programa }}</p>
 
 <h2>Referenciado em:</h2>
 <p>

@@ -1,28 +1,17 @@
-{% extends "base" %}
-
-{% block title %}{{ individuo.nome }}{% endblock title %}
-
+{% extends "base" %} {% block title %}{{ individuo.nome }}{% endblock title %}
 {% block content %}
 
 <h1>Indivíduo: {{ individuo.nome }}</h1>
 
 <h2>Informações:</h2>
+<p><strong>CPF/CNPJ</strong>: {{ individuo.cpfcnpj }}</p>
+<p><strong>Nome</strong>: {{ individuo.nome }}</p>
 <p>
-  <strong>CPF/CNPJ</strong>:
-  {{ individuo.cpfcnpj }}
+  <strong>Nascimento</strong>: {{ individuo.nascimento | date(format="%d/%m/%Y")
+  }}
 </p>
 <p>
-  <strong>Nome</strong>:
-  {{ individuo.nome }}
-</p>
-<p>
-  <strong>Nascimento</strong>:
-  {{ individuo.nascimento | date(format="%d/%m/%Y") }}
-</p>
-<p>
-  <strong>Ficha limpa</strong>:
-  {% if individuo.ficha_limpa %}Sim
-  {% else %}Não
+  <strong>Ficha limpa</strong>: {% if individuo.ficha_limpa %}Sim {% else %}Não
   {% endif %}
 </p>
 
@@ -31,7 +20,9 @@
   <a href="/candidaturas?candidato={{ individuo.cpfcnpj }}">Candidaturas</a>
 </p>
 <p>
-  <a href="/candidaturas?vice_candidato={{ individuo.cpfcnpj }}">Vice Candidaturas</a>
+  <a href="/candidaturas?vice_candidato={{ individuo.cpfcnpj }}"
+    >Vice Candidaturas</a
+  >
 </p>
 <p>
   <a href="/doacoes?doador={{ individuo.cpfcnpj }}">Doações realizadas</a>

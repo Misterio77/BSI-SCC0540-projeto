@@ -1,27 +1,14 @@
-{% extends "base" %}
+{% extends "base" %} {% block title %}Doação #{{ doacao.id }}{% endblock title
+%} {% block content %}
 
-{% block title %}Doação #{{ doacao.id }}{% endblock title %}
-
-{% block content %}
-
-<h1>
-  Doação: #{{ doacao.id }}
-</h1>
+<h1>Doação: #{{ doacao.id }}</h1>
 
 <h2>Informações:</h2>
-<p>
-  <strong>ID</strong>:
-    #{{ doacao.id }}
-</p>
-<p>
-  <strong>Valor</strong>:
-    R$ {{ doacao.valor }}
-</p>
+<p><strong>ID</strong>: #{{ doacao.id }}</p>
+<p><strong>Valor</strong>: R$ {{ doacao.valor }}</p>
 <p>
   <strong>Doador</strong>:
-  <a href="/individuos/{{ doacao.doador}}">
-      {{ doacao.doador }}
-  </a>
+  <a href="/individuos/{{ doacao.doador}}"> {{ doacao.doador }} </a>
 </p>
 <p>
   <strong>Candidatura</strong>:
