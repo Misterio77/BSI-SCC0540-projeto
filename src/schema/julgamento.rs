@@ -29,7 +29,11 @@ impl TryFrom<Row> for Julgamento {
 
 impl Julgamento {
     /// Obtém um julgamento, dado o id do processo e a instância onde ocorreu
-    pub async fn obter(db: &Client, processo: i32, instancia: &str) -> Result<Julgamento, ServerError> {
+    pub async fn obter(
+        db: &Client,
+        processo: i32,
+        instancia: &str,
+    ) -> Result<Julgamento, ServerError> {
         db.query_one(
             "
             SELECT processo, instancia, data, procedente
@@ -42,7 +46,10 @@ impl Julgamento {
     }
 
     /// Lista os julgamentos, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: JulgamentoFiltro) -> Result<Vec<Julgamento>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: JulgamentoFiltro,
+    ) -> Result<Vec<Julgamento>, ServerError> {
         db.query(
             "
             SELECT processo, instancia, data, procedente

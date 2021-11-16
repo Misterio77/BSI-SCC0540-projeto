@@ -32,6 +32,10 @@ features = ["derive"]
 version = "0.2"
 features = ["derive", "with-chrono-0_4"]
 
+[dependencies.strum]
+version = "0.22"
+features = ["derive"]
+
 [patch.crates-io]
 rocket = { git = "https://github.com/SergioBenitez/Rocket" }
 rocket_db_pools = { git = "https://github.com/SergioBenitez/Rocket" }

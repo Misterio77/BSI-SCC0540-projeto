@@ -1,0 +1,36 @@
+{% extends "base" %}
+
+{% block title %}{{ cargo.tipo }} - {{ cargo.local}}{% endblock title %}
+
+{% block content %}
+
+<h1>
+  Cargo: {{ cargo.tipo }} - {{ cargo.local}}
+</h1>
+
+<h2>Informações:</h2>
+<p>
+  <strong>Tipo</strong>:
+  {{ cargo.tipo }}
+</p>
+<p>
+  <strong>Local</strong>:
+  {{ cargo.local }}
+</p>
+<p>
+  <strong>Cadeiras</strong>:
+  {{ cargo.cadeiras }}
+</p>
+<p>
+  <strong>Salário</strong>:
+  R$ {{ cargo.salario }}
+</p>
+
+<h2>Referenciado em:</h2>
+<p>
+  <a href="/candidaturas?cargo_tipo={{ cargo.tipo }}&cargo_local={{ cargo.local }}">
+    Candidaturas
+  </a>
+</p>
+
+{% endblock content %}

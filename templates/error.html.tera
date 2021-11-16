@@ -1,27 +1,25 @@
 {% extends "base" %}
 
+{% block title %}Erro{% endblock title %}
+
 {% block content %}
     <h1>Erro - {{ code | as_str }}</h1>
 
-    <p>{{ description }}</p>
+    <p><strong>{{ description }}</strong></p>
 
     {% if reason %}
-    <details>
-      <summary>Erro detalhado:</summary>
+    <details open>
+      <summary><small>Erro detalhado:</small></summary>
       <small><code>{{ reason }}</code></small>
     </details>
     {% endif %}
 
-    <hr />
-
     <p>
+      <small>
       Talvez você queira
       <a href="#" onclick="history.go(-1)">voltar</a>
       ou retornar à <a href="/">home</a>.
+      </small>
     </p>
 
 {% endblock content %}
-
-{#
-  vim: filetype=htmldjango
-#}

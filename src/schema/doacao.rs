@@ -36,7 +36,7 @@ impl Doacao {
             "
             SELECT id, valor, doador, candidato, ano
             FROM doacao
-            WHERE id = #1",
+            WHERE id = $1",
             &[&id],
         )
         .await?

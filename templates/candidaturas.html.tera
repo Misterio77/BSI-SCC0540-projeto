@@ -1,0 +1,76 @@
+{% extends "base" %}
+
+{% block title %}Candidaturas{% endblock title %}
+
+{% block content %}
+
+<h1>Candidaturas</h1>
+
+<h2>Filtros</h2>
+<form>
+  <div class="grid">
+    <label>Número:
+      <input name="numero" value="{{ filtro.numero | default(value="") }}"/>
+    </label>
+    <label>Partido:
+      <input name="partido" value="{{ filtro.partido | default(value="") }}"/>
+    </label>
+    <label>Tipo de cargo:
+      <input name="cargo_tipo" value="{{ filtro.cargo_tipo | default(value="") }}"/>
+    </label>
+    <label>Local do cargo:
+      <input name="cargo_local" value="{{ filtro.cargo_local | default(value="") }}"/>
+    </label>
+  </div>
+  <div class="grid">
+    <label>Ano:
+      <input name="ano" value="{{ filtro.ano | default(value="") }}"/>
+    </label>
+    <label>Candidato:
+      <input name="candidato" value="{{ filtro.candidato | default(value="") }}"/>
+    </label>
+    <label>Vice-Candidato:
+      <input name="vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
+    </label>
+  </div>
+  <button>Buscar</button>
+</form>
+
+<h2>Resultados</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Número</th>
+      <th>Partido</th>
+      <th>Cargo</th>
+      <th>Ano</th>
+      <th>Candidato</th>
+      <th>Vice-Candidato</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for candidatura in candidaturas %}
+    <tr>
+      <td>{{ candidatura.numero }}</td>
+      <td>
+        <a href="/partidos/{{ candidatura.partido }}">{{ candidatura.partido }}</a>
+      </td>
+      <td>
+        <a href="/cargos/{{ candidatura.cargo_tipo }}/{{ candidatura.cargo_local }}">
+          {{ candidatura.cargo_tipo }}<br />{{ candidatura.cargo_local }}
+        </a>
+      </td>
+      <td>{{ candidatura.ano }}</td>
+      <td>
+        <a href="/individuos/{{ candidatura.candidato }}">{{ candidatura.candidato }}</a>
+      </td>
+      <td>
+        <a href="/individuos/{{ candidatura.vice_candidato }}">{{ candidatura.vice_candidato }}</a>
+      </td>
+      <td><a href="/candidaturas/{{ candidatura.candidato }}/{{ candidatura.ano }}">Mais info →</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock content %}

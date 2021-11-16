@@ -33,18 +33,19 @@ sup#flash {
   padding: 0.3rem 0.4rem;
 }
 
-/* Fixar e adicionar padding na primeira navegação */
+/* Adicionar padding, flex, e borda nas navegações */
 body>nav {
-  z-index: 99;
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  backdrop-filter: saturate(180%) blur(10px);
-  background-color: var(--nav-background-color);
-  box-shadow: 0 1px 0 var(--nav-border-color);
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
   padding-right: var(--spacing);
   padding-left: var(--spacing);
+  background-color: var(--code-background-color);
+  border-bottom: 1px solid var(--primary);
+}
+body>nav>ul {
+  display: flex;
+  flex-wrap: wrap;
 }
 
 /* Desabilitar link da página atual */
@@ -53,4 +54,25 @@ body>nav {
   cursor: default;
   text-decoration: none;
   color: unset;
+}
+
+/* Centralizar e colocar risco em titulos */
+h1 {
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--muted-border-color);
+}
+
+/* Risco, padding, e tamanho da fonte no rodapé */
+body>footer {
+  border-top: 1px solid var(--primary);
+  padding-top: 2rem;
+}
+body>footer p {
+  font-size: 80%;
+}
+
+/* Background da selelção */
+::selection {
+  background: var(--muted-color);
 }

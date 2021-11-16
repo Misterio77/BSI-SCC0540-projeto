@@ -89,6 +89,16 @@ impl From<rocket::error::Error> for ServerError {
             .build()
     }
 }
+/// Converte erro de parse no tipo de cargo
+impl From<strum::ParseError> for ServerError {
+    fn from(e: strum::ParseError) -> Self {
+        ServerError::builder()
+            .code(Status::BadRequest)
+            .source(Box::new(e))
+            .message("Tipo de cargo inválido")
+            .build()
+    }
+}
 /// Converte erro do banco de dados
 impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerError {
     fn from(e: rocket_db_pools::deadpool_postgres::tokio_postgres::Error) -> Self {
@@ -119,14 +129,8 @@ impl From<rocket_db_pools::deadpool_postgres::tokio_postgres::Error> for ServerE
 /// Baseado numa mensagem inicial de erro, deixar traduzida e bonitinha
 fn pretty_db_error(initial: &str) -> (String, Status) {
     match initial {
-        "new row for relation \"processo\" violates check constraint \"processo_ck_pena\"" => {
-            ("Um processo com procedente 'culpado' precisa ter uma pena definida.".into(), Status::BadRequest)
-        },
-        "new row for relation \"processo\" violates check constraint \"processo_ck_data_e_procedente\"" => {
-            ("Um processo julgado precisa ter uma data de julgamento e procedente definidos.".into(), Status::BadRequest)
-        },
         "query returned an unexpected number of rows" => {
-            ("Entidade não encontrada na base de dados.".into(), Status::NotFound)
+            ("Fileira não encontrada na base de dados.".into(), Status::NotFound)
         },
         m => {
             (format!("Erro na base de dados: {}", m), Status::InternalServerError)

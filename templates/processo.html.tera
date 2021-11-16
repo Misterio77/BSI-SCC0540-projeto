@@ -1,0 +1,34 @@
+{% extends "base" %}
+
+  {% block title %}Processo #{{ processo.id }}{% endblock title %}
+
+  {% block content %}
+
+  <h1>
+    Processo: #{{ processo.id }}
+  </h1>
+
+  <h2>Informações:</h2>
+  <p>
+    <strong>ID</strong>:
+      #{{ processo.id }}
+  </p>
+  <p>
+    <strong>Réu</strong>:
+    <a href="/individuos/{{ processo.reu }}">
+        {{ processo.reu }}
+    </a>
+  </p>
+  <p>
+    <strong>Crime</strong>:
+      {{ processo.crime }}
+  </p>
+
+  <h2>Referenciado em:</h2>
+  <p>
+    <a href="/julgamentos?processo={{ processo.id }}">
+      Julgamentos do processo
+    </a>
+  </p>
+
+{% endblock content %}

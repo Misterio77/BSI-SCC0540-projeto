@@ -2,6 +2,7 @@ use postgres_types::{FromSql, ToSql};
 use rust_decimal::Decimal;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::EnumString;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -14,7 +15,7 @@ pub struct Cargo {
     pub salario: Decimal,
 }
 
-#[derive(Debug, Serialize, ToSql, FromSql, Clone, Copy)]
+#[derive(Debug, Serialize, ToSql, FromSql, Clone, Copy, EnumString)]
 #[postgres(name = "tipo_cargo")]
 pub enum TipoCargo {
     Prefeito,
@@ -22,7 +23,9 @@ pub enum TipoCargo {
     Presidente,
     Vereador,
     #[serde(rename = "Deputado Estadual")]
+    #[strum(serialize = "Deputado Estadual")]
     DeputadoEstadual,
+    #[strum(serialize = "Deputado Federal")]
     #[serde(rename = "Deputado Federal")]
     DeputadoFederal,
     Senador,

@@ -16,7 +16,6 @@ pub struct Candidatura {
     pub cargo_local: String,
     pub numero: i32,
     pub partido: i16,
-    pub votos: Option<i32>,
 }
 
 /// Converte da linha para o nosso cargo_tipo
@@ -31,7 +30,6 @@ impl TryFrom<Row> for Candidatura {
             ano: row.try_get("ano")?,
             numero: row.try_get("numero")?,
             partido: row.try_get("partido")?,
-            votos: row.try_get("votos")?,
         })
     }
 }
@@ -40,7 +38,7 @@ impl Candidatura {
     /// Obtém uma candidatura, dado candidato e ano
     pub async fn obter(db: &Client, candidato: &str, ano: i16) -> Result<Candidatura, ServerError> {
         db.query_one(
-            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
+            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE candidato = $1 AND ano = $2",
             &[&candidato, &ano],
@@ -55,7 +53,7 @@ impl Candidatura {
         ano: i16,
     ) -> Result<Candidatura, ServerError> {
         db.query_one(
-            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
+            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE vice_candidato = $1 AND ano = $2",
             &[&vice_candidato, &ano],
@@ -72,7 +70,7 @@ impl Candidatura {
         ano: i16,
     ) -> Result<Candidatura, ServerError> {
         db.query_one(
-            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
+            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE cargo_tipo = $1 AND cargo_local = $2 AND numero = $3 AND ano = $4",
             &[&cargo_tipo, &cargo_local, &numero, &ano],
@@ -84,11 +82,11 @@ impl Candidatura {
     /// Lista as candidaturas, com filtros opcionais
     pub async fn listar(
         db: &Client,
-        filtro: CandidaturaFiltro,
+        filtro: &CandidaturaFiltro,
     ) -> Result<Vec<Candidatura>, ServerError> {
         db.query(
             "
-            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido, votos
+            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE
                 ($1::VARCHAR IS NULL OR candidato = $1) AND
@@ -97,10 +95,7 @@ impl Candidatura {
                 ($4::tipo_cargo IS NULL OR cargo_tipo = $4) AND
                 ($5::VARCHAR IS NULL OR cargo_local ILIKE $5) AND
                 ($6::INTEGER IS NULL OR numero = $6) AND
-                ($7::SMALLINT IS NULL OR partido = $7) AND
-                ($8::INTEGER IS NULL OR votos >= $8) AND
-                ($9::INTEGER IS NULL OR votos <= $9)
-            ",
+                ($7::SMALLINT IS NULL OR partido = $7)",
             &[
                 &filtro.candidato,
                 &filtro.vice_candidato,
@@ -109,8 +104,6 @@ impl Candidatura {
                 &filtro.cargo_local,
                 &filtro.numero,
                 &filtro.partido,
-                &filtro.min_votos,
-                &filtro.max_votos,
             ],
         )
         .await?
@@ -126,17 +119,15 @@ impl Candidatura {
 
 /// Filtro de listagem de candidaturas
 /// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct CandidaturaFiltro {
-    candidato: Option<String>,
-    vice_candidato: Option<String>,
-    ano: Option<i16>,
-    cargo_tipo: Option<TipoCargo>,
-    cargo_local: Option<String>,
-    numero: Option<i32>,
-    partido: Option<i16>,
-    min_votos: Option<i32>,
-    max_votos: Option<i32>,
+    pub candidato: Option<String>,
+    pub vice_candidato: Option<String>,
+    pub ano: Option<i16>,
+    pub cargo_tipo: Option<TipoCargo>,
+    pub cargo_local: Option<String>,
+    pub numero: Option<i32>,
+    pub partido: Option<i16>,
 }
 
 impl CandidaturaFiltro {
@@ -179,18 +170,6 @@ impl CandidaturaFiltro {
     pub fn partido(self, partido: i16) -> Self {
         Self {
             partido: Some(partido),
-            ..self
-        }
-    }
-    pub fn min_votos(self, min_votos: i32) -> Self {
-        Self {
-            min_votos: Some(min_votos),
-            ..self
-        }
-    }
-    pub fn max_votos(self, max_votos: i32) -> Self {
-        Self {
-            max_votos: Some(max_votos),
             ..self
         }
     }

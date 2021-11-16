@@ -8,7 +8,10 @@ use projeto_bd::{
     // Nosso tipo personalizado de erro
     error::ServerError,
     // Rotas do servidor
-    routes::{candidaturas, css, index, not_found},
+    routes::{
+        assets, home, errors,
+        candidaturas, cargos, doacoes, individuos, partidos, pleitos, processos, julgamentos
+    },
 };
 
 #[rocket::main]
@@ -19,12 +22,19 @@ async fn main() -> Result<(), ServerError> {
         // Middleware pra gerir templates html
         .attach(Template::fairing())
         // Servir assets da pasta assets (style.css)
-        .mount("/assets", routes![css])
+        .mount("/assets", routes![assets::css])
         // Páginas de erro
-        .register("/", catchers![not_found])
+        .register("/", catchers![errors::not_found])
         // Servir rotas
-        .mount("/", routes![index])
-        .mount("/candidaturas", candidaturas::routes())
+        .mount("/", routes![home::index])
+        .mount("/candidaturas", routes![candidaturas::get, candidaturas::list])
+        .mount("/cargos", routes![cargos::get])
+        .mount("/doacoes", routes![doacoes::get])
+        .mount("/individuos", routes![individuos::get])
+        .mount("/partidos", routes![partidos::get])
+        .mount("/pleitos", routes![pleitos::get])
+        .mount("/processos", routes![processos::get])
+        .mount("/julgamentos", routes![julgamentos::get])
         .launch()
         .await?;
     Ok(())
