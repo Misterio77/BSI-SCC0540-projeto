@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS doacao, membro_equipe, candidatura, processo, cargo, partido, individuo;
+DROP TABLE IF EXISTS doacao, membro_equipe, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
 
 -- Representa um indivíduo
@@ -69,7 +69,7 @@ CREATE TABLE processo (
     CONSTRAINT processo_fk
         FOREIGN KEY (reu)
         REFERENCES individuo (cpfcnpj)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 ALTER SEQUENCE processo_id_seq OWNED BY processo.id;
 
@@ -82,8 +82,8 @@ CREATE TABLE julgamento (
     procedente BOOLEAN NOT NULL,
 
     -- Cada processo só pode ser julgado uma vez no órgão, podendo recorrer para outro órgão superior
-    CONSTRAINT julgamento_pk PRIMARY KEY (processo, instancia),
-)
+    CONSTRAINT julgamento_pk PRIMARY KEY (processo, instancia)
+);
 
 
 -- Representa uma candidatura
@@ -106,24 +106,22 @@ CREATE TABLE candidatura (
     CONSTRAINT candidatura_un_numero_ano_cargo
         UNIQUE (cargo_tipo, cargo_local, numero, ano),
 
-    -- Verifica que o número na urna é positivo, e que o numero de digitos é correto
+    -- Verifica que o número tem o numero de digitos correto
     CONSTRAINT candidatura_ck_numero
-        CHECK (numero > 0 AND
-            CASE
-                WHEN (cargo_tipo = 'Vereador' OR cargo_tipo = 'DeputadoEstadual')
-                    -- 5 dígitos
-                    THEN (FLOOR(LOG(numero)+1) = 5)
-                WHEN (cargo_tipo = 'DeputadoFederal') THEN
-                    -- 4 dígitos
-                    (FLOOR(LOG(numero)+1) = 4)
-                WHEN (cargo_tipo = 'Senador') THEN
-                    -- 3 dígitos
-                    (FLOOR(LOG(numero)+1) = 3)
-                ELSE
-                    -- 2 dígitos
-                    (FLOOR(LOG(numero)+1) = 2)
-            END
-        ),
+        CHECK (CASE
+            WHEN (cargo_tipo = 'Vereador' OR cargo_tipo = 'DeputadoEstadual')
+                -- 5 dígitos
+                THEN (FLOOR(LOG(numero)+1) = 5)
+            WHEN (cargo_tipo = 'DeputadoFederal') THEN
+                -- 4 dígitos
+                (FLOOR(LOG(numero)+1) = 4)
+            WHEN (cargo_tipo = 'Senador') THEN
+                -- 3 dígitos
+                (FLOOR(LOG(numero)+1) = 3)
+            ELSE
+                -- 2 dígitos
+                (FLOOR(LOG(numero)+1) = 2)
+        END),
 
     -- Verifica se a candidatura cumpre requisito de vice do cargo
     -- E também que o candidato e vice são distintos
