@@ -1,5 +1,5 @@
-use rocket::form::FromForm;
 use rust_decimal::Decimal;
+use rocket::form::FromForm;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 

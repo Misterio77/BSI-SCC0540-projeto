@@ -1,5 +1,5 @@
 use rocket::form::FromForm;
-use chrono::NaiveDate;
+use time::Date;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
@@ -11,7 +11,7 @@ use crate::error::ServerError;
 pub struct Individuo {
     pub cpfcnpj: String,
     pub nome: String,
-    pub nascimento: NaiveDate,
+    pub nascimento: Date,
     pub ficha_limpa: bool,
 }
 
@@ -76,7 +76,7 @@ impl Individuo {
 pub struct IndividuoFiltro {
     pub cpfcnpj: Option<String>,
     pub nome: Option<String>,
-    pub nascimento: Option<NaiveDate>,
+    pub nascimento: Option<Date>,
     pub ficha_limpa: Option<bool>,
 }
 impl IndividuoFiltro {

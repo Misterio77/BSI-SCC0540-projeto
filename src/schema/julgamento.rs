@@ -1,5 +1,5 @@
 use rocket::form::FromForm;
-use chrono::NaiveDate;
+use time::Date;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
@@ -11,7 +11,7 @@ use crate::error::ServerError;
 pub struct Julgamento {
     pub processo: i32,
     pub instancia: String,
-    pub data: NaiveDate,
+    pub data: Date,
     pub procedente: bool,
 }
 
@@ -80,7 +80,7 @@ impl Julgamento {
 pub struct JulgamentoFiltro {
     pub processo: Option<i32>,
     pub instancia: Option<String>,
-    pub data: Option<NaiveDate>,
+    pub data: Option<Date>,
     pub procedente: Option<bool>,
 }
 impl JulgamentoFiltro {
