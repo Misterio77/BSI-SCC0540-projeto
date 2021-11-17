@@ -1,8 +1,8 @@
-use rocket::{fs::NamedFile, get};
+use rocket::{fs::NamedFile, get, routes, Route};
 /// Servir assets na página. No caso, CSS.
 use std::path::Path;
 
-pub struct CachedFile(NamedFile);
+struct CachedFile(NamedFile);
 
 impl<'r> rocket::response::Responder<'r, 'static> for CachedFile {
     fn respond_to(self, req: &'r rocket::Request<'_>) -> rocket::response::Result<'static> {
@@ -13,9 +13,13 @@ impl<'r> rocket::response::Responder<'r, 'static> for CachedFile {
 }
 
 #[get("/style.css")]
-pub async fn css() -> Option<CachedFile> {
+async fn css() -> Option<CachedFile> {
     NamedFile::open(Path::new("assets/style.css"))
         .await
         .ok()
         .map(CachedFile)
+}
+
+pub fn routes() -> Vec<Route> {
+    routes![css]
 }

@@ -13,7 +13,7 @@ pub async fn get(db: Connection<Database>, numero: i16) -> Result<Template, Serv
     let partido = Partido::obter(&db, numero).await?;
     let ctx = context! {partido};
 
-    Ok(Template::render("rotas/partido", ctx))
+    Ok(Template::render("routes/partido", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -24,7 +24,7 @@ pub async fn list(
     let partidos = Partido::listar(&db, filtro.clone()).await?;
     let ctx = context! {partidos, filtro};
 
-    Ok(Template::render("rotas/partidos", ctx))
+    Ok(Template::render("routes/partidos", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

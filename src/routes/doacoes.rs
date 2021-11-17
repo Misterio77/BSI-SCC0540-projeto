@@ -13,7 +13,7 @@ pub async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerEr
     let doacao = Doacao::obter(&db, id).await?;
     let ctx = context! {doacao};
 
-    Ok(Template::render("rotas/doacao", ctx))
+    Ok(Template::render("routes/doacao", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -21,7 +21,7 @@ pub async fn list(db: Connection<Database>, filtro: DoacaoFiltro) -> Result<Temp
     let doacoes = Doacao::listar(&db, filtro.clone()).await?;
     let ctx = context! {doacoes, filtro};
 
-    Ok(Template::render("rotas/doacoes", ctx))
+    Ok(Template::render("routes/doacoes", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

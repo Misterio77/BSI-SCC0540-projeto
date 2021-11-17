@@ -13,7 +13,7 @@ pub async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, 
     let individuo = Individuo::obter(&db, &cpfcnpj).await?;
     let ctx = context! {individuo};
 
-    Ok(Template::render("rotas/individuo", ctx))
+    Ok(Template::render("routes/individuo", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -24,7 +24,7 @@ pub async fn list(
     let individuos = Individuo::listar(&db, filtro.clone()).await?;
     let ctx = context! {individuos, filtro};
 
-    Ok(Template::render("rotas/individuos", ctx))
+    Ok(Template::render("routes/individuos", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

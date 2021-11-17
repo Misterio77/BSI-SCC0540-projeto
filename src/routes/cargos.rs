@@ -18,7 +18,7 @@ pub async fn get(
     let cargo = Cargo::obter(&db, TipoCargo::from_str(&tipo)?, &local).await?;
     let ctx = context! {cargo};
 
-    Ok(Template::render("rotas/cargo", ctx))
+    Ok(Template::render("routes/cargo", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -26,7 +26,7 @@ pub async fn list(db: Connection<Database>, filtro: CargoFiltro) -> Result<Templ
     let cargos = Cargo::listar(&db, filtro.clone()).await?;
     let ctx = context! {cargos, filtro};
 
-    Ok(Template::render("rotas/cargos", ctx))
+    Ok(Template::render("routes/cargos", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

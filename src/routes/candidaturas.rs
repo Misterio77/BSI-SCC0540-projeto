@@ -17,7 +17,7 @@ async fn get(
     let candidatura = Candidatura::obter(&db, &candidato, ano).await?;
     let ctx = context! {candidatura};
 
-    Ok(Template::render("rotas/candidatura", ctx))
+    Ok(Template::render("routes/candidatura", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -28,7 +28,7 @@ async fn list(
     let candidaturas = Candidatura::listar(&db, filtro.clone()).await?;
     let ctx = context! {candidaturas, filtro};
 
-    Ok(Template::render("rotas/candidaturas", ctx))
+    Ok(Template::render("routes/candidaturas", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

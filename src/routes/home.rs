@@ -1,8 +1,12 @@
 /// Página inicial do site
-use rocket::{get, request::FlashMessage};
+use rocket::{get, request::FlashMessage, routes, Route};
 use rocket_dyn_templates::{context, Template};
 
 #[get("/")]
-pub fn index(flash: Option<FlashMessage<'_>>) -> Template {
-    Template::render("rotas/rotas/base", context! {flash})
+fn index(flash: Option<FlashMessage<'_>>) -> Template {
+    Template::render("base", context! {flash})
+}
+
+pub fn routes() -> Vec<Route> {
+    routes![index]
 }

@@ -53,18 +53,18 @@ impl Doacao {
             FROM doacao
             WHERE
                 ($1::INTEGER  IS NULL OR id        = $1) AND
-                ($2::NUMERIC  IS NULL OR valor     = $2) AND
-                ($3::VARCHAR  IS NULL OR doador    = $3) AND
-                ($4::VARCHAR  IS NULL OR candidato = $4) AND
-                ($5::SMALLINT IS NULL OR ano      >= $5) AND
-                ($6::SMALLINT IS NULL OR ano      <= $6)",
+                ($2::VARCHAR  IS NULL OR doador    = $2) AND
+                ($3::VARCHAR  IS NULL OR candidato = $3) AND
+                ($4::NUMERIC  IS NULL OR valor    >= $4) AND
+                ($5::NUMERIC  IS NULL OR valor    <= $5) AND
+                ($6::SMALLINT IS NULL OR ano       = $6)",
             &[
                 &filtro.id,
-                &filtro.valor,
                 &filtro.doador,
                 &filtro.candidato,
-                &filtro.min_ano,
-                &filtro.max_ano,
+                &filtro.min_valor,
+                &filtro.max_valor,
+                &filtro.ano,
             ],
         )
         .await?
@@ -78,11 +78,11 @@ impl Doacao {
 #[derive(Clone, Serialize, FromForm)]
 pub struct DoacaoFiltro {
     pub id: Option<i32>,
-    pub valor: Option<Decimal>,
+    pub min_valor: Option<Decimal>,
+    pub max_valor: Option<Decimal>,
     pub doador: Option<String>,
     pub candidato: Option<String>,
-    pub min_ano: Option<i16>,
-    pub max_ano: Option<i16>,
+    pub ano: Option<i16>,
 }
 impl DoacaoFiltro {
     pub fn cleanup(self) -> Self {

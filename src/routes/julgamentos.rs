@@ -17,7 +17,7 @@ pub async fn get(
     let julgamento = Julgamento::obter(&db, processo, &instancia).await?;
     let ctx = context! {julgamento};
 
-    Ok(Template::render("rotas/julgamento", ctx))
+    Ok(Template::render("routes/julgamento", ctx))
 }
 
 #[get("/?<filtro>")]
@@ -28,7 +28,7 @@ pub async fn list(
     let julgamentos = Julgamento::listar(&db, filtro.clone()).await?;
     let ctx = context! {julgamentos, filtro};
 
-    Ok(Template::render("rotas/julgamentos", ctx))
+    Ok(Template::render("routes/julgamentos", ctx))
 }
 
 pub fn routes() -> Vec<Route> {

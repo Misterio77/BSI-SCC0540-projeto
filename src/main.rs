@@ -1,4 +1,3 @@
-use rocket::{catchers, routes};
 use rocket_db_pools::Database as DatabaseTrait;
 use rocket_dyn_templates::Template;
 
@@ -7,10 +6,11 @@ use projeto_bd::{
     database::Database,
     // Nosso tipo personalizado de erro
     error::ServerError,
+    // Assets estáticos, páginas de erro, e home
+    routes::{assets, errors, home},
     // Rotas do servidor
     routes::{
-        assets, candidaturas, cargos, doacoes, errors, home, individuos, julgamentos, partidos,
-        pleitos, processos,
+        candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
     },
 };
 
@@ -22,11 +22,12 @@ async fn main() -> Result<(), ServerError> {
         // Middleware pra gerir templates html
         .attach(Template::fairing())
         // Servir assets da pasta assets (style.css)
-        .mount("/assets", routes![assets::css])
+        .mount("/assets", assets::routes())
         // Páginas de erro
-        .register("/", catchers![errors::not_found])
-        // Servir rotas
-        .mount("/", routes![home::index])
+        .register("/", errors::catchers())
+        // Página inicial
+        .mount("/", home::routes())
+        // Rotas das entidades
         .mount("/candidaturas", candidaturas::routes())
         .mount("/cargos", cargos::routes())
         .mount("/doacoes", doacoes::routes())
@@ -35,6 +36,7 @@ async fn main() -> Result<(), ServerError> {
         .mount("/pleitos", pleitos::routes())
         .mount("/processos", processos::routes())
         .mount("/julgamentos", julgamentos::routes())
+        // Inicializar
         .launch()
         .await?;
     Ok(())
