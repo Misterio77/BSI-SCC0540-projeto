@@ -1,8 +1,9 @@
 use postgres_types::{FromSql, ToSql};
 use rust_decimal::Decimal;
 use serde::Serialize;
-use std::convert::{TryFrom, TryInto};
+use rocket::form::FromFormField;
 use strum::EnumString;
+use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -15,7 +16,7 @@ pub struct Cargo {
     pub salario: Decimal,
 }
 
-#[derive(Debug, Serialize, ToSql, FromSql, Clone, Copy, EnumString)]
+#[derive(Debug, Serialize, Clone, Copy, ToSql, FromSql, FromFormField, EnumString)]
 #[postgres(name = "tipo_cargo")]
 pub enum TipoCargo {
     Prefeito,
@@ -23,10 +24,12 @@ pub enum TipoCargo {
     Presidente,
     Vereador,
     #[serde(rename = "Deputado Estadual")]
+    #[field(value = "Deputado Estadual")]
     #[strum(serialize = "Deputado Estadual")]
     DeputadoEstadual,
-    #[strum(serialize = "Deputado Federal")]
     #[serde(rename = "Deputado Federal")]
+    #[field(value = "Deputado Federal")]
+    #[strum(serialize = "Deputado Federal")]
     DeputadoFederal,
     Senador,
 }
@@ -93,52 +96,12 @@ impl Cargo {
 }
 
 /// Filtro de listagem de cargos
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct CargoFiltro {
-    tipo: Option<TipoCargo>,
-    local: Option<String>,
-    min_cadeiras: Option<i16>,
-    max_cadeiras: Option<i16>,
-    min_salario: Option<Decimal>,
-    max_salario: Option<Decimal>,
-}
-
-impl CargoFiltro {
-    pub fn tipo(self, tipo: TipoCargo) -> Self {
-        Self {
-            tipo: Some(tipo),
-            ..self
-        }
-    }
-    pub fn local(self, local: &str) -> Self {
-        Self {
-            local: Some(local.into()),
-            ..self
-        }
-    }
-    pub fn min_cadeiras(self, min_cadeiras: i16) -> Self {
-        Self {
-            min_cadeiras: Some(min_cadeiras),
-            ..self
-        }
-    }
-    pub fn max_cadeiras(self, max_cadeiras: i16) -> Self {
-        Self {
-            max_cadeiras: Some(max_cadeiras),
-            ..self
-        }
-    }
-    pub fn min_salario(self, min_salario: Decimal) -> Self {
-        Self {
-            min_salario: Some(min_salario),
-            ..self
-        }
-    }
-    pub fn max_salario(self, max_salario: Decimal) -> Self {
-        Self {
-            max_salario: Some(max_salario),
-            ..self
-        }
-    }
+    pub tipo: Option<TipoCargo>,
+    pub local: Option<String>,
+    pub min_cadeiras: Option<i16>,
+    pub max_cadeiras: Option<i16>,
+    pub min_salario: Option<Decimal>,
+    pub max_salario: Option<Decimal>,
 }

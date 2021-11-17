@@ -70,31 +70,9 @@ impl Partido {
 }
 
 /// Filtro de listagem de partido
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct PartidoFiltro {
-    numero: Option<i16>,
-    nome: Option<String>,
-    programa: Option<String>,
-}
-
-impl PartidoFiltro {
-    pub fn numero(self, numero: i16) -> Self {
-        Self {
-            numero: Some(numero),
-            ..self
-        }
-    }
-    pub fn nome(self, nome: &str) -> Self {
-        Self {
-            nome: Some(nome.into()),
-            ..self
-        }
-    }
-    pub fn programa(self, programa: &str) -> Self {
-        Self {
-            programa: Some(programa.into()),
-            ..self
-        }
-    }
+    pub numero: Option<i16>,
+    pub nome: Option<String>,
+    pub programa: Option<String>,
 }

@@ -73,45 +73,11 @@ impl Pleito {
 }
 
 /// Filtro de listagem de pleito
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct PleitoFiltro {
-    candidato: Option<String>,
-    ano: Option<i16>,
-    turno: Option<i16>,
-    min_votos: Option<i32>,
-    max_votos: Option<i32>,
-}
-
-impl PleitoFiltro {
-    pub fn candidato(self, candidato: &str) -> Self {
-        Self {
-            candidato: Some(candidato.into()),
-            ..self
-        }
-    }
-    pub fn ano(self, ano: i16) -> Self {
-        Self {
-            ano: Some(ano),
-            ..self
-        }
-    }
-    pub fn turno(self, turno: i16) -> Self {
-        Self {
-            turno: Some(turno),
-            ..self
-        }
-    }
-    pub fn min_votos(self, min_votos: i32) -> Self {
-        Self {
-            min_votos: Some(min_votos),
-            ..self
-        }
-    }
-    pub fn max_votos(self, max_votos: i32) -> Self {
-        Self {
-            max_votos: Some(max_votos),
-            ..self
-        }
-    }
+    pub candidato: Option<String>,
+    pub ano: Option<i16>,
+    pub turno: Option<i16>,
+    pub min_votos: Option<i32>,
+    pub max_votos: Option<i32>,
 }

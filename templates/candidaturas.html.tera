@@ -1,92 +1,104 @@
-{% extends "base" %} {% block title %}Candidaturas{% endblock title %} {% block
-content %}
+{% extends "base" %}
+
+{% block title %}Candidaturas{% endblock title %}
+
+{% block content %}
 
 <h1>Candidaturas</h1>
 
 <h2>Filtros</h2>
 <form>
   <div class="grid">
-    <label
-      >Número: <input name="numero" value="{{ filtro.numero | default(value="")
-      }}"/>
+    <label>
+      Número:
+      <input name="filtro.numero" type="number" min="10" max="99999" value="{{ filtro.numero | default(value="") }}"/>
     </label>
-    <label
-      >Partido: <input name="partido" value="{{ filtro.partido |
-      default(value="") }}"/>
+    <label>
+      Partido:
+      <input name="filtro.partido" type="number" min="10" max="99" value="{{ filtro.partido | default(value="") }}"/>
     </label>
-    <label
-      >Tipo de cargo: <input name="cargo_tipo" value="{{ filtro.cargo_tipo |
-      default(value="") }}"/>
+    <label>
+      Tipo de cargo:
+      <select name="filtro.cargo_tipo">
+        <option></option>
+        <option {% if filtro.cargo_tipo == "Prefeito" %}selected{% endif %}>Prefeito</option>
+        <option {% if filtro.cargo_tipo == "Governador" %}selected{% endif %}>Governador</option>
+        <option {% if filtro.cargo_tipo == "Presidente" %}selected{% endif %}>Presidente</option>
+        <option {% if filtro.cargo_tipo == "Vereador" %}selected{% endif %}>Vereador</option>
+        <option {% if filtro.cargo_tipo == "Deputado Estadual" %}selected{% endif %}>Deputado Estadual</option>
+        <option {% if filtro.cargo_tipo == "Deputado Federal" %}selected{% endif %}>Deputado Federal</option>
+        <option {% if filtro.cargo_tipo == "Senador" %}selected{% endif %}>Senador</option>
+      </select>
     </label>
-    <label
-      >Local do cargo: <input name="cargo_local" value="{{ filtro.cargo_local |
-      default(value="") }}"/>
+    <label>
+      Local do cargo: <input name="filtro.cargo_local" value="{{ filtro.cargo_local | default(value="") }}"/>
     </label>
   </div>
   <div class="grid">
-    <label
-      >Ano: <input name="ano" value="{{ filtro.ano | default(value="") }}"/>
+    <label>
+      Ano:
+      <input name="filtro.ano" type="number" value="{{ filtro.ano | default(value="") }}"/>
     </label>
-    <label
-      >Candidato: <input name="candidato" value="{{ filtro.candidato |
-      default(value="") }}"/>
+    <label>
+      Candidato:
+      <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}"/>
     </label>
-    <label
-      >Vice-Candidato: <input name="vice_candidato" value="{{
-      filtro.vice_candidato | default(value="") }}"/>
+    <label>
+      Vice-Candidato:
+      <input name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
     </label>
   </div>
   <button>Buscar</button>
 </form>
 
 <h2>Resultados</h2>
-<table>
-  <thead>
-    <tr>
-      <th>Número</th>
-      <th>Partido</th>
-      <th>Cargo</th>
-      <th>Ano</th>
-      <th>Candidato</th>
-      <th>Vice-Candidato</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for candidatura in candidaturas %}
-    <tr>
-      <td>{{ candidatura.numero }}</td>
-      <td>
-        <a href="/partidos/{{ candidatura.partido }}"
-          >{{ candidatura.partido }}</a
-        >
-      </td>
-      <td>
-        <a
-          href="/cargos/{{ candidatura.cargo_tipo }}/{{ candidatura.cargo_local }}"
-        >
-          {{ candidatura.cargo_tipo }}<br />{{ candidatura.cargo_local }}
-        </a>
-      </td>
-      <td>{{ candidatura.ano }}</td>
-      <td>
-        <a href="/individuos/{{ candidatura.candidato }}"
-          >{{ candidatura.candidato }}</a
-        >
-      </td>
-      <td>
-        <a href="/individuos/{{ candidatura.vice_candidato }}"
-          >{{ candidatura.vice_candidato }}</a
-        >
-      </td>
-      <td>
-        <a
-          href="/candidaturas/{{ candidatura.candidato }}/{{ candidatura.ano }}"
-          >Mais info →</a
-        >
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>Número</th>
+        <th>Partido</th>
+        <th>Cargo</th>
+        <th>Ano</th>
+        <th>Candidato</th>
+        <th>Vice-Candidato</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for candidatura in candidaturas %}
+      <tr>
+        <td>{{ candidatura.numero }}</td>
+        <td>
+          <a href="/partidos/{{ candidatura.partido }}">
+            {{ candidatura.partido }}
+          </a>
+        </td>
+        <td>
+          <a href="/cargos/{{ candidatura.cargo_tipo }}/{{ candidatura.cargo_local }}">
+            {{ candidatura.cargo_tipo }}<br />{{ candidatura.cargo_local }}
+          </a>
+        </td>
+        <td>{{ candidatura.ano }}</td>
+        <td>
+          <a href="/individuos/{{ candidatura.candidato }}">
+            {{ candidatura.candidato }}
+          </a>
+        </td>
+        <td>
+          <a href="/individuos/{{ candidatura.vice_candidato }}">
+            {{ candidatura.vice_candidato }}
+          </a>
+        </td>
+        <td>
+          <a href="/candidaturas/{{ candidatura.candidato }}/{{ candidatura.ano }}">
+            Mais info →
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<figure>
+
 {% endblock content %}

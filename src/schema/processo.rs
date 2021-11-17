@@ -58,31 +58,9 @@ impl Processo {
 }
 
 /// Filtro de listagem de processo
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct ProcessoFiltro {
-    id: Option<i32>,
-    reu: Option<String>,
-    crime: Option<String>,
-}
-
-impl ProcessoFiltro {
-    pub fn id(self, id: i32) -> Self {
-        Self {
-            id: Some(id),
-            ..self
-        }
-    }
-    pub fn reu(self, reu: &str) -> Self {
-        Self {
-            reu: Some(reu.into()),
-            ..self
-        }
-    }
-    pub fn crime(self, crime: &str) -> Self {
-        Self {
-            crime: Some(crime.into()),
-            ..self
-        }
-    }
+    pub id: Option<i32>,
+    pub reu: Option<String>,
+    pub crime: Option<String>,
 }

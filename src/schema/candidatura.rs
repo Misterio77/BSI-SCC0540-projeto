@@ -1,4 +1,5 @@
 use serde::Serialize;
+use rocket::form::FromForm;
 use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
@@ -89,11 +90,11 @@ impl Candidatura {
             SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE
-                ($1::VARCHAR IS NULL OR candidato = $1) AND
-                ($2::VARCHAR IS NULL OR vice_candidato = $2) AND
+                ($1::VARCHAR IS NULL OR '' = $1 OR candidato = $1) AND
+                ($2::VARCHAR IS NULL OR '' = $1 OR vice_candidato = $2) AND
                 ($3::SMALLINT IS NULL OR ano = $3) AND
                 ($4::tipo_cargo IS NULL OR cargo_tipo = $4) AND
-                ($5::VARCHAR IS NULL OR cargo_local ILIKE $5) AND
+                ($5::VARCHAR IS NULL OR '' = $1 OR cargo_local ILIKE $5) AND
                 ($6::INTEGER IS NULL OR numero = $6) AND
                 ($7::SMALLINT IS NULL OR partido = $7)",
             &[
@@ -113,13 +114,12 @@ impl Candidatura {
     }
     /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
     pub fn filtro() -> CandidaturaFiltro {
-        CandidaturaFiltro::default()
+        Default::default()
     }
 }
 
 /// Filtro de listagem de candidaturas
-/// Funciona como um builder
-#[derive(Default, Serialize, Debug)]
+#[derive(Default, Serialize, Debug, FromForm)]
 pub struct CandidaturaFiltro {
     pub candidato: Option<String>,
     pub vice_candidato: Option<String>,
@@ -128,49 +128,4 @@ pub struct CandidaturaFiltro {
     pub cargo_local: Option<String>,
     pub numero: Option<i32>,
     pub partido: Option<i16>,
-}
-
-impl CandidaturaFiltro {
-    pub fn candidato(self, candidato: &str) -> Self {
-        Self {
-            candidato: Some(candidato.into()),
-            ..self
-        }
-    }
-    pub fn vice_candidato(self, vice_candidato: &str) -> Self {
-        Self {
-            vice_candidato: Some(vice_candidato.into()),
-            ..self
-        }
-    }
-    pub fn ano(self, ano: i16) -> Self {
-        Self {
-            ano: Some(ano),
-            ..self
-        }
-    }
-    pub fn cargo_tipo(self, cargo_tipo: TipoCargo) -> Self {
-        Self {
-            cargo_tipo: Some(cargo_tipo),
-            ..self
-        }
-    }
-    pub fn cargo_local(self, cargo_local: &str) -> Self {
-        Self {
-            cargo_local: Some(cargo_local.into()),
-            ..self
-        }
-    }
-    pub fn numero(self, numero: i32) -> Self {
-        Self {
-            numero: Some(numero),
-            ..self
-        }
-    }
-    pub fn partido(self, partido: i16) -> Self {
-        Self {
-            partido: Some(partido),
-            ..self
-        }
-    }
 }

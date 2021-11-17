@@ -76,38 +76,10 @@ impl Individuo {
 }
 
 /// Filtro de listagem de indivíduo
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct IndividuoFiltro {
-    cpfcnpj: Option<String>,
-    nome: Option<String>,
-    nascimento: Option<NaiveDate>,
-    ficha_limpa: Option<bool>,
-}
-
-impl IndividuoFiltro {
-    pub fn cpfcnpj(self, cpfcnpj: &str) -> Self {
-        Self {
-            cpfcnpj: Some(cpfcnpj.into()),
-            ..self
-        }
-    }
-    pub fn nome(self, nome: &str) -> Self {
-        Self {
-            nome: Some(nome.into()),
-            ..self
-        }
-    }
-    pub fn nascimento(self, nascimento: NaiveDate) -> Self {
-        Self {
-            nascimento: Some(nascimento),
-            ..self
-        }
-    }
-    pub fn ficha_limpa(self, ficha_limpa: bool) -> Self {
-        Self {
-            ficha_limpa: Some(ficha_limpa),
-            ..self
-        }
-    }
+    pub cpfcnpj: Option<String>,
+    pub nome: Option<String>,
+    pub nascimento: Option<NaiveDate>,
+    pub ficha_limpa: Option<bool>,
 }

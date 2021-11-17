@@ -74,38 +74,10 @@ impl Julgamento {
 }
 
 /// Filtro de listagem de julgamento
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct JulgamentoFiltro {
-    processo: Option<i32>,
-    instancia: Option<String>,
-    data: Option<NaiveDate>,
-    procedente: Option<bool>,
-}
-
-impl JulgamentoFiltro {
-    pub fn processo(self, processo: i32) -> Self {
-        Self {
-            processo: Some(processo),
-            ..self
-        }
-    }
-    pub fn instancia(self, instancia: &str) -> Self {
-        Self {
-            instancia: Some(instancia.into()),
-            ..self
-        }
-    }
-    pub fn data(self, data: NaiveDate) -> Self {
-        Self {
-            data: Some(data),
-            ..self
-        }
-    }
-    pub fn procedente(self, procedente: bool) -> Self {
-        Self {
-            procedente: Some(procedente),
-            ..self
-        }
-    }
+    pub processo: Option<i32>,
+    pub instancia: Option<String>,
+    pub data: Option<NaiveDate>,
+    pub procedente: Option<bool>,
 }

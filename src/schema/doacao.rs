@@ -79,52 +79,12 @@ impl Doacao {
 }
 
 /// Filtro de listagem de doações
-/// Funciona como um builder
-#[derive(Default)]
+#[derive(Default, Serialize, Debug)]
 pub struct DoacaoFiltro {
-    id: Option<i32>,
-    valor: Option<Decimal>,
-    doador: Option<String>,
-    candidato: Option<String>,
-    min_ano: Option<i16>,
-    max_ano: Option<i16>,
-}
-
-impl DoacaoFiltro {
-    pub fn id(self, id: i32) -> Self {
-        Self {
-            id: Some(id),
-            ..self
-        }
-    }
-    pub fn valor(self, valor: Decimal) -> Self {
-        Self {
-            valor: Some(valor),
-            ..self
-        }
-    }
-    pub fn doador(self, doador: &str) -> Self {
-        Self {
-            doador: Some(doador.into()),
-            ..self
-        }
-    }
-    pub fn candidato(self, candidato: &str) -> Self {
-        Self {
-            candidato: Some(candidato.into()),
-            ..self
-        }
-    }
-    pub fn min_ano(self, min_ano: i16) -> Self {
-        Self {
-            min_ano: Some(min_ano),
-            ..self
-        }
-    }
-    pub fn max_ano(self, max_ano: i16) -> Self {
-        Self {
-            max_ano: Some(max_ano),
-            ..self
-        }
-    }
+    pub id: Option<i32>,
+    pub valor: Option<Decimal>,
+    pub doador: Option<String>,
+    pub candidato: Option<String>,
+    pub min_ano: Option<i16>,
+    pub max_ano: Option<i16>,
 }
