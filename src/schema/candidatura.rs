@@ -8,7 +8,7 @@ use crate::error::ServerError;
 use super::TipoCargo;
 
 /// Candidatura política
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Candidatura {
     pub candidato: String,
     pub vice_candidato: Option<String>,
@@ -83,20 +83,21 @@ impl Candidatura {
     /// Lista as candidaturas, com filtros opcionais
     pub async fn listar(
         db: &Client,
-        filtro: &CandidaturaFiltro,
+        filtro: CandidaturaFiltro,
     ) -> Result<Vec<Candidatura>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
             WHERE
-                ($1::VARCHAR IS NULL OR '' = $1 OR candidato = $1) AND
-                ($2::VARCHAR IS NULL OR '' = $1 OR vice_candidato = $2) AND
-                ($3::SMALLINT IS NULL OR ano = $3) AND
-                ($4::tipo_cargo IS NULL OR cargo_tipo = $4) AND
-                ($5::VARCHAR IS NULL OR '' = $1 OR cargo_local ILIKE $5) AND
-                ($6::INTEGER IS NULL OR numero = $6) AND
-                ($7::SMALLINT IS NULL OR partido = $7)",
+                ($1::VARCHAR    IS NULL OR candidato       = $1) AND
+                ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
+                ($3::SMALLINT   IS NULL OR ano             = $3) AND
+                ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
+                ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
+                ($6::INTEGER    IS NULL OR numero          = $6) AND
+                ($7::SMALLINT   IS NULL OR partido         = $7)",
             &[
                 &filtro.candidato,
                 &filtro.vice_candidato,
@@ -112,14 +113,10 @@ impl Candidatura {
         .map(TryInto::try_into)
         .collect()
     }
-    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
-    pub fn filtro() -> CandidaturaFiltro {
-        Default::default()
-    }
 }
 
 /// Filtro de listagem de candidaturas
-#[derive(Default, Serialize, Debug, FromForm)]
+#[derive(Serialize, FromForm)]
 pub struct CandidaturaFiltro {
     pub candidato: Option<String>,
     pub vice_candidato: Option<String>,
@@ -128,4 +125,14 @@ pub struct CandidaturaFiltro {
     pub cargo_local: Option<String>,
     pub numero: Option<i32>,
     pub partido: Option<i16>,
+}
+impl CandidaturaFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            candidato: self.candidato.filter(|s| !s.is_empty()),
+            vice_candidato: self.vice_candidato.filter(|s| !s.is_empty()),
+            cargo_local: self.cargo_local.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            ..self
+        }
+    }
 }

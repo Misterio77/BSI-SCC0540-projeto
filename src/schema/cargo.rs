@@ -8,7 +8,7 @@ use std::convert::{TryFrom, TryInto};
 use crate::database::{Client, Row};
 use crate::error::ServerError;
 
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Cargo {
     pub tipo: TipoCargo,
     pub local: String,
@@ -63,17 +63,18 @@ impl Cargo {
 
     /// Lista os cargos
     pub async fn listar(db: &Client, filtro: CargoFiltro) -> Result<Vec<Cargo>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT tipo, local, cadeiras, salario
             FROM cargo
             WHERE
-                ($1::tipo_cargo IS NULL OR tipo = $1) AND
-                ($2::VARCHAR IS NULL OR local LIKE '%$2%') AND
-                ($3::SMALLINT IS NULL OR cadeiras >= $3) AND
-                ($4::SMALLINT IS NULL OR cadeiras <= $4) AND
-                ($5::NUMERIC IS NULL OR salario >= $5) AND
-                ($6::NUMERIC IS NULL OR salario <= $6)
+                ($1::tipo_cargo IS NULL OR tipo      = $1) AND
+                ($2::VARCHAR    IS NULL OR local ILIKE $2) AND
+                ($3::SMALLINT   IS NULL OR cadeiras >= $3) AND
+                ($4::SMALLINT   IS NULL OR cadeiras <= $4) AND
+                ($5::NUMERIC    IS NULL OR salario  >= $5) AND
+                ($6::NUMERIC    IS NULL OR salario  <= $6)
             ",
             &[
                 &filtro.tipo,
@@ -89,14 +90,10 @@ impl Cargo {
         .map(TryInto::try_into)
         .collect()
     }
-    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
-    pub fn filtro() -> CargoFiltro {
-        CargoFiltro::default()
-    }
 }
 
 /// Filtro de listagem de cargos
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct CargoFiltro {
     pub tipo: Option<TipoCargo>,
     pub local: Option<String>,
@@ -104,4 +101,12 @@ pub struct CargoFiltro {
     pub max_cadeiras: Option<i16>,
     pub min_salario: Option<Decimal>,
     pub max_salario: Option<Decimal>,
+}
+impl CargoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            local: self.local.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            ..self
+        }
+    }
 }

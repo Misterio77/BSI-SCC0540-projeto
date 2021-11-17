@@ -37,7 +37,7 @@
   <div class="grid">
     <label>
       Ano:
-      <input name="filtro.ano" type="number" value="{{ filtro.ano | default(value="") }}"/>
+      <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}"/>
     </label>
     <label>
       Candidato:

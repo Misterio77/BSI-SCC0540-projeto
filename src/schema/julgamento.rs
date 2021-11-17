@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Julgamento de um julgamento
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Julgamento {
     pub processo: i32,
     pub instancia: String,
@@ -50,14 +50,15 @@ impl Julgamento {
         db: &Client,
         filtro: JulgamentoFiltro,
     ) -> Result<Vec<Julgamento>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT processo, instancia, data, procedente
             FROM julgamento
             WHERE
-                ($1::INTEGER IS NULL OR processo = $1) AND
-                ($2::VARCHAR IS NULL OR instancia ILIKE '%$2%') AND
-                ($3::DATE IS NULL OR data = $3) AND
+                ($1::INTEGER IS NULL OR processo   = $1) AND
+                ($2::VARCHAR IS NULL OR instancia  = $2) AND
+                ($3::DATE    IS NULL OR data       = $3) AND
                 ($4::BOOLEAN IS NULL OR procedente = $4)",
             &[
                 &filtro.processo,
@@ -74,10 +75,18 @@ impl Julgamento {
 }
 
 /// Filtro de listagem de julgamento
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct JulgamentoFiltro {
     pub processo: Option<i32>,
     pub instancia: Option<String>,
     pub data: Option<NaiveDate>,
     pub procedente: Option<bool>,
+}
+impl JulgamentoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            instancia: self.instancia.filter(|s| !s.is_empty()),
+            ..self
+        }
+    }
 }

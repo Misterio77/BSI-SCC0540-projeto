@@ -13,7 +13,7 @@ title %} {% block content %}
 
 <h2>Referenciado em:</h2>
 <p>
-  <a href="/julgamentos?processo={{ processo.id }}">
+  <a href="/julgamentos?filtro.processo={{ processo.id }}">
     Julgamentos do processo
   </a>
 </p>

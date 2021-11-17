@@ -17,21 +17,19 @@
 
 <h2>Referenciado em:</h2>
 <p>
-  <a href="/candidaturas?candidato={{ individuo.cpfcnpj }}">Candidaturas</a>
+  <a href="/candidaturas?filtro.candidato={{ individuo.cpfcnpj }}">Candidaturas</a>
 </p>
 <p>
-  <a href="/candidaturas?vice_candidato={{ individuo.cpfcnpj }}"
-    >Vice Candidaturas</a
-  >
+  <a href="/candidaturas?filtro.vice_candidato={{ individuo.cpfcnpj }}">Vice Candidaturas</a>
 </p>
 <p>
-  <a href="/doacoes?doador={{ individuo.cpfcnpj }}">Doações realizadas</a>
+  <a href="/doacoes?filtro.doador={{ individuo.cpfcnpj }}">Doações realizadas</a>
 </p>
 <p>
-  <a href="/processos?reu={{ individuo.cpfcnpj }}">Processos onde é réu</a>
+  <a href="/processos?filtro.reu={{ individuo.cpfcnpj }}">Processos onde é réu</a>
 </p>
 <p>
-  <a href="/equipes?membro={{ individuo.cpfcnpj }}">Equipes em que participa</a>
+  <a href="/equipes?filtro.membro={{ individuo.cpfcnpj }}">Equipes em que participa</a>
 </p>
 
 {% endblock content %}

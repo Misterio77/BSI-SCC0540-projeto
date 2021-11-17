@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Doação para candidatura
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Doacao {
     pub id: i32,
     pub valor: Decimal,
@@ -45,18 +45,18 @@ impl Doacao {
 
     /// Lista as doações, com filtros opcionais
     pub async fn listar(db: &Client, filtro: DoacaoFiltro) -> Result<Vec<Doacao>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT id, valor, doador, candidato, ano
             FROM doacao
             WHERE
-                ($1::INTEGER IS NULL OR id = $1) AND
-                ($2::NUMERIC IS NULL OR valor = $2) AND
-                ($3::VARCHAR IS NULL OR doador = $3) AND
-                ($4::VARCHAR IS NULL OR candidato = $4) AND
-                ($5::SMALLINT IS NULL OR ano >= $5) AND
-                ($6::SMALLINT IS NULL OR ano <= $6)
-            ",
+                ($1::INTEGER  IS NULL OR id        = $1) AND
+                ($2::NUMERIC  IS NULL OR valor     = $2) AND
+                ($3::VARCHAR  IS NULL OR doador    = $3) AND
+                ($4::VARCHAR  IS NULL OR candidato = $4) AND
+                ($5::SMALLINT IS NULL OR ano      >= $5) AND
+                ($6::SMALLINT IS NULL OR ano      <= $6)",
             &[
                 &filtro.id,
                 &filtro.valor,
@@ -71,15 +71,10 @@ impl Doacao {
         .map(TryInto::try_into)
         .collect()
     }
-
-    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
-    pub fn filtro() -> DoacaoFiltro {
-        DoacaoFiltro::default()
-    }
 }
 
 /// Filtro de listagem de doações
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct DoacaoFiltro {
     pub id: Option<i32>,
     pub valor: Option<Decimal>,
@@ -87,4 +82,13 @@ pub struct DoacaoFiltro {
     pub candidato: Option<String>,
     pub min_ano: Option<i16>,
     pub max_ano: Option<i16>,
+}
+impl DoacaoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            doador: self.doador.filter(|s| !s.is_empty()),
+            candidato: self.candidato.filter(|s| !s.is_empty()),
+            ..self
+        }
+    }
 }

@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Indivíduo cadastrado no sistema
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Individuo {
     pub cpfcnpj: String,
     pub nome: String,
@@ -46,16 +46,16 @@ impl Individuo {
         db: &Client,
         filtro: IndividuoFiltro,
     ) -> Result<Vec<Individuo>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT cpfcnpj, nome, nascimento, ficha_limpa
             FROM individuo
             WHERE
-                ($1::VARCHAR IS NULL OR cpfcnpj = $1) AND
-                ($2::VARCHAR IS NULL OR nome LIKE '%$2%') AND
-                ($3::DATE IS NULL OR nascimento = $3) AND
-                ($4::BOOLEAN IS NULL OR ficha_limpa = $4)
-            ",
+                ($1::VARCHAR IS NULL OR cpfcnpj     = $1) AND
+                ($2::VARCHAR IS NULL OR nome    ILIKE $2) AND
+                ($3::DATE    IS NULL OR nascimento  = $3) AND
+                ($4::BOOLEAN IS NULL OR ficha_limpa = $4)",
             &[
                 &filtro.cpfcnpj,
                 &filtro.nome,
@@ -68,18 +68,22 @@ impl Individuo {
         .map(TryInto::try_into)
         .collect()
     }
-
-    /// Cria um filtro para o metodo listar, pode ser manipulado usando os metodos dele
-    pub fn filtro() -> IndividuoFiltro {
-        IndividuoFiltro::default()
-    }
 }
 
 /// Filtro de listagem de indivíduo
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct IndividuoFiltro {
     pub cpfcnpj: Option<String>,
     pub nome: Option<String>,
     pub nascimento: Option<NaiveDate>,
     pub ficha_limpa: Option<bool>,
+}
+impl IndividuoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            cpfcnpj: self.cpfcnpj.filter(|s| !s.is_empty()),
+            nome: self.nome.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            ..self
+        }
+    }
 }

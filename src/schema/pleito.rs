@@ -5,7 +5,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Pleito de um pleito
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Pleito {
     pub candidato: String,
     pub ano: i16,
@@ -47,16 +47,17 @@ impl Pleito {
 
     /// Lista os pleitos, com filtros opcionais
     pub async fn listar(db: &Client, filtro: PleitoFiltro) -> Result<Vec<Pleito>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT candidato, ano, turno, votos
             FROM pleito
             WHERE
-                ($1::VARCHAR IS NULL OR candidato ILIKE '%$1%') AND
-                ($2::SMALLINT IS NULL OR ano = $2) AND
-                ($3::SMALLINT IS NULL OR turno = $3) AND
-                ($4::INTEGER IS NULL OR votos >= $4) AND
-                ($5::INTEGER IS NULL OR votos <= $5)",
+                ($1::VARCHAR  IS NULL OR candidato = $1) AND
+                ($2::SMALLINT IS NULL OR ano       = $2) AND
+                ($3::SMALLINT IS NULL OR turno     = $3) AND
+                ($4::INTEGER  IS NULL OR votos    >= $4) AND
+                ($5::INTEGER  IS NULL OR votos    <= $5)",
             &[
                 &filtro.candidato,
                 &filtro.ano,
@@ -73,11 +74,19 @@ impl Pleito {
 }
 
 /// Filtro de listagem de pleito
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct PleitoFiltro {
     pub candidato: Option<String>,
     pub ano: Option<i16>,
     pub turno: Option<i16>,
     pub min_votos: Option<i32>,
     pub max_votos: Option<i32>,
+}
+impl PleitoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            candidato: self.candidato.filter(|s| !s.is_empty()),
+            ..self
+        }
+    }
 }

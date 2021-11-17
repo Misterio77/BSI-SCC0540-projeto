@@ -12,7 +12,7 @@ endblock title %} {% block content %}
 <h2>Referenciado em:</h2>
 <p>
   <a
-    href="/candidaturas?cargo_tipo={{ cargo.tipo }}&cargo_local={{ cargo.local }}"
+    href="/candidaturas?filtro.cargo_tipo={{ cargo.tipo }}&filtro.cargo_local={{ cargo.local }}"
   >
     Candidaturas
   </a>

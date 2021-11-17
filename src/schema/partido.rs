@@ -5,7 +5,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Partido político
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Partido {
     pub numero: i16,
     pub nome: String,
@@ -57,9 +57,9 @@ impl Partido {
             SELECT numero, nome, programa
             FROM partido
             WHERE
-                ($1::SMALLINT IS NULL OR numero = $1) AND
-                ($2::VARCHAR IS NULL OR nome LIKE '%$2%') AND
-                ($3::VARCHAR IS NULL OR programa LIKE '%$3%')",
+                ($1::SMALLINT IS NULL OR numero       = $1) AND
+                ($2::VARCHAR  IS NULL OR nome     ILIKE $2) AND
+                ($3::VARCHAR  IS NULL OR programa ILIKE $3)",
             &[&filtro.numero, &filtro.nome, &filtro.programa],
         )
         .await?
@@ -70,9 +70,18 @@ impl Partido {
 }
 
 /// Filtro de listagem de partido
-#[derive(Default, Serialize, Debug)]
+#[derive(Serialize)]
 pub struct PartidoFiltro {
     pub numero: Option<i16>,
     pub nome: Option<String>,
     pub programa: Option<String>,
+}
+impl PartidoFiltro {
+    pub fn cleanup(self) -> Self {
+        Self {
+            nome: self.nome.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            programa: self.programa.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            ..self
+        }
+    }
 }

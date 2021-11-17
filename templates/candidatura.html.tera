@@ -37,14 +37,14 @@
 <h2>Referenciado em:</h2>
 <p>
   <a
-    href="/doacoes?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}"
+    href="/doacoes?filtro.candidato={{ candidatura.candidato }}&filtro.ano={{ candidatura.ano }}"
   >
     Doações recebidas
   </a>
 </p>
 <p>
   <a
-    href="/membros_equipe?candidato={{ candidatura.candidato }}&ano={{ candidatura.ano }}"
+    href="/membros_equipe?filtro.candidato={{ candidatura.candidato }}&filtro.ano={{ candidatura.ano }}"
   >
     Membros da equipe de campanha
   </a>
