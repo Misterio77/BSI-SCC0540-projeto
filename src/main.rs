@@ -4,10 +4,12 @@ use rocket_dyn_templates::Template;
 use projeto_bd::{
     // Nosso banco de dados
     database::Database,
+    // Assets estáticos
+    assets::Assets,
     // Nosso tipo personalizado de erro
     error::ServerError,
-    // Assets estáticos, páginas de erro, e home
-    routes::{assets, errors, home},
+    // Páginas de erro, e home
+    routes::{errors, home},
     // Rotas do servidor
     routes::{
         candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
@@ -22,7 +24,7 @@ async fn main() -> Result<(), ServerError> {
         // Middleware pra gerir templates html
         .attach(Template::fairing())
         // Servir assets da pasta assets (style.css)
-        .mount("/assets", assets::routes())
+        .attach(Assets)
         // Páginas de erro
         .register("/", errors::catchers())
         // Página inicial

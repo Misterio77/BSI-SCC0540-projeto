@@ -1325,6 +1325,7 @@ dependencies = [
 name = "projeto-bd"
 version = "0.1.0"
 dependencies = [
+ "normpath",
  "postgres-types",
  "rocket",
  "rocket_db_pools",
