@@ -27,17 +27,14 @@ async fn main() -> Result<(), ServerError> {
         .register("/", catchers![errors::not_found])
         // Servir rotas
         .mount("/", routes![home::index])
-        .mount(
-            "/candidaturas",
-            routes![candidaturas::get, candidaturas::list],
-        )
-        .mount("/cargos", routes![cargos::get])
-        .mount("/doacoes", routes![doacoes::get])
-        .mount("/individuos", routes![individuos::get])
-        .mount("/partidos", routes![partidos::get])
-        .mount("/pleitos", routes![pleitos::get])
-        .mount("/processos", routes![processos::get])
-        .mount("/julgamentos", routes![julgamentos::get])
+        .mount("/candidaturas", candidaturas::routes())
+        .mount("/cargos", cargos::routes())
+        .mount("/doacoes", doacoes::routes())
+        .mount("/individuos", individuos::routes())
+        .mount("/partidos", partidos::routes())
+        .mount("/pleitos", pleitos::routes())
+        .mount("/processos", processos::routes())
+        .mount("/julgamentos", julgamentos::routes())
         .launch()
         .await?;
     Ok(())

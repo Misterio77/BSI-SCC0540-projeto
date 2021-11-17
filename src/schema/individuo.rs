@@ -1,7 +1,7 @@
 use rocket::form::FromForm;
-use time::Date;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use time::Date;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;

@@ -1,6 +1,6 @@
-use rust_decimal::Decimal;
 use postgres_types::{FromSql, ToSql};
 use rocket::form::{FromForm, FromFormField};
+use rust_decimal::Decimal;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 use strum::EnumString;

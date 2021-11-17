@@ -1,0 +1,80 @@
+{% extends "base" %}
+
+{% block title %}Cargos{% endblock title %}
+
+{% block content %}
+
+<h1>Cargos</h1>
+
+<h2>Filtros</h2>
+<form>
+  <div class="grid">
+    <label>
+      Tipo:
+      <select name="filtro.tipo">
+        <option></option>
+        <option {% if filtro.tipo == "Prefeito" %}selected{% endif %}>Prefeito</option>
+        <option {% if filtro.tipo == "Governador" %}selected{% endif %}>Governador</option>
+        <option {% if filtro.tipo == "Presidente" %}selected{% endif %}>Presidente</option>
+        <option {% if filtro.tipo == "Vereador" %}selected{% endif %}>Vereador</option>
+        <option {% if filtro.tipo == "Deputado Estadual" %}selected{% endif %}>Deputado Estadual</option>
+        <option {% if filtro.tipo == "Deputado Federal" %}selected{% endif %}>Deputado Federal</option>
+        <option {% if filtro.tipo == "Senador" %}selected{% endif %}>Senador</option>
+      </select>
+    </label>
+    <label>
+      Local: <input name="filtro.local" value="{{ filtro.local | default(value="") }}"/>
+    </label>
+  </div>
+  <div class="grid">
+    <label>
+      Mínimo de Cadeiras:
+      <input name="filtro.min_cadeiras" min="0" max="" type="number" value="{{ filtro.min_cadeiras | default(value="") }}"/>
+    </label>
+    <label>
+      Máximo de Cadeiras:
+      <input name="filtro.max_cadeiras" min="0" max="" type="number" value="{{ filtro.max_cadeiras | default(value="") }}"/>
+    </label>
+    <label>
+      Salário Mínimo:
+      <input name="filtro.min_salario" min="0" max="" type="number" value="{{ filtro.min_salario | default(value="") }}"/>
+    </label>
+    <label>
+      Salário Máximo:
+      <input name="filtro.max_salario" min="0" max="" type="number" value="{{ filtro.max_salario | default(value="") }}"/>
+    </label>
+  </div>
+  <button>Buscar</button>
+</form>
+
+<h2>Resultados</h2>
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>tipo</th>
+        <th>local</th>
+        <th>Cadeiras</th>
+        <th>Salário</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cargo in cargos %}
+      <tr>
+        <td>{{ cargo.tipo }}</td>
+        <td>{{ cargo.local }}</td>
+        <td>{{ cargo.cadeiras }}</td>
+        <td>{{ cargo.salario }}</td>
+        <td>
+          <a href="/cargos/{{ cargo.tipo }}/{{ cargo.local }}">
+            Mais info →
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<figure>
+
+{% endblock content %}

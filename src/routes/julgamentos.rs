@@ -1,9 +1,12 @@
-/// Rota que exibe info de um julgamento
-use rocket::get;
+use rocket::{get, routes, Route};
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
 
-use crate::{database::Database, error::ServerError, schema::Julgamento};
+use crate::{
+    database::Database,
+    error::ServerError,
+    schema::{Julgamento, JulgamentoFiltro},
+};
 
 #[get("/<processo>/<instancia>")]
 pub async fn get(
@@ -14,5 +17,20 @@ pub async fn get(
     let julgamento = Julgamento::obter(&db, processo, &instancia).await?;
     let ctx = context! {julgamento};
 
-    Ok(Template::render("julgamento", ctx))
+    Ok(Template::render("rotas/julgamento", ctx))
+}
+
+#[get("/?<filtro>")]
+pub async fn list(
+    db: Connection<Database>,
+    filtro: JulgamentoFiltro,
+) -> Result<Template, ServerError> {
+    let julgamentos = Julgamento::listar(&db, filtro.clone()).await?;
+    let ctx = context! {julgamentos, filtro};
+
+    Ok(Template::render("rotas/julgamentos", ctx))
+}
+
+pub fn routes() -> Vec<Route> {
+    routes![get, list]
 }
