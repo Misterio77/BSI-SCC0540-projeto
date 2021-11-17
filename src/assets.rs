@@ -104,6 +104,8 @@ impl Fairing for Assets {
                 .raw_header("Cache-control", format!("max-age={}", configuration.max_age))
                 .finalize();
 
+            let status = new.status();
+            response.set_status(status);
             response.merge(new);
         }
     }
