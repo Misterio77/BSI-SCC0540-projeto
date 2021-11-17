@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
@@ -59,7 +60,7 @@ impl Processo {
 }
 
 /// Filtro de listagem de processo
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct ProcessoFiltro {
     pub id: Option<i32>,
     pub reu: Option<String>,
@@ -69,7 +70,10 @@ impl ProcessoFiltro {
     pub fn cleanup(self) -> Self {
         Self {
             reu: self.reu.filter(|s| !s.is_empty()),
-            crime: self.crime.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            crime: self
+                .crime
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

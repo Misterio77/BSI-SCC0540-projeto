@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
@@ -74,7 +75,7 @@ impl Pleito {
 }
 
 /// Filtro de listagem de pleito
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct PleitoFiltro {
     pub candidato: Option<String>,
     pub ano: Option<i16>,

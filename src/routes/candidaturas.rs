@@ -22,8 +22,11 @@ pub async fn get(
 }
 
 #[get("/?<filtro>")]
-pub async fn list(db: Connection<Database>, filtro: CandidaturaFiltro) -> Result<Template, ServerError> {
-    let candidaturas = Candidatura::listar(&db, &filtro).await?;
+pub async fn list(
+    db: Connection<Database>,
+    filtro: CandidaturaFiltro,
+) -> Result<Template, ServerError> {
+    let candidaturas = Candidatura::listar(&db, filtro.clone()).await?;
     let ctx = context! {candidaturas, filtro};
     let template = Template::render("candidaturas", ctx);
     Ok(template)

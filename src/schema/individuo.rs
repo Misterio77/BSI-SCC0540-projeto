@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use chrono::NaiveDate;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
@@ -71,7 +72,7 @@ impl Individuo {
 }
 
 /// Filtro de listagem de indivíduo
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct IndividuoFiltro {
     pub cpfcnpj: Option<String>,
     pub nome: Option<String>,
@@ -82,7 +83,10 @@ impl IndividuoFiltro {
     pub fn cleanup(self) -> Self {
         Self {
             cpfcnpj: self.cpfcnpj.filter(|s| !s.is_empty()),
-            nome: self.nome.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            nome: self
+                .nome
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

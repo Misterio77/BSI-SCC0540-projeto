@@ -1,9 +1,9 @@
 use postgres_types::{FromSql, ToSql};
+use rocket::form::{FromForm, FromFormField};
 use rust_decimal::Decimal;
 use serde::Serialize;
-use rocket::form::FromFormField;
-use strum::EnumString;
 use std::convert::{TryFrom, TryInto};
+use strum::EnumString;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -93,7 +93,7 @@ impl Cargo {
 }
 
 /// Filtro de listagem de cargos
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct CargoFiltro {
     pub tipo: Option<TipoCargo>,
     pub local: Option<String>,
@@ -105,7 +105,10 @@ pub struct CargoFiltro {
 impl CargoFiltro {
     pub fn cleanup(self) -> Self {
         Self {
-            local: self.local.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            local: self
+                .local
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

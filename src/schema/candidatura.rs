@@ -1,5 +1,5 @@
-use serde::Serialize;
 use rocket::form::FromForm;
+use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
 use crate::database::{Client, Row};
@@ -116,7 +116,7 @@ impl Candidatura {
 }
 
 /// Filtro de listagem de candidaturas
-#[derive(Serialize, FromForm)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct CandidaturaFiltro {
     pub candidato: Option<String>,
     pub vice_candidato: Option<String>,
@@ -131,7 +131,10 @@ impl CandidaturaFiltro {
         Self {
             candidato: self.candidato.filter(|s| !s.is_empty()),
             vice_candidato: self.vice_candidato.filter(|s| !s.is_empty()),
-            cargo_local: self.cargo_local.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            cargo_local: self
+                .cargo_local
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

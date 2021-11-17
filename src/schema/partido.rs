@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
 
@@ -70,7 +71,7 @@ impl Partido {
 }
 
 /// Filtro de listagem de partido
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct PartidoFiltro {
     pub numero: Option<i16>,
     pub nome: Option<String>,
@@ -79,8 +80,14 @@ pub struct PartidoFiltro {
 impl PartidoFiltro {
     pub fn cleanup(self) -> Self {
         Self {
-            nome: self.nome.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
-            programa: self.programa.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            nome: self
+                .nome
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
+            programa: self
+                .programa
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

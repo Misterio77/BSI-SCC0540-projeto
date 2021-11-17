@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use chrono::NaiveDate;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
@@ -75,7 +76,7 @@ impl Julgamento {
 }
 
 /// Filtro de listagem de julgamento
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct JulgamentoFiltro {
     pub processo: Option<i32>,
     pub instancia: Option<String>,

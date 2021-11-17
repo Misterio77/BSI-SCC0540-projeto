@@ -1,3 +1,4 @@
+use rocket::form::FromForm;
 use rust_decimal::Decimal;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
@@ -74,7 +75,7 @@ impl Doacao {
 }
 
 /// Filtro de listagem de doações
-#[derive(Serialize)]
+#[derive(Clone, Serialize, FromForm)]
 pub struct DoacaoFiltro {
     pub id: Option<i32>,
     pub valor: Option<Decimal>,
