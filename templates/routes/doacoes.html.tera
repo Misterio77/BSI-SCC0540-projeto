@@ -3,6 +3,7 @@
 {% block title %}Doações{% endblock title %}
 
 {% block content %}
+{% set n_elements = doacoes | length %}
 
 <h1>Doações</h1>
 
@@ -37,6 +38,10 @@
   </form>
 </details>
 
+{% include "paginas" %}
+
+<hr />
+
 <figure>
   <table>
     <thead>
@@ -70,7 +75,6 @@
   </table>
 </figure>
 
-{% set n_elements = doacoes | length %}
 {% include "paginas" %}
 
 {% endblock content %}

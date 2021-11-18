@@ -78,9 +78,7 @@ body>footer p {
 }
 
 .paginas {
-  border: 1px solid var(--muted-border-color);
-  box-sizing: border-box;
-  padding: 1rem;
+  margin: 3rem;
   text-align: center;
 }
 .paginas a {

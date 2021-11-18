@@ -3,6 +3,7 @@
 {% block title %}Cargos{% endblock title %}
 
 {% block content %}
+{% set n_elements = cargos | length %}
 
 <h1>Cargos</h1>
 
@@ -49,6 +50,10 @@
   </form>
 </details>
 
+{% include "paginas" %}
+
+<hr />
+
 <figure>
   <table>
     <thead>
@@ -78,7 +83,6 @@
   </table>
 </figure>
 
-{% set n_elements = cargos | length %}
 {% include "paginas" %}
 
 {% endblock content %}
