@@ -1,10 +1,6 @@
 {# Permite exibir uma mensagem baseada no cookie flash #}
 {% if flash %}
-  <sup id="flash" onclick="document.getElementById('flash').remove()"
-    {% if flash.kind == "success" %} style="--primary: #7cb342" {% endif %}
-    {% if flash.kind == "error" %} style="--primary: #d81b60;" {% endif %}
-    {% if flash.kind == "warning" %} style="--primary: #fdd835;" {% endif %}
-  >
+<sup id="flash" onclick="document.getElementById('flash').remove()" class="{{ flash.kind }}">
   {{ flash.message }}
-  </sup>
+</sup>
 {% endif %}

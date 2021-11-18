@@ -1,45 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt">
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Home{% endblock %} | Justiça Eleitoral</title>
     <link rel="preload" href="/assets/style.css" as="style" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/@picocss/pico@1.4.1/css/pico.min.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@1.4.1/css/pico.min.css" />
     <link rel="stylesheet" href="/assets/style.css" />
   </head>
   <body>
-    <nav>
-      <ul>
-        <li><a href="/">Justiça Eleitoral</a></li>
-      </ul>
-    </nav>
+    <nav><ul><li><a href="/">Justiça Eleitoral</a></li></ul></nav>
 
-    <nav>
-      <ul>
-        <li><a href="/candidaturas">Candidaturas</a></li>
-        <li><a href="/cargos">Cargos</a></li>
-        <li><a href="/doacoes">Doações</a></li>
-        <li><a href="/equipes">Equipes</a></li>
-        <li><a href="/individuos">Indivíduos</a></li>
-        <li><a href="/julgamentos">Julgamentos</a></li>
-        <li><a href="/partidos">Partidos</a></li>
-        <li><a href="/pleitos">Pleitos</a></li>
-        <li><a href="/processos">Processos</a></li>
-      </ul>
-    </nav>
+    <nav><ul>
+      <li><a href="/candidaturas">Candidaturas</a></li>
+      <li><a href="/cargos">Cargos</a></li>
+      <li><a href="/doacoes">Doações</a></li>
+      <li><a href="/equipes">Equipes</a></li>
+      <li><a href="/individuos">Indivíduos</a></li>
+      <li><a href="/julgamentos">Julgamentos</a></li>
+      <li><a href="/partidos">Partidos</a></li>
+      <li><a href="/pleitos">Pleitos</a></li>
+      <li><a href="/processos">Processos</a></li>
+    </ul></nav>
 
-    <main class="container">{% block content %} {% endblock content %}</main>
+    <main class="container">
+      {% block content %}
+      {% endblock content %}
+    </main>
 
     <footer class="container">
       <p>
         Projeto para a disciplina de Bases de Dados -
-        <a href="https://git.sr.ht/~misterio/BSI-SCC0540-projeto">
-          Código fonte
-        </a>
+        <a href="https://git.sr.ht/~misterio/BSI-SCC0540-projeto">Código fonte</a>
       </p>
     </footer>
   </body>

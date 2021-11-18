@@ -1,5 +1,8 @@
-{% extends "base" %} {% block title %}{{ cargo.tipo }} - {{ cargo.local}}{%
-endblock title %} {% block content %}
+{% extends "base" %}
+
+{% block title %}{{ cargo.tipo }} - {{ cargo.local}}{% endblock title %}
+
+{% block content %}
 
 <h1>Cargo: {{ cargo.tipo }} - {{ cargo.local}}</h1>
 

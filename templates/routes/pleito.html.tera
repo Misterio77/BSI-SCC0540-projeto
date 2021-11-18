@@ -1,5 +1,8 @@
-{% extends "base" %} {% block title %}{{ pleito.candidato }} {{ pleito.ano}} {{
-pleito.turno }}{% endblock title %} {% block content %}
+{% extends "base" %}
+
+{% block title %}{{ pleito.candidato }} {{ pleito.ano}} {{ pleito.turno }}{% endblock title %}
+
+{% block content %}
 
 <h1>
   Pleito: {{ pleito.turno }}º turno - {{ pleito.candidato }} - {{ pleito.ano }}

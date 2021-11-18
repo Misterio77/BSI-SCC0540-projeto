@@ -1,5 +1,8 @@
-{% extends "base" %} {% block title %}{{ candidatura.numero }}{% endblock title
-%} {% block content %}
+{% extends "base" %}
+
+{% block title %}{{ candidatura.numero }}{% endblock title%}
+
+{% block content %}
 
 <h1>
   Candidatura: {{ candidatura.numero }} ({{ candidatura.ano }}) - {{

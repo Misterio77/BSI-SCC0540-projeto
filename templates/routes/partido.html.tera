@@ -1,5 +1,8 @@
-{% extends "base" %} {% block title %}{{ partido.nome }}{% endblock title %} {%
-block content %}
+{% extends "base" %}
+
+{% block title %}{{ partido.nome }}{% endblock title %}
+
+{% block content %}
 
 <h1>Partido: {{ partido.nome }} ({{ partido.numero }})</h1>
 

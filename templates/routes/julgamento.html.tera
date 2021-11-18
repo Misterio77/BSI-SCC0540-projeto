@@ -1,5 +1,8 @@
-{% extends "base" %} {% block title %}Julgamento #{{ julgamento.processo }} - {{
-julgamento.instancia }}{% endblock title %} {% block content %}
+{% extends "base" %}
+
+{% block title %}Julgamento #{{ julgamento.processo }} - {{ julgamento.instancia }}{% endblock title %}
+
+{% block content %}
 
 <h1>Julgamento: #{{ julgamento.processo }} - {{ julgamento.instancia }}</h1>
 

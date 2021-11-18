@@ -1,5 +1,9 @@
-{% extends "base" %} {% block title %}Erro{% endblock title %} {% block content
-%}
+{% extends "base" %} 
+
+{% block title %}Erro{% endblock title %}
+
+{% block content%}
+
 <h1>Erro - {{ code | as_str }}</h1>
 
 <p><strong>{{ description }}</strong></p>

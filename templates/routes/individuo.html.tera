@@ -1,4 +1,7 @@
-{% extends "base" %} {% block title %}{{ individuo.nome }}{% endblock title %}
+{% extends "base" %}
+
+{% block title %}{{ individuo.nome }}{% endblock title %}
+
 {% block content %}
 
 <h1>Indivíduo: {{ individuo.nome }}</h1>
