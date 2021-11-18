@@ -1338,7 +1338,7 @@ dependencies = [
 
 [[package]]
 name = "projeto-bd"
-version = "1.0.0-pre3"
+version = "1.0.0-pre4"
 dependencies = [
  "normpath",
  "postgres-types",
