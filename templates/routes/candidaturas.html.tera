@@ -6,52 +6,53 @@
 
 <h1>Candidaturas</h1>
 
-<h2>Filtros</h2>
-<form>
-  <div class="grid">
-    <label>
-      Número:
-      <input name="filtro.numero" type="number" min="10" max="99999" value="{{ filtro.numero | default(value="") }}"/>
-    </label>
-    <label>
-      Partido:
-      <input name="filtro.partido" type="number" min="10" max="99" value="{{ filtro.partido | default(value="") }}"/>
-    </label>
-    <label>
-      Tipo de cargo:
-      <select name="filtro.cargo_tipo">
-        <option></option>
-        <option {% if filtro.cargo_tipo == "Prefeito" %}selected{% endif %}>Prefeito</option>
-        <option {% if filtro.cargo_tipo == "Governador" %}selected{% endif %}>Governador</option>
-        <option {% if filtro.cargo_tipo == "Presidente" %}selected{% endif %}>Presidente</option>
-        <option {% if filtro.cargo_tipo == "Vereador" %}selected{% endif %}>Vereador</option>
-        <option {% if filtro.cargo_tipo == "Deputado Estadual" %}selected{% endif %}>Deputado Estadual</option>
-        <option {% if filtro.cargo_tipo == "Deputado Federal" %}selected{% endif %}>Deputado Federal</option>
-        <option {% if filtro.cargo_tipo == "Senador" %}selected{% endif %}>Senador</option>
-      </select>
-    </label>
-    <label>
-      Local do cargo: <input name="filtro.cargo_local" value="{{ filtro.cargo_local | default(value="") }}"/>
-    </label>
-  </div>
-  <div class="grid">
-    <label>
-      Ano:
-      <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}"/>
-    </label>
-    <label>
-      Candidato:
-      <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}"/>
-    </label>
-    <label>
-      Vice-Candidato:
-      <input name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
-    </label>
-  </div>
-  <button>Buscar</button>
-</form>
+<details>
+  <summary>Filtros</summary>
+  <form>
+    <div class="grid">
+      <label>
+        Número:
+        <input name="filtro.numero" type="number" min="10" max="99999" value="{{ filtro.numero | default(value="") }}"/>
+      </label>
+      <label>
+        Partido:
+        <input name="filtro.partido" type="number" min="10" max="99" value="{{ filtro.partido | default(value="") }}"/>
+      </label>
+      <label>
+        Tipo de cargo:
+        <select name="filtro.cargo_tipo">
+          <option></option>
+          <option {% if filtro.cargo_tipo == "Prefeito" %}selected{% endif %}>Prefeito</option>
+          <option {% if filtro.cargo_tipo == "Governador" %}selected{% endif %}>Governador</option>
+          <option {% if filtro.cargo_tipo == "Presidente" %}selected{% endif %}>Presidente</option>
+          <option {% if filtro.cargo_tipo == "Vereador" %}selected{% endif %}>Vereador</option>
+          <option {% if filtro.cargo_tipo == "Deputado Estadual" %}selected{% endif %}>Deputado Estadual</option>
+          <option {% if filtro.cargo_tipo == "Deputado Federal" %}selected{% endif %}>Deputado Federal</option>
+          <option {% if filtro.cargo_tipo == "Senador" %}selected{% endif %}>Senador</option>
+        </select>
+      </label>
+      <label>
+        Local do cargo: <input name="filtro.cargo_local" value="{{ filtro.cargo_local | default(value="") }}"/>
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        Ano:
+        <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}"/>
+      </label>
+      <label>
+        Candidato:
+        <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}"/>
+      </label>
+      <label>
+        Vice-Candidato:
+        <input name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
+      </label>
+    </div>
+    <button>Buscar</button>
+  </form>
+</details>
 
-<h2>Resultados</h2>
 <figure>
   <table>
     <thead>

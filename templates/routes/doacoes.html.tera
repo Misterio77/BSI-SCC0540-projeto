@@ -6,36 +6,37 @@
 
 <h1>Doações</h1>
 
-<h2>Filtros</h2>
-<form>
-  <div class="grid">
-    <label>
-      Valor mínimo:
-      <input name="filtro.min_valor" min="0" max="" type="number" value="{{ filtro.min_valor | default(value="") }}"/>
-    </label>
-    <label>
-      Valor máximo:
-      <input name="filtro.max_valor" min="0" max="" type="number" value="{{ filtro.max_valor | default(value="") }}"/>
-    </label>
-  </div>
-  <div class="grid">
-    <label>
-      Doador:
-      <input name="filtro.doador" value="{{ filtro.doador | default(value="") }}" />
-    </label>
-    <label>
-      Candidato:
-      <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}" />
-    </label>
-    <label>
-      Ano:
-      <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}" />
-    </label>
-  </div>
-  <button>Buscar</button>
-</form>
+<details>
+  <summary>Filtros</summary>
+  <form>
+    <div class="grid">
+      <label>
+        Valor mínimo:
+        <input name="filtro.min_valor" min="0" max="" type="number" value="{{ filtro.min_valor | default(value="") }}"/>
+      </label>
+      <label>
+        Valor máximo:
+        <input name="filtro.max_valor" min="0" max="" type="number" value="{{ filtro.max_valor | default(value="") }}"/>
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        Doador:
+        <input name="filtro.doador" value="{{ filtro.doador | default(value="") }}" />
+      </label>
+      <label>
+        Candidato:
+        <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}" />
+      </label>
+      <label>
+        Ano:
+        <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}" />
+      </label>
+    </div>
+    <button>Buscar</button>
+  </form>
+</details>
 
-<h2>Resultados</h2>
 <figure>
   <table>
     <thead>
