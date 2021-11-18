@@ -2,12 +2,17 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "projeto-bd";
-  version = "1.0.0-pre2";
+  version = "1.0.0-pre3";
 
   src = lib.cleanSource ./.;
 
-  # cargoSha256 = lib.fakeSha256;
-  cargoSha256 = "sha256-ZRq/2rfz/Rutaoum1zXU+9cdO1AORgJPEjWYTB/GEeM=";
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "rocket-0.5.0-rc.1" = "sha256-wmC/nekpOx7Dwy4dRVoEWxrznnlw9r3Nmq8J9X+Kbmo=";
+      "rust_decimal-1.17.0" = "sha256-YMdY8M00ZGWHnhVypyuOBJzu1fm6lyu+96Y/Jjg338g=";
+    };
+  };
 
   postInstall = ''
     install -d $out/etc
