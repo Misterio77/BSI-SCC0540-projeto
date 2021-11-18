@@ -19,7 +19,7 @@ pub struct Candidatura {
     pub partido: i16,
 }
 
-/// Converte da linha para o nosso cargo_tipo
+/// Converte da linha para o nosso tipo
 impl TryFrom<Row> for Candidatura {
     type Error = ServerError;
     fn try_from(row: Row) -> Result<Candidatura, ServerError> {

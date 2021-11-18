@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[get("/<processo>/<instancia>")]
-pub async fn get(
+async fn get(
     db: Connection<Database>,
     processo: i32,
     instancia: String,
@@ -21,10 +21,7 @@ pub async fn get(
 }
 
 #[get("/?<filtro>")]
-pub async fn list(
-    db: Connection<Database>,
-    filtro: JulgamentoFiltro,
-) -> Result<Template, ServerError> {
+async fn list(db: Connection<Database>, filtro: JulgamentoFiltro) -> Result<Template, ServerError> {
     let julgamentos = Julgamento::listar(&db, filtro.clone()).await?;
     let ctx = context! {julgamentos, filtro};
 

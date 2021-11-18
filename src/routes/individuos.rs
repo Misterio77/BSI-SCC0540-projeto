@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[get("/<cpfcnpj>")]
-pub async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, ServerError> {
+async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, ServerError> {
     let individuo = Individuo::obter(&db, &cpfcnpj).await?;
     let ctx = context! {individuo};
 
@@ -17,10 +17,7 @@ pub async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, 
 }
 
 #[get("/?<filtro>")]
-pub async fn list(
-    db: Connection<Database>,
-    filtro: IndividuoFiltro,
-) -> Result<Template, ServerError> {
+async fn list(db: Connection<Database>, filtro: IndividuoFiltro) -> Result<Template, ServerError> {
     let individuos = Individuo::listar(&db, filtro.clone()).await?;
     let ctx = context! {individuos, filtro};
 

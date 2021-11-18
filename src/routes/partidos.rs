@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[get("/<numero>")]
-pub async fn get(db: Connection<Database>, numero: i16) -> Result<Template, ServerError> {
+async fn get(db: Connection<Database>, numero: i16) -> Result<Template, ServerError> {
     let partido = Partido::obter(&db, numero).await?;
     let ctx = context! {partido};
 
@@ -17,10 +17,7 @@ pub async fn get(db: Connection<Database>, numero: i16) -> Result<Template, Serv
 }
 
 #[get("/?<filtro>")]
-pub async fn list(
-    db: Connection<Database>,
-    filtro: PartidoFiltro,
-) -> Result<Template, ServerError> {
+async fn list(db: Connection<Database>, filtro: PartidoFiltro) -> Result<Template, ServerError> {
     let partidos = Partido::listar(&db, filtro.clone()).await?;
     let ctx = context! {partidos, filtro};
 

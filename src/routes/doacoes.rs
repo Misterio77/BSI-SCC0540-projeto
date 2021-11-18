@@ -9,7 +9,7 @@ use crate::{
 };
 
 #[get("/<id>")]
-pub async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError> {
+async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError> {
     let doacao = Doacao::obter(&db, id).await?;
     let ctx = context! {doacao};
 
@@ -17,7 +17,7 @@ pub async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerEr
 }
 
 #[get("/?<filtro>")]
-pub async fn list(db: Connection<Database>, filtro: DoacaoFiltro) -> Result<Template, ServerError> {
+async fn list(db: Connection<Database>, filtro: DoacaoFiltro) -> Result<Template, ServerError> {
     let doacoes = Doacao::listar(&db, filtro.clone()).await?;
     let ctx = context! {doacoes, filtro};
 

@@ -53,16 +53,21 @@ impl Fairing for Assets {
         let path = match relative_path.normalize() {
             Ok(path) => path.into_path_buf(),
             Err(e) => {
-                error!("Invalid assets directory '{}': {}.", relative_path.display(), e);
+                error!(
+                    "Invalid assets directory '{}': {}.",
+                    relative_path.display(),
+                    e
+                );
                 return Err(rocket);
             }
         };
 
         let max_age = rocket
             .figment()
-            .extract_inner::<i32>("assets_max_age").unwrap_or(86400);
+            .extract_inner::<i32>("assets_max_age")
+            .unwrap_or(86400);
 
-        Ok(rocket.manage(AssetsContext{path, max_age}))
+        Ok(rocket.manage(AssetsContext { path, max_age }))
     }
 
     async fn on_liftoff(&self, rocket: &Rocket<Orbit>) {
@@ -101,7 +106,10 @@ impl Fairing for Assets {
             };
 
             let new = Response::build_from(file_response.respond_to(request).unwrap())
-                .raw_header("Cache-control", format!("max-age={}", configuration.max_age))
+                .raw_header(
+                    "Cache-control",
+                    format!("max-age={}", configuration.max_age),
+                )
                 .finalize();
 
             let status = new.status();

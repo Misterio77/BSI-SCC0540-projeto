@@ -2,18 +2,18 @@ use rocket_db_pools::Database as DatabaseTrait;
 use rocket_dyn_templates::Template;
 
 use projeto_bd::{
-    // Nosso banco de dados
-    database::Database,
     // Assets estáticos
     assets::Assets,
+    // Nosso banco de dados
+    database::Database,
     // Nosso tipo personalizado de erro
     error::ServerError,
-    // Páginas de erro, e home
-    routes::{errors, home},
     // Rotas do servidor
     routes::{
         candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
     },
+    // Páginas de erro, e home
+    routes::{errors, home},
 };
 
 #[rocket::main]

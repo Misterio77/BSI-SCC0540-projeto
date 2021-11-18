@@ -10,7 +10,7 @@ use crate::{
 };
 
 #[get("/<tipo>/<local>")]
-pub async fn get(
+async fn get(
     db: Connection<Database>,
     tipo: String,
     local: String,
@@ -22,7 +22,7 @@ pub async fn get(
 }
 
 #[get("/?<filtro>")]
-pub async fn list(db: Connection<Database>, filtro: CargoFiltro) -> Result<Template, ServerError> {
+async fn list(db: Connection<Database>, filtro: CargoFiltro) -> Result<Template, ServerError> {
     let cargos = Cargo::listar(&db, filtro.clone()).await?;
     let ctx = context! {cargos, filtro};
 
