@@ -16,10 +16,15 @@ async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError>
     Ok(Template::render("routes/doacao", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: DoacaoFiltro) -> Result<Template, ServerError> {
-    let doacoes = Doacao::listar(&db, filtro.clone()).await?;
-    let ctx = context! {doacoes, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: DoacaoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let doacoes = Doacao::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {doacoes, filtro, pagina};
 
     Ok(Template::render("routes/doacoes", ctx))
 }

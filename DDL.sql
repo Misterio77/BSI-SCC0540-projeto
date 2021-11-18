@@ -105,6 +105,10 @@ CREATE TABLE candidatura (
     CONSTRAINT candidatura_un_numero_ano_cargo
         UNIQUE (cargo_tipo, cargo_local, numero, ano),
 
+    -- Verifica que os dois primeiros dígitos do número representam o partido
+    CONSTRAINT candidatura_ck_partido
+    CHECK ((LEFT((numero::VARCHAR), 2)::INTEGER ) = partido),
+
     -- Verifica que o número tem o numero de digitos correto
     CONSTRAINT candidatura_ck_numero
         CHECK (CASE

@@ -40,7 +40,12 @@ impl Processo {
     }
 
     /// Lista os processos, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: ProcessoFiltro) -> Result<Vec<Processo>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: ProcessoFiltro,
+        pagina: u16,
+        limite: u16,
+    ) -> Result<Vec<Processo>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
             "
@@ -49,8 +54,15 @@ impl Processo {
             WHERE
                 ($1::INTEGER IS NULL OR id        = $1) AND
                 ($2::VARCHAR IS NULL OR reu       = $2) AND
-                ($3::VARCHAR IS NULL OR crime ILIKE $3)",
-            &[&filtro.id, &filtro.reu, &filtro.crime],
+                ($3::VARCHAR IS NULL OR crime ILIKE $3)
+            LIMIT $4 OFFSET $5",
+            &[
+                &filtro.id,
+                &filtro.reu,
+                &filtro.crime,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
+            ],
         )
         .await?
         .into_iter()

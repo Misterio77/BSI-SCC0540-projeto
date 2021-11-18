@@ -21,10 +21,15 @@ async fn get(
     Ok(Template::render("routes/pleito", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: PleitoFiltro) -> Result<Template, ServerError> {
-    let pleitos = Pleito::listar(&db, filtro.clone()).await?;
-    let ctx = context! {pleitos, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: PleitoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let pleitos = Pleito::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {pleitos, filtro, pagina};
 
     Ok(Template::render("routes/pleitos", ctx))
 }

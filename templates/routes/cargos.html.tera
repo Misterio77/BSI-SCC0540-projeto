@@ -45,7 +45,7 @@
         <input name="filtro.max_salario" min="0" max="" type="number" value="{{ filtro.max_salario | default(value="") }}"/>
       </label>
     </div>
-    <button>Buscar</button>
+    <button>Filtrar</button>
   </form>
 </details>
 
@@ -76,6 +76,9 @@
       {% endfor %}
     </tbody>
   </table>
-<figure>
+</figure>
+
+{% set n_elements = cargos | length %}
+{% include "paginas" %}
 
 {% endblock content %}

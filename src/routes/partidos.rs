@@ -16,10 +16,15 @@ async fn get(db: Connection<Database>, numero: i16) -> Result<Template, ServerEr
     Ok(Template::render("routes/partido", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: PartidoFiltro) -> Result<Template, ServerError> {
-    let partidos = Partido::listar(&db, filtro.clone()).await?;
-    let ctx = context! {partidos, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: PartidoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let partidos = Partido::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {partidos, filtro, pagina};
 
     Ok(Template::render("routes/partidos", ctx))
 }

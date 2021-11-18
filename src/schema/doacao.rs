@@ -45,7 +45,12 @@ impl Doacao {
     }
 
     /// Lista as doações, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: DoacaoFiltro) -> Result<Vec<Doacao>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: DoacaoFiltro,
+        pagina: u16,
+        limite: u16,
+    ) -> Result<Vec<Doacao>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
             "
@@ -57,7 +62,8 @@ impl Doacao {
                 ($3::VARCHAR  IS NULL OR candidato = $3) AND
                 ($4::NUMERIC  IS NULL OR valor    >= $4) AND
                 ($5::NUMERIC  IS NULL OR valor    <= $5) AND
-                ($6::SMALLINT IS NULL OR ano       = $6)",
+                ($6::SMALLINT IS NULL OR ano       = $6)
+            LIMIT $7 OFFSET $8",
             &[
                 &filtro.id,
                 &filtro.doador,
@@ -65,6 +71,8 @@ impl Doacao {
                 &filtro.min_valor,
                 &filtro.max_valor,
                 &filtro.ano,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
             ],
         )
         .await?

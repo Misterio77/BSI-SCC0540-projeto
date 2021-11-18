@@ -16,10 +16,15 @@ async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, Serv
     Ok(Template::render("routes/individuo", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: IndividuoFiltro) -> Result<Template, ServerError> {
-    let individuos = Individuo::listar(&db, filtro.clone()).await?;
-    let ctx = context! {individuos, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: IndividuoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let individuos = Individuo::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {individuos, filtro, pagina};
 
     Ok(Template::render("routes/individuos", ctx))
 }

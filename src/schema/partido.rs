@@ -52,7 +52,12 @@ impl Partido {
     }
 
     /// Lista os partidos
-    pub async fn listar(db: &Client, filtro: PartidoFiltro) -> Result<Vec<Partido>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: PartidoFiltro,
+        pagina: u16,
+        limite: u16,
+    ) -> Result<Vec<Partido>, ServerError> {
         db.query(
             "
             SELECT numero, nome, programa
@@ -60,8 +65,15 @@ impl Partido {
             WHERE
                 ($1::SMALLINT IS NULL OR numero       = $1) AND
                 ($2::VARCHAR  IS NULL OR nome     ILIKE $2) AND
-                ($3::VARCHAR  IS NULL OR programa ILIKE $3)",
-            &[&filtro.numero, &filtro.nome, &filtro.programa],
+                ($3::VARCHAR  IS NULL OR programa ILIKE $3)
+            LIMIT $4 OFFSET $5",
+            &[
+                &filtro.numero,
+                &filtro.nome,
+                &filtro.programa,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
+            ],
         )
         .await?
         .into_iter()

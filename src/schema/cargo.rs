@@ -62,7 +62,12 @@ impl Cargo {
     }
 
     /// Lista os cargos
-    pub async fn listar(db: &Client, filtro: CargoFiltro) -> Result<Vec<Cargo>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: CargoFiltro,
+        pagina: u16,
+        limite: u16,
+    ) -> Result<Vec<Cargo>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
             "
@@ -75,7 +80,7 @@ impl Cargo {
                 ($4::SMALLINT   IS NULL OR cadeiras <= $4) AND
                 ($5::NUMERIC    IS NULL OR salario  >= $5) AND
                 ($6::NUMERIC    IS NULL OR salario  <= $6)
-            ",
+            LIMIT $7 OFFSET $8",
             &[
                 &filtro.tipo,
                 &filtro.local,
@@ -83,6 +88,8 @@ impl Cargo {
                 &filtro.max_cadeiras,
                 &filtro.min_salario,
                 &filtro.max_salario,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
             ],
         )
         .await?

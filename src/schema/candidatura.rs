@@ -84,6 +84,8 @@ impl Candidatura {
     pub async fn listar(
         db: &Client,
         filtro: CandidaturaFiltro,
+        pagina: u16,
+        limite: u16,
     ) -> Result<Vec<Candidatura>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
@@ -97,7 +99,8 @@ impl Candidatura {
                 ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
                 ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
                 ($6::INTEGER    IS NULL OR numero          = $6) AND
-                ($7::SMALLINT   IS NULL OR partido         = $7)",
+                ($7::SMALLINT   IS NULL OR partido         = $7)
+            LIMIT $8 OFFSET $9",
             &[
                 &filtro.candidato,
                 &filtro.vice_candidato,
@@ -106,6 +109,8 @@ impl Candidatura {
                 &filtro.cargo_local,
                 &filtro.numero,
                 &filtro.partido,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
             ],
         )
         .await?

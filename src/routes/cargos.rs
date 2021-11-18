@@ -21,10 +21,15 @@ async fn get(
     Ok(Template::render("routes/cargo", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: CargoFiltro) -> Result<Template, ServerError> {
-    let cargos = Cargo::listar(&db, filtro.clone()).await?;
-    let ctx = context! {cargos, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: CargoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let cargos = Cargo::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {cargos, filtro, pagina};
 
     Ok(Template::render("routes/cargos", ctx))
 }

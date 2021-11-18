@@ -47,7 +47,12 @@ impl Pleito {
     }
 
     /// Lista os pleitos, com filtros opcionais
-    pub async fn listar(db: &Client, filtro: PleitoFiltro) -> Result<Vec<Pleito>, ServerError> {
+    pub async fn listar(
+        db: &Client,
+        filtro: PleitoFiltro,
+        pagina: u16,
+        limite: u16,
+    ) -> Result<Vec<Pleito>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
             "
@@ -58,13 +63,16 @@ impl Pleito {
                 ($2::SMALLINT IS NULL OR ano       = $2) AND
                 ($3::SMALLINT IS NULL OR turno     = $3) AND
                 ($4::INTEGER  IS NULL OR votos    >= $4) AND
-                ($5::INTEGER  IS NULL OR votos    <= $5)",
+                ($5::INTEGER  IS NULL OR votos    <= $5)
+            LIMIT $6 OFFSET $7",
             &[
                 &filtro.candidato,
                 &filtro.ano,
                 &filtro.turno,
                 &filtro.min_votos,
                 &filtro.max_votos,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
             ],
         )
         .await?

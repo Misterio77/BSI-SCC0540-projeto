@@ -33,7 +33,7 @@
         <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}" />
       </label>
     </div>
-    <button>Buscar</button>
+    <button>Filtrar</button>
   </form>
 </details>
 
@@ -68,6 +68,9 @@
       {% endfor %}
     </tbody>
   </table>
-<figure>
+</figure>
+
+{% set n_elements = doacoes | length %}
+{% include "paginas" %}
 
 {% endblock content %}

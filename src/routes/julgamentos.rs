@@ -20,10 +20,15 @@ async fn get(
     Ok(Template::render("routes/julgamento", ctx))
 }
 
-#[get("/?<filtro>")]
-async fn list(db: Connection<Database>, filtro: JulgamentoFiltro) -> Result<Template, ServerError> {
-    let julgamentos = Julgamento::listar(&db, filtro.clone()).await?;
-    let ctx = context! {julgamentos, filtro};
+#[get("/?<filtro>&<pagina>")]
+async fn list(
+    db: Connection<Database>,
+    filtro: JulgamentoFiltro,
+    pagina: Option<u16>,
+) -> Result<Template, ServerError> {
+    let pagina = pagina.unwrap_or(1);
+    let julgamentos = Julgamento::listar(&db, filtro.clone(), pagina, 50).await?;
+    let ctx = context! {julgamentos, filtro, pagina};
 
     Ok(Template::render("routes/julgamentos", ctx))
 }

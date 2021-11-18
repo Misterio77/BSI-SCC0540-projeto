@@ -50,6 +50,8 @@ impl Julgamento {
     pub async fn listar(
         db: &Client,
         filtro: JulgamentoFiltro,
+        pagina: u16,
+        limite: u16,
     ) -> Result<Vec<Julgamento>, ServerError> {
         let filtro = filtro.cleanup();
         db.query(
@@ -60,12 +62,15 @@ impl Julgamento {
                 ($1::INTEGER IS NULL OR processo   = $1) AND
                 ($2::VARCHAR IS NULL OR instancia  = $2) AND
                 ($3::DATE    IS NULL OR data       = $3) AND
-                ($4::BOOLEAN IS NULL OR procedente = $4)",
+                ($4::BOOLEAN IS NULL OR procedente = $4)
+            LIMIT $5 OFFSET $6",
             &[
                 &filtro.processo,
                 &filtro.instancia,
                 &filtro.data,
                 &filtro.procedente,
+                &(limite as i64),
+                &(((pagina-1) as i64) * (limite as i64)),
             ],
         )
         .await?
