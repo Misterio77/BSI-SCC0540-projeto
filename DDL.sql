@@ -1,5 +1,6 @@
 BEGIN;
 
+-- Limpar tabelas antes de criar
 DROP TABLE IF EXISTS doacao, apoio, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
 
@@ -22,14 +23,16 @@ CREATE TABLE partido (
     nome VARCHAR NOT NULL,
     programa VARCHAR NOT NULL,
 
+    -- Número eleitoral é chave primária
     CONSTRAINT partido_pk PRIMARY KEY (numero),
+    -- Nenhum partido pode ter nome igual, também
     CONSTRAINT partido_un UNIQUE (nome),
-
+    -- E o número eleitoral começa em 10
     CONSTRAINT partido_numero CHECK (numero >= 10)
 );
 
 
--- Enumera os possíveis tipos de cargo
+-- Enumera os possíveis tipos de cargo político
 CREATE TYPE tipo_cargo AS ENUM (
     -- Esses tem vice
     'Prefeito',
@@ -48,8 +51,13 @@ CREATE TABLE cargo (
     cadeiras SMALLINT NOT NULL,
     salario NUMERIC NOT NULL,
 
+    -- Tem como pk uma chave composta do tipo do cargo e o local
+    -- onde é disputado (não a esfera!)
+    -- Por exemplo, um deputado federal representando o estado de
+    -- São Saulo deve ser listado como ('DeputadoFederal', 'São Paulo').
     CONSTRAINT cargo_pk PRIMARY KEY (tipo, local),
 
+    -- As cadeiras e os salários devem ser maiores que 0
     CONSTRAINT cargo_ck_cadeiras CHECK (cadeiras > 0),
     CONSTRAINT cargo_ck_salario CHECK (salario > 0)
 );
@@ -107,7 +115,7 @@ CREATE TABLE candidatura (
 
     -- Verifica que os dois primeiros dígitos do número representam o partido
     CONSTRAINT candidatura_ck_partido
-    CHECK ((LEFT((numero::VARCHAR), 2)::INTEGER ) = partido),
+        CHECK ((LEFT((numero::VARCHAR), 2)::INTEGER ) = partido),
 
     -- Verifica que o número tem o numero de digitos correto
     CONSTRAINT candidatura_ck_numero
@@ -127,9 +135,10 @@ CREATE TABLE candidatura (
         END),
 
     -- Verifica que o candidato é pessoa física
-    CONSTRAINT candidatura_ck_candidato CHECK (candidato SIMILAR TO '[0-9]{11}'),
+    CONSTRAINT candidatura_ck_candidato_fisico CHECK (candidato SIMILAR TO '[0-9]{11}'),
+    CONSTRAINT candidatura_ck_vice_fisico CHECK (candidato SIMILAR TO '[0-9]{11}'),
 
-    -- Verifica se a candidatura cumpre requisito de vice do cargo
+    -- Verifica se a candidatura cumpre requisito de vice q o cargo pede
     -- E também que o candidato e vice são distintos
     CONSTRAINT candidatura_ck_vice_candidato
         CHECK (CASE
@@ -182,7 +191,10 @@ CREATE TABLE pleito (
 );
 
 
--- Representa cada apoiador da campanha
+-- Representa cada apoiador da candidatura
+-- Na minha visão, esses são os membros partidários
+-- e contratados que ajudam na campanha (podendo incluir
+-- empresas).
 CREATE TABLE apoio (
     apoiador VARCHAR NOT NULL,
     candidato VARCHAR NOT NULL,
