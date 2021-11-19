@@ -26,6 +26,14 @@
 
     <main class="container">
       {% block content %}
+      <h1>Home</h1>
+      <p>Seja bem vindo ao protótipo!</p>
+
+      <p>Segue um diagrama relacional para sua conveniência. Experimente clicar em uma das caixas para ir até a entidade!</p>
+
+      <figure>
+        {% include "diagram" %}
+      </figure>
       {% endblock content %}
     </main>
 

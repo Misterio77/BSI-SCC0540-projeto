@@ -101,3 +101,21 @@ nav.breadcrumb {
   padding-top: 0;
   padding-bottom: 5rem;
 }
+
+.diagram {
+  display: block;
+  margin: auto;
+}
+.diagram g a rect {
+  fill: var(--code-background-color);
+  stroke: var(--color);
+}
+.diagram g a text {
+  fill: var(--contrast);
+}
+.diagram g a line,
+.diagram g line,
+.diagram g path,
+.diagram g ellipse {
+  stroke: var(--primary);
+}
