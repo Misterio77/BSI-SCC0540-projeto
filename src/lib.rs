@@ -1,6 +1,5 @@
-pub mod assets;
-pub mod database;
-pub mod error;
+pub mod common;
+pub use common::{assets, database, error, pagination};
+
 pub mod routes;
 pub mod schema;
-pub mod pagination;
