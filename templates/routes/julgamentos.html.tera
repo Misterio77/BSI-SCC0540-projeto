@@ -54,7 +54,11 @@
     <tbody>
       {% for julgamento in julgamentos %}
       <tr>
-        <td>{{ julgamento.processo }}</td>
+        <td>
+          <a href="/processos/{{ julgamento.processo }}">
+            {{ julgamento.processo }}
+          </a>
+        </td>
         <td>{{ julgamento.instancia }}</td>
         <td>{{ julgamento.data }}</td>
         <td>{% if julgamento.procedente %}Culpado{% else %}Inocente{% endif %}</td>
