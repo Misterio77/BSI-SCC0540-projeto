@@ -3,7 +3,7 @@ pessoas="$(psql -c "COPY (SELECT cpfcnpj FROM individuo WHERE cpfcnpj SIMILAR TO
 
 for i in {1..300}; do
     reu="'$(shuf -n 1 <<< "$pessoas")'"
-    crime="$(shuf -n 1 -e "'Assassinato'" "'Tráfico de Drogas'" "'Estelionato'" "'Corrupção'" "'Estupro'" "'Obstrução da Justiça'" "'Falsidade Ideológica'" "'Abacaxi na pizza'")"
+    crime="$(shuf -n 1 -e "'Assassinato'" "'Tráfico de Drogas'" "'Estelionato'" "'Corrupção'" "'Maus Tratos'" "'Obstrução da Justiça'" "'Falsidade Ideológica'" "'Abacaxi na pizza'")"
 
     psql -c "INSERT INTO processo VALUES (DEFAULT, $reu, $crime)"
 done
