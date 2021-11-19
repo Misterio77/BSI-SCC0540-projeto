@@ -89,13 +89,21 @@ impl Candidatura {
     ) -> Result<Vec<Candidatura>, ServerError> {
         let filtro = filtro.cleanup();
 
-        // Mostrar apenas os eleitos?
-        let query = if filtro.eleitos {
-            // Query especial, que usa funções window para pegar apenas os top candidatos, com o
-            // número de cadeiras do cargo como limite
-            "
-            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido FROM (
-                SELECT
+        let query = format!(
+            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
+            {}
+            WHERE
+                {}
+                ($1::VARCHAR    IS NULL OR candidato       = $1) AND
+                ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
+                ($3::SMALLINT   IS NULL OR ano             = $3) AND
+                ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
+                ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
+                ($6::INTEGER    IS NULL OR numero          = $6) AND
+                ($7::SMALLINT   IS NULL OR partido         = $7)
+            LIMIT $8 OFFSET $9",
+            if filtro.eleitos {
+                "FROM (SELECT
                     c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
                     row_number() OVER(
                         PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
@@ -106,38 +114,21 @@ impl Candidatura {
                 INNER JOIN pleito p
                     ON p.candidato = c.candidato
                     AND p.ano = c.ano
-            ) AS eleicao
-            INNER JOIN cargo
-                ON cargo.local = eleicao.cargo_local
-                AND cargo.tipo = eleicao.cargo_tipo
-            WHERE
-                rownum <= cargo.cadeiras AND
-                ($1::VARCHAR    IS NULL OR candidato       = $1) AND
-                ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
-                ($3::SMALLINT   IS NULL OR ano             = $3) AND
-                ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
-                ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
-                ($6::INTEGER    IS NULL OR numero          = $6) AND
-                ($7::SMALLINT   IS NULL OR partido         = $7)
-            LIMIT $8 OFFSET $9"
-        } else {
-            // Query usual
-            "
-            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
-            FROM candidatura
-            WHERE
-                ($1::VARCHAR    IS NULL OR candidato       = $1) AND
-                ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
-                ($3::SMALLINT   IS NULL OR ano             = $3) AND
-                ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
-                ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
-                ($6::INTEGER    IS NULL OR numero          = $6) AND
-                ($7::SMALLINT   IS NULL OR partido         = $7)
-            LIMIT $8 OFFSET $9"
-        };
-
+                ) AS eleicao
+                INNER JOIN cargo
+                    ON cargo.local = eleicao.cargo_local
+                    AND cargo.tipo = eleicao.cargo_tipo"
+            } else {
+                "FROM candidatura"
+            },
+            if filtro.eleitos {
+                "rownum <= cargo.cadeiras AND"
+            } else {
+                ""
+            },
+        );
         db.query(
-            query,
+            &query,
             &[
                 &filtro.candidato,
                 &filtro.vice_candidato,
