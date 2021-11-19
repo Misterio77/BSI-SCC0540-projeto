@@ -48,15 +48,37 @@ impl Individuo {
         limite: u16,
     ) -> Result<Vec<Individuo>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
+
+        let tirar_ficha_suja = "EXCEPT (
             SELECT cpfcnpj, nome, nascimento
+            FROM individuo
+            INNER JOIN processo
+                ON processo.reu = individuo.cpfcnpj
+            INNER JOIN julgamento
+                ON julgamento.processo = processo.id
+            WHERE
+                julgamento.procedente IS true AND
+                julgamento.data >= (CURRENT_DATE - interval '5 years'))";
+
+        let query = format!(
+            "{}{}{}",
+            "SELECT cpfcnpj, nome, nascimento
             FROM individuo
             WHERE
                 ($1::VARCHAR IS NULL OR cpfcnpj     = $1) AND
                 ($2::VARCHAR IS NULL OR nome    ILIKE $2) AND
                 ($3::DATE    IS NULL OR nascimento  = $3)
-            LIMIT $4 OFFSET $5",
+            ",
+            if filtro.ficha_limpa {
+                tirar_ficha_suja
+            } else {
+                ""
+            },
+            " LIMIT $4 OFFSET $5"
+        );
+
+        db.query(
+            &query,
             &[
                 &filtro.cpfcnpj,
                 &filtro.nome,
@@ -78,6 +100,7 @@ pub struct IndividuoFiltro {
     pub cpfcnpj: Option<String>,
     pub nome: Option<String>,
     pub nascimento: Option<Date>,
+    pub ficha_limpa: bool,
 }
 impl IndividuoFiltro {
     pub fn cleanup(self) -> Self {

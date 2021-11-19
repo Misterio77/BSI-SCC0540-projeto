@@ -58,7 +58,11 @@
       <tr>
         <td>{{ doacao.id }}</td>
         <td>R$ {{ doacao.valor }}</td>
-        <td>{{ doacao.doador }}</td>
+        <td>
+          <a href="/individuos/{{ doacao.doador }}">
+            {{ doacao.doador }}
+          </a>
+        </td>
         <td>
           <a href="/candidaturas/{{ doacao.candidato }}/{{ doacao.ano }}">
             {{ doacao.candidato }} {{ doacao.ano }}

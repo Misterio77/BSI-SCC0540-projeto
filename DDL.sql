@@ -188,7 +188,6 @@ CREATE TABLE apoio (
     candidato VARCHAR NOT NULL,
     ano SMALLINT NOT NULL,
     funcao VARCHAR NOT NULL,
-    remunerado BOOLEAN NOT NULL,
 
     CONSTRAINT apoio_pk PRIMARY KEY (apoiador, ano),
 

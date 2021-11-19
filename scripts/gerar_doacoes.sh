@@ -8,8 +8,10 @@ for i in {1..2000}; do
     candidato="'$(cut -d ',' -f 1 <<< "$candidatura")'"
     ano="'$(cut -d ',' -f 2 <<< "$candidatura")'"
 
-    apoiador="'$(shuf -n 1 <<< "$pessoas")'"
-    funcao="'$(shuf -n 1 -e Designer Panfleteiro Marketeiro Tesoureiro Site)'"
+    doador="'$(shuf -n 1 <<< "$pessoas")'"
 
-    psql -c "INSERT INTO apoio VALUES ($apoiador, $candidato, $ano, $funcao)"
+    valor="'$(shuf -n 1 -i 100-10000)'"
+
+
+    psql -c "INSERT INTO doacao VALUES (DEFAULT, $valor, $doador, $candidato, $ano)"
 done
