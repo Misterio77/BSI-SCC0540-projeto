@@ -30,6 +30,8 @@
             # HTML/CSS tooling
             nodePackages.prettier
             sass
+            # Diagrams
+            plantuml
           ];
         };
       }

@@ -1,0 +1,81 @@
+@startuml
+hide circle
+
+entity Indivíduo {
+    PK cpfcnpj
+    --
+    nome
+    nascimento
+}
+entity Partido {
+    PK numero
+    --
+    UN nome
+    programa
+}
+entity Cargo {
+    PK tipo
+    PK local
+    --
+    cadeiras
+    salario
+}
+entity Processo{
+    PK id
+    --
+    FK reu
+    crime
+}
+entity Julgamento {
+    PK,FK processo
+    PK instancia
+    --
+    data
+    procedente
+}
+entity Candidatura {
+    PK,FK1 candidato
+    PK ano
+    --
+    FK2 vice_candidato
+    FK3 cargo_tipo
+    FK3 cargo_local
+    FK4 partido
+    numero
+}
+entity Pleito {
+    PK,FK candidato
+    PK,FK ano
+    PK turno
+    --
+    votos
+}
+entity Apoio {
+    PK,FK1 apoiador
+    PK,FK2 ano
+    --
+    FK2 candidato
+    funcao
+}
+entity Doação {
+    PK id
+    --
+    FK1 candidato
+    FK1 ano
+    FK2 doador
+    valor
+}
+
+Indivíduo ||--o{ Processo: "reu"
+Processo ||-o{ Julgamento: "processo"
+Indivíduo ||-o{ Candidatura: "candidato"
+Indivíduo |o--o{ Candidatura: "vice_candidato"
+Partido ||--o{ Candidatura: "partido"
+Cargo ||--o{ Candidatura: "cargo_tipo, cargo_local"
+Indivíduo ||--o{ Apoio: "apoiador"
+Candidatura ||--o{ Apoio: "candidato, ano"
+Indivíduo ||--o{ Doação: "doador"
+Candidatura ||--o{ Doação: "candidato, ano"
+Candidatura ||--o{ Pleito: "candidato, ano"
+
+@enduml
