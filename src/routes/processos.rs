@@ -6,6 +6,7 @@ use crate::{
     database::Database,
     error::ServerError,
     schema::{Processo, ProcessoFiltro},
+    pagination::Pages,
 };
 
 #[get("/<id>")]
@@ -16,15 +17,14 @@ async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError>
     Ok(Template::render("routes/processo", ctx))
 }
 
-#[get("/?<filtro>&<pagina>")]
+#[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
     filtro: ProcessoFiltro,
-    pagina: Option<u16>,
+    paginas: Pages,
 ) -> Result<Template, ServerError> {
-    let pagina = pagina.unwrap_or(1);
-    let processos = Processo::listar(&db, filtro.clone(), pagina, 50).await?;
-    let ctx = context! {processos, filtro, pagina};
+    let processos = Processo::listar(&db, filtro.clone(), paginas.current, 50).await?;
+    let ctx = context! {processos, filtro, paginas};
 
     Ok(Template::render("routes/processos", ctx))
 }

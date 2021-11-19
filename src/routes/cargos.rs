@@ -7,6 +7,7 @@ use crate::{
     database::Database,
     error::ServerError,
     schema::{Cargo, CargoFiltro, TipoCargo},
+    pagination::Pages,
 };
 
 #[get("/<tipo>/<local>")]
@@ -21,15 +22,14 @@ async fn get(
     Ok(Template::render("routes/cargo", ctx))
 }
 
-#[get("/?<filtro>&<pagina>")]
+#[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
     filtro: CargoFiltro,
-    pagina: Option<u16>,
+    paginas: Pages,
 ) -> Result<Template, ServerError> {
-    let pagina = pagina.unwrap_or(1);
-    let cargos = Cargo::listar(&db, filtro.clone(), pagina, 50).await?;
-    let ctx = context! {cargos, filtro, pagina};
+    let cargos = Cargo::listar(&db, filtro.clone(), paginas.current, 50).await?;
+    let ctx = context! {cargos, filtro, paginas};
 
     Ok(Template::render("routes/cargos", ctx))
 }

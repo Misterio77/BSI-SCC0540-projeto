@@ -1,25 +1,9 @@
 <div class="paginas">
-  <a class="anterior" role="button" {% if pagina <= 1 %}disabled{% endif %} href="?pagina={{ pagina - 1 }}">
+  <a class="anterior" role="button" {% if paginas.current <= 1 %}disabled{% endif %} href="{{ paginas.prev_url }}">
     ←
   </a>
-  {{ pagina }}
-  <a class="proxima" role="button" {% if n_elements < 50 %}disabled{% endif %} href="?pagina={{ pagina + 1 }}">
+  {{ paginas.current }}
+  <a class="proxima" role="button" {% if n_elements < 50 %}disabled{% endif %} href="{{ paginas.next_url }}">
     →
   </a>
 </div>
-<script>
-  const current_url = new URL(window.location.href);
-
-  const next = new URL(current_url);
-  next.searchParams.set('pagina', {{ pagina }}+1)
-
-  const previous = new URL(current_url);
-  previous.searchParams.set('pagina', {{ pagina }}-1);
-
-  document.querySelectorAll(".paginas .proxima").forEach(button => {
-    button.href = next.toString()
-  });
-  document.querySelectorAll(".paginas .anterior").forEach(button => {
-    button.href = previous.toString()
-  });
-</script>

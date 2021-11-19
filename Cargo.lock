@@ -1342,6 +1342,7 @@ version = "1.0.0-pre5"
 dependencies = [
  "normpath",
  "postgres-types",
+ "qstring",
  "rocket",
  "rocket_db_pools",
  "rocket_dyn_templates",
@@ -1349,6 +1350,15 @@ dependencies = [
  "serde",
  "strum",
  "time",
+]
+
+[[package]]
+name = "qstring"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d464fae65fff2680baf48019211ce37aaec0c78e9264c84a3e484717f965104e"
+dependencies = [
+ "percent-encoding",
 ]
 
 [[package]]
@@ -1505,6 +1515,7 @@ dependencies = [
  "rocket_codegen",
  "rocket_http",
  "serde",
+ "serde_json",
  "state",
  "tempfile",
  "time",

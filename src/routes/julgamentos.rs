@@ -6,6 +6,7 @@ use crate::{
     database::Database,
     error::ServerError,
     schema::{Julgamento, JulgamentoFiltro},
+    pagination::Pages,
 };
 
 #[get("/<processo>/<instancia>")]
@@ -20,15 +21,14 @@ async fn get(
     Ok(Template::render("routes/julgamento", ctx))
 }
 
-#[get("/?<filtro>&<pagina>")]
+#[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
     filtro: JulgamentoFiltro,
-    pagina: Option<u16>,
+    paginas: Pages,
 ) -> Result<Template, ServerError> {
-    let pagina = pagina.unwrap_or(1);
-    let julgamentos = Julgamento::listar(&db, filtro.clone(), pagina, 50).await?;
-    let ctx = context! {julgamentos, filtro, pagina};
+    let julgamentos = Julgamento::listar(&db, filtro.clone(), paginas.current, 50).await?;
+    let ctx = context! {julgamentos, filtro, paginas};
 
     Ok(Template::render("routes/julgamentos", ctx))
 }

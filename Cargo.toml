@@ -9,7 +9,7 @@ license = "MIT"
 
 [dependencies.rocket]
 version = "0.5.0-rc.1"
-features = ["tls"]
+features = ["tls", "json"]
 [dependencies.rocket_dyn_templates]
 version = "0.1.0-rc.1"
 features = ["tera"]
@@ -39,6 +39,9 @@ features = ["derive"]
 
 [dependencies.normpath]
 version = "0.3"
+
+[dependencies.qstring]
+version = "0.7"
 
 [patch.crates-io]
 rocket = { git = "https://github.com/SergioBenitez/Rocket" }
