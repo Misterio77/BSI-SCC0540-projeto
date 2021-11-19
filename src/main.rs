@@ -8,6 +8,8 @@ use projeto_bd::{
     database::Database,
     // Nosso tipo personalizado de erro
     error::ServerError,
+    // Reescrever deleções
+    post_as_delete::PostAsDelete,
     // Rotas do servidor
     routes::{
         apoios, candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos,
@@ -24,6 +26,8 @@ async fn main() -> Result<(), ServerError> {
         .attach(Database::init())
         // Middleware pra gerir templates html
         .attach(Template::fairing())
+        // Middleware pra reescrever POST de deleções em DELETE
+        .attach(PostAsDelete)
         // Servir assets da pasta assets (style.css)
         .attach(Assets)
         // Páginas de erro
