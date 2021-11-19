@@ -11,7 +11,12 @@ use crate::{
 };
 
 #[get("/<apoiador>/<candidato>/<ano>")]
-async fn get(db: Connection<Database>, apoiador: String, candidato: String, ano: i16) -> Result<Response<Apoio>, ServerError> {
+async fn get(
+    db: Connection<Database>,
+    apoiador: String,
+    candidato: String,
+    ano: i16,
+) -> Result<Response<Apoio>, ServerError> {
     let apoio = Apoio::obter(&db, &apoiador, &candidato, ano).await?;
 
     Ok(Response::new(

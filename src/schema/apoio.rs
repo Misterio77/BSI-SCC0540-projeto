@@ -29,7 +29,12 @@ impl TryFrom<Row> for Apoio {
 
 impl Apoio {
     /// Obtém apoio, dado apoiador, candidato, e ano
-    pub async fn obter(db: &Client, apoiador: &str, candidato: &str, ano: i16) -> Result<Apoio, ServerError> {
+    pub async fn obter(
+        db: &Client,
+        apoiador: &str,
+        candidato: &str,
+        ano: i16,
+    ) -> Result<Apoio, ServerError> {
         db.query_one(
             "
             SELECT apoiador, candidato, ano, funcao
@@ -65,7 +70,7 @@ impl Apoio {
                 &filtro.ano,
                 &filtro.funcao,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?
@@ -88,7 +93,10 @@ impl ApoioFiltro {
         Self {
             apoiador: self.apoiador.filter(|s| !s.is_empty()),
             candidato: self.candidato.filter(|s| !s.is_empty()),
-            funcao: self.funcao.filter(|s| !s.is_empty()).map(|s| format!("%{}%", s)),
+            funcao: self
+                .funcao
+                .filter(|s| !s.is_empty())
+                .map(|s| format!("%{}%", s)),
             ..self
         }
     }

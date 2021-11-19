@@ -72,7 +72,7 @@ impl Partido {
                 &filtro.nome,
                 &filtro.programa,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?

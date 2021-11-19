@@ -156,13 +156,11 @@ impl<'r> rocket::response::Responder<'r, 'static> for ServerError {
         if media_type == Some(&rocket::http::MediaType::JSON) {
             let json = rocket::serde::json::Json(self);
 
-            response
-                .join(json.respond_to(req)?)
+            response.join(json.respond_to(req)?)
         } else {
             let template = Template::render("error", self);
 
-            response
-                .join(template.respond_to(req)?)
+            response.join(template.respond_to(req)?)
         };
 
         response.ok()

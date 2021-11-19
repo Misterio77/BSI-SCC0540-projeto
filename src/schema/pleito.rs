@@ -72,7 +72,7 @@ impl Pleito {
                 &filtro.min_votos,
                 &filtro.max_votos,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?

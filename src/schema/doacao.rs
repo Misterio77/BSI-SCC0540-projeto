@@ -72,7 +72,7 @@ impl Doacao {
                 &filtro.max_valor,
                 &filtro.ano,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?

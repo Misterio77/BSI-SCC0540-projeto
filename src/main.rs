@@ -10,7 +10,8 @@ use projeto_bd::{
     error::ServerError,
     // Rotas do servidor
     routes::{
-        apoios, candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
+        apoios, candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos,
+        processos,
     },
     // Páginas de erro, e home
     routes::{errors, home},

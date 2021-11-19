@@ -110,7 +110,7 @@ impl Candidatura {
                 &filtro.numero,
                 &filtro.partido,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?

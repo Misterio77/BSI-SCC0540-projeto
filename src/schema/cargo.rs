@@ -89,7 +89,7 @@ impl Cargo {
                 &filtro.min_salario,
                 &filtro.max_salario,
                 &(limite as i64),
-                &(((pagina-1) as i64) * (limite as i64)),
+                &(((pagina - 1) as i64) * (limite as i64)),
             ],
         )
         .await?

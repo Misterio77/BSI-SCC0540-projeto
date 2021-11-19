@@ -60,7 +60,8 @@ fn get_page(query: &qstring::QString) -> u16 {
 fn set_page(query: qstring::QString, page: u16) -> qstring::QString {
     let mut map: HashMap<String, String> = query.into_pairs().into_iter().collect();
 
-    *map.entry("pagina".into()).or_insert_with(|| page.to_string()) = page.to_string();
+    *map.entry("pagina".into())
+        .or_insert_with(|| page.to_string()) = page.to_string();
 
     qstring::QString::new(map.into_iter().collect())
 }
