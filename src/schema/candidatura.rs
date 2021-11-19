@@ -151,14 +151,14 @@ impl Candidatura {
 /// Filtro de listagem de candidaturas
 #[derive(Clone, Serialize, FromForm)]
 pub struct CandidaturaFiltro {
-    pub candidato: Option<String>,
-    pub vice_candidato: Option<String>,
-    pub ano: Option<i16>,
-    pub cargo_tipo: Option<TipoCargo>,
-    pub cargo_local: Option<String>,
-    pub numero: Option<i32>,
-    pub partido: Option<i16>,
-    pub eleitos: bool,
+    candidato: Option<String>,
+    vice_candidato: Option<String>,
+    ano: Option<i16>,
+    cargo_tipo: Option<TipoCargo>,
+    cargo_local: Option<String>,
+    numero: Option<i32>,
+    partido: Option<i16>,
+    eleitos: bool,
 }
 impl CandidaturaFiltro {
     pub fn cleanup(self) -> Self {

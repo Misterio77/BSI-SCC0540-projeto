@@ -85,12 +85,12 @@ impl Doacao {
 /// Filtro de listagem de doações
 #[derive(Clone, Serialize, FromForm)]
 pub struct DoacaoFiltro {
-    pub id: Option<i32>,
-    pub min_valor: Option<Decimal>,
-    pub max_valor: Option<Decimal>,
-    pub doador: Option<String>,
-    pub candidato: Option<String>,
-    pub ano: Option<i16>,
+    id: Option<i32>,
+    min_valor: Option<Decimal>,
+    max_valor: Option<Decimal>,
+    doador: Option<String>,
+    candidato: Option<String>,
+    ano: Option<i16>,
 }
 impl DoacaoFiltro {
     pub fn cleanup(self) -> Self {

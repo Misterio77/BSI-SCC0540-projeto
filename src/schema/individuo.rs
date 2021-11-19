@@ -96,10 +96,10 @@ impl Individuo {
 /// Filtro de listagem de indivíduo
 #[derive(Clone, Serialize, FromForm)]
 pub struct IndividuoFiltro {
-    pub cpfcnpj: Option<String>,
-    pub nome: Option<String>,
-    pub nascimento: Option<Date>,
-    pub ficha_limpa: bool,
+    cpfcnpj: Option<String>,
+    nome: Option<String>,
+    nascimento: Option<Date>,
+    ficha_limpa: bool,
 }
 impl IndividuoFiltro {
     pub fn cleanup(self) -> Self {

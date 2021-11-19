@@ -85,11 +85,11 @@ impl Pleito {
 /// Filtro de listagem de pleito
 #[derive(Clone, Serialize, FromForm)]
 pub struct PleitoFiltro {
-    pub candidato: Option<String>,
-    pub ano: Option<i16>,
-    pub turno: Option<i16>,
-    pub min_votos: Option<i32>,
-    pub max_votos: Option<i32>,
+    candidato: Option<String>,
+    ano: Option<i16>,
+    turno: Option<i16>,
+    min_votos: Option<i32>,
+    max_votos: Option<i32>,
 }
 impl PleitoFiltro {
     pub fn cleanup(self) -> Self {

@@ -83,10 +83,10 @@ impl Julgamento {
 /// Filtro de listagem de julgamento
 #[derive(Clone, Serialize, FromForm)]
 pub struct JulgamentoFiltro {
-    pub processo: Option<i32>,
-    pub instancia: Option<String>,
-    pub data: Option<Date>,
-    pub procedente: Option<bool>,
+    processo: Option<i32>,
+    instancia: Option<String>,
+    data: Option<Date>,
+    procedente: Option<bool>,
 }
 impl JulgamentoFiltro {
     pub fn cleanup(self) -> Self {

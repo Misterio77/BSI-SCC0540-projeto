@@ -58,19 +58,18 @@ impl Partido {
         pagina: u16,
         limite: u16,
     ) -> Result<Vec<Partido>, ServerError> {
+        let filtro = filtro.cleanup();
         db.query(
             "
             SELECT numero, nome, programa
             FROM partido
             WHERE
-                ($1::SMALLINT IS NULL OR numero       = $1) AND
-                ($2::VARCHAR  IS NULL OR nome     ILIKE $2) AND
-                ($3::VARCHAR  IS NULL OR programa ILIKE $3)
-            LIMIT $4 OFFSET $5",
+                ($1::SMALLINT IS NULL OR numero   = $1) AND
+                ($2::VARCHAR  IS NULL OR nome ILIKE $2)
+            LIMIT $3 OFFSET $4",
             &[
                 &filtro.numero,
                 &filtro.nome,
-                &filtro.programa,
                 &(limite as i64),
                 &(((pagina - 1) as i64) * (limite as i64)),
             ],
@@ -85,19 +84,14 @@ impl Partido {
 /// Filtro de listagem de partido
 #[derive(Clone, Serialize, FromForm)]
 pub struct PartidoFiltro {
-    pub numero: Option<i16>,
-    pub nome: Option<String>,
-    pub programa: Option<String>,
+    numero: Option<i16>,
+    nome: Option<String>,
 }
 impl PartidoFiltro {
     pub fn cleanup(self) -> Self {
         Self {
             nome: self
                 .nome
-                .filter(|s| !s.is_empty())
-                .map(|s| format!("%{}%", s)),
-            programa: self
-                .programa
                 .filter(|s| !s.is_empty())
                 .map(|s| format!("%{}%", s)),
             ..self

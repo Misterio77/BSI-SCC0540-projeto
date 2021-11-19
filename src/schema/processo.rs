@@ -74,9 +74,9 @@ impl Processo {
 /// Filtro de listagem de processo
 #[derive(Clone, Serialize, FromForm)]
 pub struct ProcessoFiltro {
-    pub id: Option<i32>,
-    pub reu: Option<String>,
-    pub crime: Option<String>,
+    id: Option<i32>,
+    reu: Option<String>,
+    crime: Option<String>,
 }
 impl ProcessoFiltro {
     pub fn cleanup(self) -> Self {

@@ -102,12 +102,12 @@ impl Cargo {
 /// Filtro de listagem de cargos
 #[derive(Clone, Serialize, FromForm)]
 pub struct CargoFiltro {
-    pub tipo: Option<TipoCargo>,
-    pub local: Option<String>,
-    pub min_cadeiras: Option<i16>,
-    pub max_cadeiras: Option<i16>,
-    pub min_salario: Option<Decimal>,
-    pub max_salario: Option<Decimal>,
+    tipo: Option<TipoCargo>,
+    local: Option<String>,
+    min_cadeiras: Option<i16>,
+    max_cadeiras: Option<i16>,
+    min_salario: Option<Decimal>,
+    max_salario: Option<Decimal>,
 }
 impl CargoFiltro {
     pub fn cleanup(self) -> Self {

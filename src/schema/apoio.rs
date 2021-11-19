@@ -83,10 +83,10 @@ impl Apoio {
 /// Filtro de listagem de apoios
 #[derive(Clone, Debug, Serialize, FromForm)]
 pub struct ApoioFiltro {
-    pub apoiador: Option<String>,
-    pub candidato: Option<String>,
-    pub ano: Option<i16>,
-    pub funcao: Option<String>,
+    apoiador: Option<String>,
+    candidato: Option<String>,
+    ano: Option<i16>,
+    funcao: Option<String>,
 }
 impl ApoioFiltro {
     pub fn cleanup(self) -> Self {

@@ -1,0 +1,79 @@
+{% extends "base" %}
+
+{% block title %}Pleitos{% endblock title %}
+
+{% block content %}
+{% set n_elements = pleitos | length %}
+
+<h1>Pleitos</h1>
+
+<details>
+  <summary>Filtros</summary>
+  <form>
+    <div class="grid">
+      <label>
+        Candidato:
+      <small>(Apenas números)</small>:
+        <input type="number" name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}" />
+      </label>
+      <label>
+        Ano:
+        <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}"/>
+      </label>
+    </div>
+    <div class="grid">
+      <label>
+        Turno:
+        <input type="number" min="1" max="2" name="filtro.turno" value="{{ filtro.turno | default(value="") }}"/>
+      </label>
+      <label>
+        Mínimo de Votos:
+        <input type="number" min="0" name="filtro.min_votos" value="{{ filtro.min_votos | default(value="") }}"/>
+      </label>
+      <label>
+        Máximo de Votos:
+        <input type="number" min="0" name="filtro.max_votos" value="{{ filtro.max_votos | default(value="") }}"/>
+      </label>
+    </div>
+    <button>Filtrar</button>
+  </form>
+</details>
+
+{% include "paginas" %}
+
+<hr />
+
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>Candidatura</th>
+        <th>Turno</th>
+        <th>Votos</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pleito in pleitos %}
+      <tr>
+        <td>
+          <a href="/candidaturas/{{ pleito.candidato }}/{{ pleito.ano }}">
+            {{ pleito.candidato }} {{ pleito.ano }}
+          </a>
+        </td>
+        <td>{{ pleito.turno }}</td>
+        <td>{{ pleito.votos }}</td>
+        <td>
+          <a href="/pleitos/{{ pleito.candidato }}/{{ pleito.ano }}/{{ pleito.turno }}">
+            Mais info →
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>
+
+{% include "paginas" %}
+
+{% endblock content %}
