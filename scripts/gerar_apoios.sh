@@ -2,7 +2,7 @@
 pessoas="$(psql -c "COPY (SELECT cpfcnpj FROM individuo WHERE cpfcnpj SIMILAR TO '[0-9]{11}') TO STDOUT WITH CSV")"
 candidaturas="$(psql -c "COPY (SELECT candidato,ano FROM candidatura) TO STDOUT WITH CSV")"
 
-for i in {1..100}; do
+for i in {1..2000}; do
     candidatura="$(shuf -n 1 <<< "$candidaturas")"
 
     apoiador="'$(shuf -n 1 <<< "$pessoas")'"

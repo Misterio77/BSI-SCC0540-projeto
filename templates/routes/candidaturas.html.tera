@@ -52,6 +52,10 @@
       <input type="number" name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
     </label>
   </div>
+  <label>
+    Exibir apenas eleitos
+    <input type="checkbox" name="filtro.eleitos" {% if filtro.eleitos %}checked{% endif %}/>
+  </label>
   <button>Filtrar</button>
 </form>
 </details>

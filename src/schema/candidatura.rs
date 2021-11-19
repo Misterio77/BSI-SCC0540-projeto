@@ -88,7 +88,40 @@ impl Candidatura {
         limite: u16,
     ) -> Result<Vec<Candidatura>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
+
+        // Mostrar apenas os eleitos?
+        let query = if filtro.eleitos {
+            // Query especial, que usa funções window para pegar apenas os top candidatos, com o
+            // número de cadeiras do cargo como limite
+            "
+            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido FROM (
+                SELECT
+                    c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
+                    row_number() OVER(
+                        PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
+                        ORDER BY p.turno DESC, p.votos DESC
+                    ) AS rownum
+                FROM
+                    candidatura c
+                INNER JOIN pleito p
+                    ON p.candidato = c.candidato
+                    AND p.ano = c.ano
+            ) AS eleicao
+            INNER JOIN cargo
+                ON cargo.local = eleicao.cargo_local
+                AND cargo.tipo = eleicao.cargo_tipo
+            WHERE
+                rownum <= cargo.cadeiras AND
+                ($1::VARCHAR    IS NULL OR candidato       = $1) AND
+                ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
+                ($3::SMALLINT   IS NULL OR ano             = $3) AND
+                ($4::tipo_cargo IS NULL OR cargo_tipo      = $4) AND
+                ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
+                ($6::INTEGER    IS NULL OR numero          = $6) AND
+                ($7::SMALLINT   IS NULL OR partido         = $7)
+            LIMIT $8 OFFSET $9"
+        } else {
+            // Query usual
             "
             SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             FROM candidatura
@@ -100,7 +133,11 @@ impl Candidatura {
                 ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
                 ($6::INTEGER    IS NULL OR numero          = $6) AND
                 ($7::SMALLINT   IS NULL OR partido         = $7)
-            LIMIT $8 OFFSET $9",
+            LIMIT $8 OFFSET $9"
+        };
+
+        db.query(
+            query,
             &[
                 &filtro.candidato,
                 &filtro.vice_candidato,
@@ -130,6 +167,7 @@ pub struct CandidaturaFiltro {
     pub cargo_local: Option<String>,
     pub numero: Option<i32>,
     pub partido: Option<i16>,
+    pub eleitos: bool,
 }
 impl CandidaturaFiltro {
     pub fn cleanup(self) -> Self {

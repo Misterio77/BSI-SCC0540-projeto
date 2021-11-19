@@ -44,6 +44,13 @@
 <h2>Referenciado em:</h2>
 <p>
   <a
+    href="/pleitos?filtro.candidato={{ candidatura.candidato }}&filtro.ano={{ candidatura.ano }}"
+  >
+    Pleitos concluídos
+  </a>
+</p>
+<p>
+  <a
     href="/doacoes?filtro.candidato={{ candidatura.candidato }}&filtro.ano={{ candidatura.ano }}"
   >
     Doações recebidas

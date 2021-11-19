@@ -17,8 +17,9 @@ while read -r cargo; do
 
     # Para cada ano
     for ano in $anos; do
-        # 3 candidatos
-        for i in {1..3}; do
+        # entre 3 e 15 candidatos
+        n_candidatos="$(shuf -n 1 -i 3-15)"
+        for i in $(seq 1 $n_candidatos ); do
             # Escolher partido
             partido="$(shuf -n 1 <<< "$partidos")"
 
