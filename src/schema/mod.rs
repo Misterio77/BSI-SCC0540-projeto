@@ -6,6 +6,7 @@ pub mod julgamento;
 pub mod partido;
 pub mod pleito;
 pub mod processo;
+pub mod apoio;
 
 pub use candidatura::{Candidatura, CandidaturaFiltro};
 pub use cargo::{Cargo, CargoFiltro, TipoCargo};
@@ -15,4 +16,4 @@ pub use julgamento::{Julgamento, JulgamentoFiltro};
 pub use partido::{Partido, PartidoFiltro};
 pub use pleito::{Pleito, PleitoFiltro};
 pub use processo::{Processo, ProcessoFiltro};
-// TODO: membro equipe
+pub use apoio::{Apoio, ApoioFiltro};

@@ -1,3 +1,4 @@
+pub mod apoios;
 pub mod candidaturas;
 pub mod cargos;
 pub mod doacoes;

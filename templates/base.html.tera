@@ -13,14 +13,14 @@
     <nav><ul><li><a href="/">Justiça Eleitoral</a></li></ul></nav>
 
     <nav><ul>
-      <li><a href="/candidaturas">Candidaturas</a></li>
-      <li><a href="/cargos">Cargos</a></li>
-      <li><a href="/doacoes">Doações</a></li>
-      <li><a href="/equipes">Equipes</a></li>
-      <li><a href="/individuos">Indivíduos</a></li>
-      <li><a href="/julgamentos">Julgamentos</a></li>
-      <li><a href="/partidos">Partidos</a></li>
-      <li><a href="/pleitos">Pleitos</a></li>
+      <li><a href="/apoios">Apoios</a></li> |
+      <li><a href="/candidaturas">Candidaturas</a></li> |
+      <li><a href="/cargos">Cargos</a></li> |
+      <li><a href="/doacoes">Doações</a></li> |
+      <li><a href="/individuos">Indivíduos</a></li> |
+      <li><a href="/julgamentos">Julgamentos</a></li> |
+      <li><a href="/partidos">Partidos</a></li> |
+      <li><a href="/pleitos">Pleitos</a></li> |
       <li><a href="/processos">Processos</a></li>
     </ul></nav>
 

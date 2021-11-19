@@ -32,7 +32,7 @@ impl<'r> request::FromRequest<'r> for Pages {
         let next = current + 1;
 
         let prev_query = set_page(query.clone(), prev);
-        let next_query = set_page(query.clone(), next);
+        let next_query = set_page(query, next);
 
         let prev_url = format!("{}?{}", uri.path(), prev_query);
         let next_url = format!("{}?{}", uri.path(), next_query);
@@ -60,7 +60,7 @@ fn get_page(query: &qstring::QString) -> u16 {
 fn set_page(query: qstring::QString, page: u16) -> qstring::QString {
     let mut map: HashMap<String, String> = query.into_pairs().into_iter().collect();
 
-    *map.entry("pagina".into()).or_insert(page.to_string()) = page.to_string();
+    *map.entry("pagina".into()).or_insert_with(|| page.to_string()) = page.to_string();
 
     qstring::QString::new(map.into_iter().collect())
 }

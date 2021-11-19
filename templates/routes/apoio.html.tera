@@ -1,0 +1,28 @@
+{% extends "base" %}
+
+{% block title %}Apoio {{ apoio.apoiador }} {{ apoio.candidato }} ({{ apoio.ano }}){% endblock title %}
+
+{% block content %}
+
+<nav class="breadcrumb">
+  <a href="/apoios">← Apoios</a>
+</nav>
+
+<h1>Apoio: {{ apoio.apoiador }} é {{ apoio.funcao }} em {{ apoio.candidato }} ({{ apoio.ano }})</h1>
+
+<h2>Informações:</h2>
+<p>
+  <strong>Apoiador</strong>:
+  <a href="/individuos/{{ apoio.apoiador }}">
+    {{ apoio.apoiador }}
+  </a>
+</p>
+<p>
+  <strong>Candidatura</strong>:
+  <a href="/candidaturas/{{ apoio.candidato }}/{{ apoio.ano }}">
+    {{ apoio.candidato }} ({{ apoio.ano }})
+  </a>
+</p>
+<p><strong>Função</strong>: {{ apoio.funcao }}</p>
+
+{% endblock content %}

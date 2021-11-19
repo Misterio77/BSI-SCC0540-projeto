@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Pleito de um pleito
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Pleito {
     pub candidato: String,
     pub ano: i16,

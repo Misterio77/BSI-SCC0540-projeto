@@ -1,20 +1,27 @@
 use rocket::{get, routes, Route};
 use rocket_db_pools::Connection;
-use rocket_dyn_templates::{context, Template};
+use rocket_dyn_templates::context;
 
 use crate::{
     database::Database,
     error::ServerError,
-    schema::{Individuo, IndividuoFiltro},
     pagination::Pages,
+    schema::{Individuo, IndividuoFiltro},
+    Response,
 };
 
 #[get("/<cpfcnpj>")]
-async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, ServerError> {
+async fn get(
+    db: Connection<Database>,
+    cpfcnpj: String,
+) -> Result<Response<Individuo>, ServerError> {
     let individuo = Individuo::obter(&db, &cpfcnpj).await?;
-    let ctx = context! {individuo};
 
-    Ok(Template::render("routes/individuo", ctx))
+    Ok(Response::new(
+        individuo.clone(),
+        "routes/individuo",
+        context! {individuo},
+    ))
 }
 
 #[get("/?<filtro>")]
@@ -22,11 +29,14 @@ async fn list(
     db: Connection<Database>,
     filtro: IndividuoFiltro,
     paginas: Pages,
-) -> Result<Template, ServerError> {
+) -> Result<Response<Vec<Individuo>>, ServerError> {
     let individuos = Individuo::listar(&db, filtro.clone(), paginas.current, 50).await?;
-    let ctx = context! {individuos, filtro, paginas};
 
-    Ok(Template::render("routes/individuos", ctx))
+    Ok(Response::new(
+        individuos.clone(),
+        "routes/individuos",
+        context! {individuos, filtro, paginas},
+    ))
 }
 
 pub fn routes() -> Vec<Route> {

@@ -32,7 +32,7 @@
   <a href="/processos?filtro.reu={{ individuo.cpfcnpj }}">Processos onde é réu</a>
 </p>
 <p>
-  <a href="/equipes?filtro.membro={{ individuo.cpfcnpj }}">Equipes em que participa</a>
+  <a href="/apoios?filtro.apoiador={{ individuo.cpfcnpj }}">Candidaturas em que é apoiador</a>
 </p>
 
 {% endblock content %}

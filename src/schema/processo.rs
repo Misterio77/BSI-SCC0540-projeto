@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Processo judicial
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Processo {
     pub id: i32,
     pub reu: String,

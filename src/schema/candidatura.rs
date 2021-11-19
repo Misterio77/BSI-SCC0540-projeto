@@ -8,7 +8,7 @@ use crate::error::ServerError;
 use super::TipoCargo;
 
 /// Candidatura política
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Candidatura {
     pub candidato: String,
     pub vice_candidato: Option<String>,

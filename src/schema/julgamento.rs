@@ -7,7 +7,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Julgamento de um julgamento
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Julgamento {
     pub processo: i32,
     pub instancia: String,

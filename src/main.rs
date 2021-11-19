@@ -10,7 +10,7 @@ use projeto_bd::{
     error::ServerError,
     // Rotas do servidor
     routes::{
-        candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
+        apoios, candidaturas, cargos, doacoes, individuos, julgamentos, partidos, pleitos, processos,
     },
     // Páginas de erro, e home
     routes::{errors, home},
@@ -30,6 +30,7 @@ async fn main() -> Result<(), ServerError> {
         // Página inicial
         .mount("/", home::routes())
         // Rotas das entidades
+        .mount("/apoios", apoios::routes())
         .mount("/candidaturas", candidaturas::routes())
         .mount("/cargos", cargos::routes())
         .mount("/doacoes", doacoes::routes())

@@ -8,7 +8,7 @@ use strum::EnumString;
 use crate::database::{Client, Row};
 use crate::error::ServerError;
 
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Cargo {
     pub tipo: TipoCargo,
     pub local: String,

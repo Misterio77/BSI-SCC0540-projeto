@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS doacao, membro_equipe, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
+DROP TABLE IF EXISTS doacao, apoio, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
 
 -- Representa um indivíduo
@@ -182,20 +182,22 @@ CREATE TABLE pleito (
 );
 
 
--- Representa cada membro da equipe
-CREATE TABLE membro_equipe (
-    membro VARCHAR NOT NULL,
+-- Representa cada apoiador da campanha
+CREATE TABLE apoio (
+    apoiador VARCHAR NOT NULL,
     candidato VARCHAR NOT NULL,
     ano SMALLINT NOT NULL,
+    funcao VARCHAR NOT NULL,
+    remunerado BOOLEAN NOT NULL,
 
-    CONSTRAINT membro_equipe_pk PRIMARY KEY (membro, ano),
+    CONSTRAINT apoio_pk PRIMARY KEY (apoiador, ano),
 
-    CONSTRAINT membro_equipe_fk_membro
-        FOREIGN KEY (membro)
+    CONSTRAINT apoio_fk_apoiador
+        FOREIGN KEY (apoiador)
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE,
 
-    CONSTRAINT membro_equipe_fk_candidatura
+    CONSTRAINT apoio_fk_candidatura
         FOREIGN KEY (candidato, ano)
         REFERENCES candidatura (candidato, ano)
         ON DELETE CASCADE ON UPDATE CASCADE

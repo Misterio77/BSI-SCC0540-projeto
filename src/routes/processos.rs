@@ -1,20 +1,24 @@
 use rocket::{get, routes, Route};
 use rocket_db_pools::Connection;
-use rocket_dyn_templates::{context, Template};
+use rocket_dyn_templates::context;
 
 use crate::{
     database::Database,
     error::ServerError,
-    schema::{Processo, ProcessoFiltro},
     pagination::Pages,
+    schema::{Processo, ProcessoFiltro},
+    Response,
 };
 
 #[get("/<id>")]
-async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError> {
+async fn get(db: Connection<Database>, id: i32) -> Result<Response<Processo>, ServerError> {
     let processo = Processo::obter(&db, id).await?;
-    let ctx = context! {processo};
 
-    Ok(Template::render("routes/processo", ctx))
+    Ok(Response::new(
+        processo.clone(),
+        "routes/processo",
+        context! {processo},
+    ))
 }
 
 #[get("/?<filtro>")]
@@ -22,11 +26,14 @@ async fn list(
     db: Connection<Database>,
     filtro: ProcessoFiltro,
     paginas: Pages,
-) -> Result<Template, ServerError> {
+) -> Result<Response<Vec<Processo>>, ServerError> {
     let processos = Processo::listar(&db, filtro.clone(), paginas.current, 50).await?;
-    let ctx = context! {processos, filtro, paginas};
 
-    Ok(Template::render("routes/processos", ctx))
+    Ok(Response::new(
+        processos.clone(),
+        "routes/processos",
+        context! {processos, filtro, paginas},
+    ))
 }
 
 pub fn routes() -> Vec<Route> {

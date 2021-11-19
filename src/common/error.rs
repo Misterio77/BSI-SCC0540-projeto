@@ -148,13 +148,24 @@ impl<'r> rocket::response::Responder<'r, 'static> for ServerError {
         self,
         req: &'r rocket::request::Request<'_>,
     ) -> rocket::response::Result<'static> {
-        let code = self.code;
-        let template = Template::render("error", self);
-        rocket::response::Response::build()
-            .status(code)
-            .header(rocket::http::ContentType::HTML)
-            .join(template.respond_to(req)?)
-            .ok()
+        let media_type = req.accept().map(|a| a.preferred().media_type());
+
+        let mut response = rocket::response::Response::build();
+        response.status(self.code);
+
+        if media_type == Some(&rocket::http::MediaType::JSON) {
+            let json = rocket::serde::json::Json(self);
+
+            response
+                .join(json.respond_to(req)?)
+        } else {
+            let template = Template::render("error", self);
+
+            response
+                .join(template.respond_to(req)?)
+        };
+
+        response.ok()
     }
 }
 

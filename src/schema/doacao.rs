@@ -7,7 +7,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Doação para candidatura
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Doacao {
     pub id: i32,
     pub valor: Decimal,

@@ -7,7 +7,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Indivíduo cadastrado no sistema
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Individuo {
     pub cpfcnpj: String,
     pub nome: String,

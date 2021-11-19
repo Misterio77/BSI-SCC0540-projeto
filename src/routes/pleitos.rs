@@ -1,12 +1,13 @@
 use rocket::{get, routes, Route};
 use rocket_db_pools::Connection;
-use rocket_dyn_templates::{context, Template};
+use rocket_dyn_templates::context;
 
 use crate::{
     database::Database,
     error::ServerError,
-    schema::{Pleito, PleitoFiltro},
     pagination::Pages,
+    schema::{Pleito, PleitoFiltro},
+    Response,
 };
 
 #[get("/<candidato>/<ano>/<turno>")]
@@ -15,11 +16,14 @@ async fn get(
     candidato: String,
     ano: i16,
     turno: i16,
-) -> Result<Template, ServerError> {
+) -> Result<Response<Pleito>, ServerError> {
     let pleito = Pleito::obter(&db, &candidato, ano, turno).await?;
-    let ctx = context! {pleito};
 
-    Ok(Template::render("routes/pleito", ctx))
+    Ok(Response::new(
+        pleito.clone(),
+        "routes/pleito",
+        context! {pleito},
+    ))
 }
 
 #[get("/?<filtro>")]
@@ -27,11 +31,14 @@ async fn list(
     db: Connection<Database>,
     filtro: PleitoFiltro,
     paginas: Pages,
-) -> Result<Template, ServerError> {
+) -> Result<Response<Vec<Pleito>>, ServerError> {
     let pleitos = Pleito::listar(&db, filtro.clone(), paginas.current, 50).await?;
-    let ctx = context! {pleitos, filtro, paginas};
 
-    Ok(Template::render("routes/pleitos", ctx))
+    Ok(Response::new(
+        pleitos.clone(),
+        "routes/pleitos",
+        context! {pleitos, filtro, paginas},
+    ))
 }
 
 pub fn routes() -> Vec<Route> {

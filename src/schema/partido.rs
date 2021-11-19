@@ -6,7 +6,7 @@ use crate::database::{Client, Row};
 use crate::error::ServerError;
 
 /// Partido político
-#[derive(Serialize)]
+#[derive(Clone, Serialize)]
 pub struct Partido {
     pub numero: i16,
     pub nome: String,
