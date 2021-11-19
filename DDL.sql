@@ -8,8 +8,6 @@ CREATE TABLE individuo (
     cpfcnpj VARCHAR NOT NULL,
     nome VARCHAR NOT NULL,
     nascimento DATE NOT NULL,
-    -- TODO: trigger para manter atualizado
-    ficha_limpa BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT individuo_pk PRIMARY KEY (cpfcnpj),
 
@@ -87,6 +85,7 @@ CREATE TABLE julgamento (
 
 
 -- Representa uma candidatura
+-- TODO: só permitir adicionar candidatura caso no ano da eleição seja ficha limpa
 CREATE TABLE candidatura (
     candidato VARCHAR NOT NULL,
     vice_candidato VARCHAR DEFAULT NULL,
@@ -96,6 +95,7 @@ CREATE TABLE candidatura (
     numero INTEGER NOT NULL,
     partido SMALLINT NOT NULL,
 
+    -- Cada pessoa só pode ser candidata a um cargo por eleição
     CONSTRAINT candidatura_pk PRIMARY KEY (candidato, ano),
 
     -- Garante que, para cada ano, a pessoa só é vice de uma candidatura
@@ -125,6 +125,9 @@ CREATE TABLE candidatura (
                 -- 2 dígitos
                 (FLOOR(LOG(numero)+1) = 2)
         END),
+
+    -- Verifica que o candidato é pessoa física
+    CONSTRAINT candidatura_ck_candidato CHECK (candidato SIMILAR TO '[0-9]{11}'),
 
     -- Verifica se a candidatura cumpre requisito de vice do cargo
     -- E também que o candidato e vice são distintos
@@ -225,7 +228,5 @@ CREATE TABLE doacao (
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
 -- 1 doação por indivíduo com cnpj por candidatura
 CREATE UNIQUE INDEX doacao_un_juridica ON doacao (doador, candidato, ano) WHERE (doador SIMILAR TO '[0-9]{14}');
-
--- TODO: só permitir adicionar candidatura caso no ano da eleição seja ficha limpa
 
 COMMIT;

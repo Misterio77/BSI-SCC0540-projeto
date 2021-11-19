@@ -1,0 +1,66 @@
+{% extends "base" %}
+
+{% block title %}Individuos{% endblock title %}
+
+{% block content %}
+{% set n_elements = individuos | length %}
+
+<h1>Indivíduos</h1>
+
+<details>
+  <summary>Filtros</summary>
+  <form>
+    <div class="grid">
+      <label>
+        CPF/CNPJ
+        <small>(Apenas números)</small>:
+        <input type="number" name="filtro.cpfcnpj" value="{{ filtro.cpfcnpj | default(value="") }}" />
+      </label>
+      <label>
+        Nome/Razão Social:
+        <input name="filtro.nome" value="{{ filtro.nome | default(value="") }}"/>
+      </label>
+      <label>
+        Nascimento/Abertura:
+        <input name="filtro.nascimento" type="date" value="{{ filtro.nascimento | default(value="") }}"/>
+      </label>
+      <!-- TODO adicionar filtro de ficha limpa -->
+    </div>
+    <button>Filtrar</button>
+  </form>
+</details>
+
+{% include "paginas" %}
+
+<hr />
+
+<figure>
+  <table>
+    <thead>
+      <tr>
+        <th>CPF/CNPJ</th>
+        <th>Nome/Razão Social</th>
+        <th>Nacimento/Abertura</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for individuo in individuos %}
+      <tr>
+        <td>{{ individuo.cpfcnpj }}</td>
+        <td>{{ individuo.nome }}</td>
+        <td>{{ individuo.nascimento }}</td>
+        <td>
+          <a href="/individuos/{{ individuo.cpfcnpj }}">
+            Mais info →
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</figure>
+
+{% include "paginas" %}
+
+{% endblock content %}

@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<nav class="breadcrumb">
+  <a href="/cargos">← Cargos</a>
+</nav>
+
 <h1>Cargo: {{ cargo.tipo }} - {{ cargo.local}}</h1>
 
 <h2>Informações:</h2>

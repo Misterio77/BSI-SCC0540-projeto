@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<nav class="breadcrumb">
+  <a href="/candidaturas">← Candidaturas</a>
+</nav>
+
 <h1>
   Candidatura: {{ candidatura.numero }} ({{ candidatura.ano }}) - {{
   candidatura.cargo_tipo }} ({{ candidatura.cargo_local }})

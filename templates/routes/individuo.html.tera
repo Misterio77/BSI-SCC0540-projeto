@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<nav class="breadcrumb">
+  <a href="/individuos">← Indivíduos</a>
+</nav>
+
 <h1>Indivíduo: {{ individuo.nome }}</h1>
 
 <h2>Informações:</h2>
@@ -12,10 +16,6 @@
 <p>
   <strong>Nascimento</strong>: {{ individuo.nascimento | date(format="%d/%m/%Y")
   }}
-</p>
-<p>
-  <strong>Ficha limpa</strong>: {% if individuo.ficha_limpa %}Sim {% else %}Não
-  {% endif %}
 </p>
 
 <h2>Referenciado em:</h2>

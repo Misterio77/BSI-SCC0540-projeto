@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<nav class="breadcrumb">
+  <a href="/partidos">← Partidos</a>
+</nav>
+
 <h1>Partido: {{ partido.nome }} ({{ partido.numero }})</h1>
 
 <h2>Informações:</h2>

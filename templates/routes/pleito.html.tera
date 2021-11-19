@@ -4,6 +4,10 @@
 
 {% block content %}
 
+<nav class="breadcrumb">
+  <a href="/pleitos">← Pleitos</a>
+</nav>
+
 <h1>
   Pleito: {{ pleito.turno }}º turno - {{ pleito.candidato }} - {{ pleito.ano }}
 </h1>

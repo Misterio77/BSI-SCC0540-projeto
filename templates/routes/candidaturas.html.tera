@@ -12,7 +12,7 @@
 <form>
   <div class="grid">
     <label>
-      Número:
+      Número eleitoral:
       <input name="filtro.numero" type="number" min="10" max="99999" value="{{ filtro.numero | default(value="") }}"/>
     </label>
     <label>
@@ -42,12 +42,14 @@
       <input name="filtro.ano" min="0" max="{{ now() | date(format="%Y") }}" type="number" value="{{ filtro.ano | default(value="") }}"/>
     </label>
     <label>
-      Candidato:
-      <input name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}"/>
+      Candidato
+      <small>(Apenas números)</small>:
+      <input type="number" name="filtro.candidato" value="{{ filtro.candidato | default(value="") }}"/>
     </label>
     <label>
-      Vice-Candidato:
-      <input name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
+      Vice-Candidato
+      <small>(Apenas números)</small>:
+      <input type="number" name="filtro.vice_candidato" value="{{ filtro.vice_candidato | default(value="") }}"/>
     </label>
   </div>
   <button>Filtrar</button>

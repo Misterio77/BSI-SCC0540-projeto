@@ -71,7 +71,7 @@
         <td>{{ cargo.tipo }}</td>
         <td>{{ cargo.local }}</td>
         <td>{{ cargo.cadeiras }}</td>
-        <td>{{ cargo.salario }}</td>
+        <td>R$ {{ cargo.salario }}</td>
         <td>
           <a href="/cargos/{{ cargo.tipo }}/{{ cargo.local }}">
             Mais info →

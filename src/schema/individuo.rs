@@ -12,7 +12,6 @@ pub struct Individuo {
     pub cpfcnpj: String,
     pub nome: String,
     pub nascimento: Date,
-    pub ficha_limpa: bool,
 }
 
 /// Converte da linha para o nosso tipo
@@ -23,7 +22,6 @@ impl TryFrom<Row> for Individuo {
             cpfcnpj: row.try_get("cpfcnpj")?,
             nome: row.try_get("nome")?,
             nascimento: row.try_get("nascimento")?,
-            ficha_limpa: row.try_get("ficha_limpa")?,
         })
     }
 }
@@ -33,7 +31,7 @@ impl Individuo {
     pub async fn obter(db: &Client, cpfcnpj: &str) -> Result<Individuo, ServerError> {
         db.query_one(
             "
-            SELECT cpfcnpj, nome, nascimento, ficha_limpa
+            SELECT cpfcnpj, nome, nascimento
             FROM individuo
             WHERE cpfcnpj = $1",
             &[&cpfcnpj],
@@ -52,19 +50,17 @@ impl Individuo {
         let filtro = filtro.cleanup();
         db.query(
             "
-            SELECT cpfcnpj, nome, nascimento, ficha_limpa
+            SELECT cpfcnpj, nome, nascimento
             FROM individuo
             WHERE
                 ($1::VARCHAR IS NULL OR cpfcnpj     = $1) AND
                 ($2::VARCHAR IS NULL OR nome    ILIKE $2) AND
-                ($3::DATE    IS NULL OR nascimento  = $3) AND
-                ($4::BOOLEAN IS NULL OR ficha_limpa = $4)
-            LIMIT $5 OFFSET $6",
+                ($3::DATE    IS NULL OR nascimento  = $3)
+            LIMIT $4 OFFSET $5",
             &[
                 &filtro.cpfcnpj,
                 &filtro.nome,
                 &filtro.nascimento,
-                &filtro.ficha_limpa,
                 &(limite as i64),
                 &(((pagina-1) as i64) * (limite as i64)),
             ],
@@ -82,7 +78,6 @@ pub struct IndividuoFiltro {
     pub cpfcnpj: Option<String>,
     pub nome: Option<String>,
     pub nascimento: Option<Date>,
-    pub ficha_limpa: Option<bool>,
 }
 impl IndividuoFiltro {
     pub fn cleanup(self) -> Self {

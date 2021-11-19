@@ -1,3 +1,6 @@
+:root {
+  --accordion-close-summary-color: var(--color);
+}
 /* Tema claro */
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
@@ -74,7 +77,7 @@ body>footer p {
 
 /* Background da selelção */
 ::selection {
-  background: var(--muted-color);
+  background: var(--primary-hover);
 }
 
 .paginas {
@@ -87,4 +90,9 @@ body>footer p {
   margin-right: 2rem;
   padding-left: 1.3rem;
   padding-right: 1.3rem;
+}
+
+nav.breadcrumb {
+  padding-top: 0;
+  padding-bottom: 5rem;
 }
