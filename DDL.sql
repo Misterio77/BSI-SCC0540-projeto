@@ -88,7 +88,12 @@ CREATE TABLE julgamento (
     procedente BOOLEAN NOT NULL,
 
     -- Cada processo só pode ser julgado uma vez no órgão, podendo recorrer para outro órgão superior
-    CONSTRAINT julgamento_pk PRIMARY KEY (processo, instancia)
+    CONSTRAINT julgamento_pk PRIMARY KEY (processo, instancia),
+
+    CONSTRAINT julgamento_fk
+        FOREIGN KEY (processo)
+        REFERENCES processo (id)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
