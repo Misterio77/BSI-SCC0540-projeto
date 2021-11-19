@@ -2,7 +2,7 @@
 
 rustPlatform.buildRustPackage rec {
   pname = "projeto-bd";
-  version = "1.0.0-pre7";
+  version = "1.0.0-pre8";
 
   src = lib.cleanSource ./.;
 
