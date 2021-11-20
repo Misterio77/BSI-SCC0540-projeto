@@ -39,11 +39,11 @@ impl Individuo {
         .await?
         .try_into()
     }
+
     /// Deletar individuo
     pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
         db.execute(
-            "
-            DELETE FROM individuo
+            "DELETE FROM individuo
             WHERE cpfcnpj = $1",
             &[&self.cpfcnpj],
         )

@@ -25,4 +25,9 @@
   </a>
 </p>
 
+<hr />
+<form method="post" action="/processos/{{ processo.id }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

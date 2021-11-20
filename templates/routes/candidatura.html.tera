@@ -64,4 +64,9 @@
   </a>
 </p>
 
+<hr />
+<form method="post" action="/candidaturas/{{ candidatura.candidato }}/{{ candidatura.ano }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

@@ -1,4 +1,9 @@
-use rocket::{get, routes, Route};
+use rocket::{
+    delete, get,
+    request::FlashMessage,
+    response::{Flash, Redirect},
+    routes, Route,
+};
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
 use std::str::FromStr;
@@ -21,9 +26,25 @@ async fn get(
     Ok(Template::render("routes/cargo", context! {cargo}))
 }
 
+#[delete("/<tipo>/<local>")]
+async fn delete(
+    db: Connection<Database>,
+    tipo: String,
+    local: String,
+) -> Result<Flash<Redirect>, ServerError> {
+    let cargo = Cargo::obter(&db, TipoCargo::from_str(&tipo)?, &local).await?;
+    cargo.remover(&db).await?;
+
+    Ok(Flash::success(
+        Redirect::to("/cargos"),
+        "Remoção bem sucedida.",
+    ))
+}
+
 #[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
+    flash: Option<FlashMessage<'_>>,
     filtro: CargoFiltro,
     paginas: Pages,
 ) -> Result<Template, ServerError> {
@@ -31,10 +52,10 @@ async fn list(
 
     Ok(Template::render(
         "routes/cargos",
-        context! {cargos, filtro, paginas},
+        context! {cargos, filtro, paginas, flash},
     ))
 }
 
 pub fn routes() -> Vec<Route> {
-    routes![get, list]
+    routes![get, list, delete]
 }

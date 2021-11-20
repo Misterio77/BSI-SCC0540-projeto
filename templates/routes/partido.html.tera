@@ -20,4 +20,9 @@
   <a href="/candidaturas?filtro.partido={{ partido.numero }}">Candidaturas</a>
 </p>
 
+<hr />
+<form method="post" action="/partidos/{{ partido.numero }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

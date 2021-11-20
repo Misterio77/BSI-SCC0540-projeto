@@ -25,4 +25,9 @@
   </a>
 </p>
 
+<hr />
+<form method="post" action="/cargos/{{ cargo.tipo }}/{{ cargo.local }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

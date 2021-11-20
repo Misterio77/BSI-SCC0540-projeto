@@ -25,4 +25,9 @@
 </p>
 <p><strong>Função</strong>: {{ apoio.funcao }}</p>
 
+<hr />
+<form method="post" action="/apoios/{{ apoio.apoiador }}/{{ apoio.candidato }}/{{ apoio.ano }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

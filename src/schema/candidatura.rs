@@ -80,6 +80,17 @@ impl Candidatura {
         .try_into()
     }
 
+    /// Deletar candidatura
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM candidatura
+            WHERE candidato = $1 AND ano = $2",
+            &[&self.candidato, &self.ano],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista as candidaturas, com filtros opcionais
     pub async fn listar(
         db: &Client,

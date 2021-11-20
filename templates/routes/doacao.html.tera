@@ -24,4 +24,9 @@
   </a>
 </p>
 
+<hr />
+<form method="post" action="/doacoes/{{ doacao.id }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

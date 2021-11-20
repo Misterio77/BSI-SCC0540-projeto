@@ -61,6 +61,17 @@ impl Cargo {
         .try_into()
     }
 
+    /// Deletar cargo
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM cargo
+            WHERE tipo = $1 AND local = $2",
+            &[&self.tipo, &self.local],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista os cargos
     pub async fn listar(
         db: &Client,

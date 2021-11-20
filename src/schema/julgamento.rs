@@ -46,6 +46,17 @@ impl Julgamento {
         .try_into()
     }
 
+    /// Deletar julgamento
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM julgamento
+            WHERE processo = $1 AND instancia = $2",
+            &[&self.processo, &self.instancia],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista os julgamentos, com filtros opcionais
     pub async fn listar(
         db: &Client,

@@ -44,6 +44,17 @@ impl Doacao {
         .try_into()
     }
 
+    /// Deletar doação
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM doacao
+            WHERE id = $1",
+            &[&self.id],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista as doações, com filtros opcionais
     pub async fn listar(
         db: &Client,

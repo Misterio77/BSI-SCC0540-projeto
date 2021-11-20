@@ -39,6 +39,17 @@ impl Processo {
         .try_into()
     }
 
+    /// Deletar pleito
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM processo
+            WHERE id = $1",
+            &[&self.id],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista os processos, com filtros opcionais
     pub async fn listar(
         db: &Client,

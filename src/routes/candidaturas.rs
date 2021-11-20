@@ -1,4 +1,9 @@
-use rocket::{get, routes, Route};
+use rocket::{
+    delete, get,
+    request::FlashMessage,
+    response::{Flash, Redirect},
+    routes, Route,
+};
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
 
@@ -23,9 +28,25 @@ async fn get(
     ))
 }
 
+#[delete("/<candidato>/<ano>")]
+async fn delete(
+    db: Connection<Database>,
+    candidato: String,
+    ano: i16,
+) -> Result<Flash<Redirect>, ServerError> {
+    let candidatura = Candidatura::obter(&db, &candidato, ano).await?;
+    candidatura.remover(&db).await?;
+
+    Ok(Flash::success(
+        Redirect::to("/candidaturas"),
+        "Remoção bem sucedida.",
+    ))
+}
+
 #[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
+    flash: Option<FlashMessage<'_>>,
     filtro: CandidaturaFiltro,
     paginas: Pages,
 ) -> Result<Template, ServerError> {
@@ -33,10 +54,10 @@ async fn list(
 
     Ok(Template::render(
         "routes/candidaturas",
-        context! {candidaturas, filtro, paginas},
+        context! {candidaturas, filtro, paginas, flash},
     ))
 }
 
 pub fn routes() -> Vec<Route> {
-    routes![get, list]
+    routes![get, list, delete]
 }

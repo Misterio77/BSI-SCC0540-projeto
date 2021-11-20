@@ -45,6 +45,16 @@ impl Apoio {
         .await?
         .try_into()
     }
+    /// Deletar apoio
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM apoio
+            WHERE apoiador = $1 AND candidato = $2 AND ano = $3",
+            &[&self.apoiador, &self.candidato, &self.ano],
+        )
+        .await?;
+        Ok(())
+    }
 
     /// Lista os apoios, com filtros opcionais
     pub async fn listar(

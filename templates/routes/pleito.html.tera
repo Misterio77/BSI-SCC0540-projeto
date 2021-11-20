@@ -22,4 +22,9 @@
 </p>
 <p><strong>Votos</strong>: {{ pleito.votos }}</p>
 
+<hr />
+<form method="post" action="/pleitos/{{ pleito.candidato }}/{{ pleito.ano }}/{{ pleito.turno }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

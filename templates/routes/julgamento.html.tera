@@ -24,4 +24,9 @@
   %}Inocente {% endif %}
 </p>
 
+<hr />
+<form method="post" action="/julgamentos/{{ julgamento.processo }}/{{ julgamento.instancia }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

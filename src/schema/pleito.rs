@@ -46,6 +46,17 @@ impl Pleito {
         .try_into()
     }
 
+    /// Deletar pleito
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM pleito
+            WHERE candidato = $1 AND ano = $2 AND turno = $3",
+            &[&self.candidato, &self.ano, &self.turno],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista os pleitos, com filtros opcionais
     pub async fn listar(
         db: &Client,

@@ -51,6 +51,17 @@ impl Partido {
         .try_into()
     }
 
+    /// Deletar partido
+    pub async fn remover(self, db: &Client) -> Result<(), ServerError> {
+        db.execute(
+            "DELETE FROM partido
+            WHERE numero = $1",
+            &[&self.numero],
+        )
+        .await?;
+        Ok(())
+    }
+
     /// Lista os partidos
     pub async fn listar(
         db: &Client,
