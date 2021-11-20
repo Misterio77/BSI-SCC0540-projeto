@@ -66,16 +66,16 @@ entity Doação {
     valor
 }
 
-Indivíduo ||--o{ Processo: "reu"
-Processo ||-o{ Julgamento: "processo"
-Indivíduo ||-o{ Candidatura: "candidato"
-Indivíduo |o--o{ Candidatura: "vice_candidato"
-Partido ||--o{ Candidatura: "partido"
-Cargo ||--o{ Candidatura: "cargo_tipo, cargo_local"
-Indivíduo ||--o{ Apoio: "apoiador"
-Candidatura ||--o{ Apoio: "candidato, ano"
-Indivíduo ||--o{ Doação: "doador"
-Candidatura ||--o{ Doação: "candidato, ano"
-Candidatura ||--o{ Pleito: "candidato, ano"
+Indivíduo ||--o{ Processo: "FK reu"
+Processo ||-o{ Julgamento: "FK processo"
+Indivíduo ||-o{ Candidatura: "FK1 candidato"
+Indivíduo |o--o{ Candidatura: "FK2 vice_candidato"
+Partido ||--o{ Candidatura: "FK4 partido"
+Cargo ||--o{ Candidatura: "FK3 cargo_tipo, cargo_local"
+Indivíduo ||--o{ Apoio: "FK1 apoiador"
+Candidatura ||--o{ Apoio: "FK2 ano, candidato"
+Indivíduo ||--o{ Doação: "FK1 candidato, ano"
+Candidatura ||--o{ Doação: "FK2 doador"
+Candidatura ||--o{ Pleito: "FK candidato, ano"
 
 @enduml

@@ -1,5 +1,6 @@
 use rocket::{
     delete, get,
+    request::FlashMessage,
     response::{Flash, Redirect},
     routes, Route,
 };
@@ -22,18 +23,19 @@ async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, Serv
 
 #[delete("/<cpfcnpj>")]
 async fn delete(db: Connection<Database>, cpfcnpj: String) -> Result<Flash<Redirect>, ServerError> {
-    let individuo = Individuo::obter(&db, &cpfcnpj);
-    individuo.remover().await?;
+    let individuo = Individuo::obter(&db, &cpfcnpj).await?;
+    individuo.remover(&db).await?;
 
     Ok(Flash::success(
         Redirect::to("/individuos"),
-        "Remoção realizada com sucesso",
+        "Remoção bem sucedida.",
     ))
 }
 
 #[get("/?<filtro>")]
 async fn list(
     db: Connection<Database>,
+    flash: Option<FlashMessage<'_>>,
     filtro: IndividuoFiltro,
     paginas: Pages,
 ) -> Result<Template, ServerError> {
@@ -41,10 +43,10 @@ async fn list(
 
     Ok(Template::render(
         "routes/individuos",
-        context! {individuos, filtro, paginas},
+        context! {individuos, filtro, paginas, flash},
     ))
 }
 
 pub fn routes() -> Vec<Route> {
-    routes![get, list]
+    routes![get, delete, list]
 }

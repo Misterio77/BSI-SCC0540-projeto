@@ -27,13 +27,26 @@
 }
 
 /* Adicionar cor e padding nos flashs */
-sup#flash {
+#flash {
+  text-align: center;
+  padding-bottom: 3rem;
+}
+#flash sup {
   background-color: var(--primary);
   color: var(--primary-inverse);
   font-weight: bold;
   border-radius: 0.6rem;
   margin: 0.2rem;
   padding: 0.3rem 0.4rem;
+}
+#flash.success sup {
+  background-color: var(--ins-color);
+  border-color: var(--color);
+}
+#flash sup::after {
+  content: " x";
+  margin-left: 0.5em;
+  margin-right: 0.1em;
 }
 
 /* Adicionar padding, flex, e borda nas navegações */
@@ -80,6 +93,7 @@ body>footer p {
   background: var(--primary-hover);
 }
 
+/* Navegação entre páginas */
 .paginas {
   margin-top: 2rem;
   margin-bottom: 2rem;
@@ -97,11 +111,13 @@ body>footer p {
   margin-right: 1.4rem;
 }
 
+/* Breadcrumb */
 nav.breadcrumb {
   padding-top: 0;
   padding-bottom: 5rem;
 }
 
+/* Diagrama na home */
 .diagram {
   display: block;
   margin: auto;
@@ -118,4 +134,9 @@ nav.breadcrumb {
 .diagram g path,
 .diagram g ellipse {
   stroke: var(--primary);
+}
+
+.delete {
+    background-color: var(--del-color);
+    border-color: var(--color);
 }

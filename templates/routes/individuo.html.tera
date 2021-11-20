@@ -35,4 +35,9 @@
   <a href="/apoios?filtro.apoiador={{ individuo.cpfcnpj }}">Candidaturas em que é apoiador</a>
 </p>
 
+<hr />
+<form method="post" action="/individuos/{{ individuo.cpfcnpj }}/delete">
+  <button class="delete">Apagar entidade</button>
+</form>
+
 {% endblock content %}

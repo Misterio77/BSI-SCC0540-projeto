@@ -1,6 +1,8 @@
 {# Permite exibir uma mensagem baseada no cookie flash #}
 {% if flash %}
-<sup id="flash" onclick="document.getElementById('flash').remove()" class="{{ flash.kind }}">
-  {{ flash.message }}
-</sup>
+<div id="flash" class="{{ flash.kind }}">
+  <sup onclick="document.getElementById('flash').remove()">
+    {{ flash.message }}
+  </sup>
+</div>
 {% endif %}
