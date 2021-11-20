@@ -20,6 +20,13 @@ Compile com `cargo build --release`. Caso queira compilar no modo desenvolviment
 
 Crie um banco de dados no PostgreSQL (de preferência a versão 13, mas a 12 deve funcionar também), e configure um usuário corretamente para ter acesso à ele.
 
+Feito isso, execute `DDL.sql` para criar a schema, e `DML.sql` para preencher com dados fictícios que geramos.
+
+Você pode fazer isso usando o `psql`:
+```
+cat DDL.sql DML.sql | psql
+```
+
 ### Configuração
 
 Edite o arquivo `Rocket.toml`, colocando em `url` (na seção `default.databases.database`) a string de conexão que você usará para conectar ao seu banco. A padrão usa um socket unix com meu usuário (misterio), mas você pode usar TCP facilmente também. [Mais info sobre connection string](https://stackoverflow.com/questions/3582552).
@@ -46,17 +53,17 @@ Localizado em `src/schema`.
 
 Modela classes de acordo com o banco de dados.
 
-Cada entidade tem sua `struct`, métodos para `obter` a entidade partindo da sua chave, `listar` (esses recebem um filtro, e às vezes podem se tornar queries especiais), ou a `remover` do banco. Inclui também um filtro para listagem personalizada, bem como ordenação.
+Cada entidade tem sua `struct`, métodos para `obter` a entidade partindo da sua chave, `listar` (esses recebem um filtro, e às vezes podem se tornar queries especiais), e a `remover` do banco. Inclui também um filtro para listagem personalizada, bem como ordenação.
 
 ### Rotas
 
 Localizadas em `src/routes`.
 
-Define as rotas (URIs) que serão expostas no servidor. Essas utilizam as classes definidas no modelo.
+Define as rotas que serão expostas no servidor. Essas consomem as classes do modelo.
 
-Cada entidade tem uma rota `get` (que chama `Entidade::obter()`), uma rota `list` (que chama `Entidade::listar()`), e uma rota delete (que chama `Entidade::obter()`, seguido de `entidade.remover()`).
+Cada entidade tem uma rota `get`, uma rota `list`, e uma rota delete.
 
-As rotas especificam quais parâmetros pedem do usuário (exemplo: `/individuos/1234`, onde 1234 é o cpf/cnpj), e o que respondem (exemplo: Template renderizado (tela HTML com contexto passado à ela), ou redirecionamento (no caso do delete)).
+As funções de rota especificam qual o caminho (URI) ela estará disponível, e quais os parâmetros pedidos ao usuário (exemplo: `/individuos/<cpfcnpj>`), e o que respondem (exemplo: Template renderizado (tela HTML com contexto passado à ela), ou redirecionamento (no caso do delete)).
 
 
 ### Templates
