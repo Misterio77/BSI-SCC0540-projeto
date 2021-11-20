@@ -35,6 +35,25 @@
         <input type="number" min="0" name="filtro.max_votos" value="{{ filtro.max_votos | default(value="") }}"/>
       </label>
     </div>
+
+    <hr />
+    <div class="grid">
+      <label>
+        Ordenação:
+        <select name="filtro.ordenacao">
+          <option></option>
+          <option {% if filtro.ordenacao == "Candidato" %}selected{% endif %}>Candidato</option>
+          <option {% if filtro.ordenacao == "Ano" %}selected{% endif %}>Ano</option>
+          <option {% if filtro.ordenacao == "Turno" %}selected{% endif %}>Turno</option>
+          <option {% if filtro.ordenacao == "Votos" %}selected{% endif %}>Votos</option>
+        </select>
+      </label>
+      <label>
+        Decrescente
+        <input type="checkbox" name="filtro.ordenacao_desc" {% if filtro.ordenacao_desc %}checked{% endif %}/>
+      </label>
+    </div>
+
     <button>Filtrar</button>
   </form>
 </details>

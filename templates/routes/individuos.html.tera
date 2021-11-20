@@ -29,6 +29,24 @@
       Exibir apenas ficha limpa
       <input type="checkbox" name="filtro.ficha_limpa" {% if filtro.ficha_limpa %}checked{% endif %}/>
     </label>
+
+    <hr />
+    <div class="grid">
+      <label>
+        Ordenação:
+        <select name="filtro.ordenacao">
+          <option></option>
+          <option {% if filtro.ordenacao == "Cpfcnpj" %}selected{% endif %} value="Cpfcnpj">CPF/CNPJ</option>
+          <option {% if filtro.ordenacao == "Nome" %}selected{% endif %}>Nome</option>
+          <option {% if filtro.ordenacao == "Nascimento" %}selected{% endif %}>Nascimento</option>
+        </select>
+      </label>
+      <label>
+        Decrescente
+        <input type="checkbox" name="filtro.ordenacao_desc" {% if filtro.ordenacao_desc %}checked{% endif %}/>
+      </label>
+    </div>
+
     <button>Filtrar</button>
   </form>
 </details>

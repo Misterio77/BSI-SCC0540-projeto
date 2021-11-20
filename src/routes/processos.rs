@@ -22,10 +22,7 @@ async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError>
 }
 
 #[delete("/<id>")]
-async fn delete(
-    db: Connection<Database>,
-    id: i32,
-) -> Result<Flash<Redirect>, ServerError> {
+async fn delete(db: Connection<Database>, id: i32) -> Result<Flash<Redirect>, ServerError> {
     let processo = Processo::obter(&db, id).await?;
     processo.remover(&db).await?;
 

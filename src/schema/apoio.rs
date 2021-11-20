@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -64,16 +65,30 @@ impl Apoio {
         limite: u16,
     ) -> Result<Vec<Apoio>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT apoiador, candidato, ano, funcao
+
+        let query = format!(
+            "SELECT apoiador, candidato, ano, funcao
             FROM apoio
             WHERE
                 ($1::VARCHAR  IS NULL OR apoiador   = $1) AND
                 ($2::VARCHAR  IS NULL OR candidato  = $2) AND
                 ($3::SMALLINT IS NULL OR ano        = $3) AND
                 ($4::VARCHAR  IS NULL OR funcao ILIKE $4)
-            LIMIT $5 OFFSET $6",
+            {} LIMIT $5 OFFSET $6",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+
+        db.query(
+            &query,
             &[
                 &filtro.apoiador,
                 &filtro.candidato,
@@ -97,6 +112,8 @@ pub struct ApoioFiltro {
     candidato: Option<String>,
     ano: Option<i16>,
     funcao: Option<String>,
+    ordenacao: Option<ApoioOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl ApoioFiltro {
     pub fn cleanup(self) -> Self {
@@ -110,4 +127,13 @@ impl ApoioFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum ApoioOrdenacao {
+    Apoiador,
+    Candidato,
+    Ano,
+    Funcao,
 }

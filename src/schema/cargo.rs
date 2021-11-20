@@ -1,9 +1,16 @@
-use postgres_types::{FromSql, ToSql};
-use rocket::form::{FromForm, FromFormField};
+use rocket::{
+    form::{FromForm, FromFormField},
+    request::FromParam,
+};
 use rust_decimal::Decimal;
 use serde::Serialize;
-use std::convert::{TryFrom, TryInto};
-use strum::EnumString;
+use std::{
+    convert::{TryFrom, TryInto},
+    str::FromStr,
+};
+
+use postgres_types::{FromSql, ToSql};
+use strum::{Display, EnumString};
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -32,6 +39,13 @@ pub enum TipoCargo {
     #[strum(serialize = "Deputado Federal")]
     DeputadoFederal,
     Senador,
+}
+
+impl FromParam<'_> for TipoCargo {
+    type Error = ServerError;
+    fn from_param(param: &str) -> Result<Self, Self::Error> {
+        Ok(TipoCargo::from_str(param)?)
+    }
 }
 
 /// Converte da linha para o nosso tipo
@@ -80,9 +94,9 @@ impl Cargo {
         limite: u16,
     ) -> Result<Vec<Cargo>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT tipo, local, cadeiras, salario
+
+        let query = format!(
+            "SELECT tipo, local, cadeiras, salario
             FROM cargo
             WHERE
                 ($1::tipo_cargo IS NULL OR tipo      = $1) AND
@@ -91,7 +105,21 @@ impl Cargo {
                 ($4::SMALLINT   IS NULL OR cadeiras <= $4) AND
                 ($5::NUMERIC    IS NULL OR salario  >= $5) AND
                 ($6::NUMERIC    IS NULL OR salario  <= $6)
-            LIMIT $7 OFFSET $8",
+            {} LIMIT $7 OFFSET $8",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            }
+        );
+
+        db.query(
+            &query,
             &[
                 &filtro.tipo,
                 &filtro.local,
@@ -119,6 +147,8 @@ pub struct CargoFiltro {
     max_cadeiras: Option<i16>,
     min_salario: Option<Decimal>,
     max_salario: Option<Decimal>,
+    ordenacao: Option<CargoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl CargoFiltro {
     pub fn cleanup(self) -> Self {
@@ -130,4 +160,13 @@ impl CargoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum CargoOrdenacao {
+    Tipo,
+    Local,
+    Cadeiras,
+    Salario,
 }

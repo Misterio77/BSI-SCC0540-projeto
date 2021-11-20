@@ -22,10 +22,7 @@ async fn get(db: Connection<Database>, id: i32) -> Result<Template, ServerError>
 }
 
 #[delete("/<id>")]
-async fn delete(
-    db: Connection<Database>,
-    id: i32,
-) -> Result<Flash<Redirect>, ServerError> {
+async fn delete(db: Connection<Database>, id: i32) -> Result<Flash<Redirect>, ServerError> {
     let doacao = Doacao::obter(&db, id).await?;
     doacao.remover(&db).await?;
 

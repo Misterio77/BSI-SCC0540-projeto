@@ -22,10 +22,7 @@ async fn get(db: Connection<Database>, numero: i16) -> Result<Template, ServerEr
 }
 
 #[delete("/<numero>")]
-async fn delete(
-    db: Connection<Database>,
-    numero: i16,
-) -> Result<Flash<Redirect>, ServerError> {
+async fn delete(db: Connection<Database>, numero: i16) -> Result<Flash<Redirect>, ServerError> {
     let partido = Partido::obter(&db, numero).await?;
     partido.remover(&db).await?;
 

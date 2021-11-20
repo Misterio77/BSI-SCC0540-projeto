@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -65,9 +66,9 @@ impl Pleito {
         limite: u16,
     ) -> Result<Vec<Pleito>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT candidato, ano, turno, votos
+
+        let query = format!(
+            "SELECT candidato, ano, turno, votos
             FROM pleito
             WHERE
                 ($1::VARCHAR  IS NULL OR candidato = $1) AND
@@ -75,7 +76,20 @@ impl Pleito {
                 ($3::SMALLINT IS NULL OR turno     = $3) AND
                 ($4::INTEGER  IS NULL OR votos    >= $4) AND
                 ($5::INTEGER  IS NULL OR votos    <= $5)
-            LIMIT $6 OFFSET $7",
+            {} LIMIT $6 OFFSET $7",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+        db.query(
+            &query,
             &[
                 &filtro.candidato,
                 &filtro.ano,
@@ -101,6 +115,8 @@ pub struct PleitoFiltro {
     turno: Option<i16>,
     min_votos: Option<i32>,
     max_votos: Option<i32>,
+    ordenacao: Option<PleitoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl PleitoFiltro {
     pub fn cleanup(self) -> Self {
@@ -109,4 +125,13 @@ impl PleitoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum PleitoOrdenacao {
+    Candidato,
+    Ano,
+    Turno,
+    Votos,
 }

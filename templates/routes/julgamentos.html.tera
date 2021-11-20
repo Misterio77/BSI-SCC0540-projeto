@@ -32,6 +32,25 @@
         </select>
       </label>
     </div>
+
+    <hr />
+    <div class="grid">
+      <label>
+        Ordenação:
+        <select name="filtro.ordenacao">
+          <option></option>
+          <option {% if filtro.ordenacao == "Proceso" %}selected{% endif %}>Processo</option>
+          <option {% if filtro.ordenacao == "Instancia" %}selected{% endif %} value="Instancia">Instância</option>
+          <option {% if filtro.ordenacao == "Data" %}selected{% endif %}>Data</option>
+          <option {% if filtro.ordenacao == "Procedente" %}selected{% endif %}>Procedente</option>
+        </select>
+      </label>
+      <label>
+        Decrescente
+        <input type="checkbox" name="filtro.ordenacao_desc" {% if filtro.ordenacao_desc %}checked{% endif %}/>
+      </label>
+    </div>
+
     <button>Filtrar</button>
   </form>
 </details>

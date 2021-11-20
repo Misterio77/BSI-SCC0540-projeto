@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -100,8 +101,30 @@ impl Candidatura {
     ) -> Result<Vec<Candidatura>, ServerError> {
         let filtro = filtro.cleanup();
 
+        // Se é apenas os eleitos, usar view function para extrair
+        let tabela = if filtro.eleitos {
+            "FROM (SELECT
+                c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
+                row_number() OVER(
+                    PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
+                    ORDER BY p.turno DESC, p.votos DESC
+                ) AS rownum
+            FROM
+                candidatura c
+            INNER JOIN pleito p
+                ON p.candidato = c.candidato
+                AND p.ano = c.ano
+            ) AS eleicao
+            INNER JOIN cargo
+                ON cargo.local = eleicao.cargo_local
+                AND cargo.tipo = eleicao.cargo_tipo"
+        } else {
+            "FROM candidatura"
+        };
+
         let query = format!(
-            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
+            "
+            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
             {}
             WHERE
                 {}
@@ -112,32 +135,26 @@ impl Candidatura {
                 ($5::VARCHAR    IS NULL OR cargo_local ILIKE $5) AND
                 ($6::INTEGER    IS NULL OR numero          = $6) AND
                 ($7::SMALLINT   IS NULL OR partido         = $7)
-            LIMIT $8 OFFSET $9",
-            if filtro.eleitos {
-                "FROM (SELECT
-                    c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
-                    row_number() OVER(
-                        PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
-                        ORDER BY p.turno DESC, p.votos DESC
-                    ) AS rownum
-                FROM
-                    candidatura c
-                INNER JOIN pleito p
-                    ON p.candidato = c.candidato
-                    AND p.ano = c.ano
-                ) AS eleicao
-                INNER JOIN cargo
-                    ON cargo.local = eleicao.cargo_local
-                    AND cargo.tipo = eleicao.cargo_tipo"
-            } else {
-                "FROM candidatura"
-            },
+            {} LIMIT $8 OFFSET $9",
+            tabela,
+            // Se é apenas os eleitos, colocar a condição da view function
             if filtro.eleitos {
                 "rownum <= cargo.cadeiras AND"
             } else {
                 ""
             },
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            }
         );
+
         db.query(
             &query,
             &[
@@ -170,6 +187,8 @@ pub struct CandidaturaFiltro {
     numero: Option<i32>,
     partido: Option<i16>,
     eleitos: bool,
+    ordenacao: Option<CandidaturaOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl CandidaturaFiltro {
     pub fn cleanup(self) -> Self {
@@ -183,4 +202,17 @@ impl CandidaturaFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum CandidaturaOrdenacao {
+    Candidato,
+    ViceCandidato,
+    Ano,
+    CargoTipo,
+    CargoLocal,
+    Numero,
+    Partido,
+    Eleitos,
 }

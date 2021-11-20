@@ -1,7 +1,8 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use rust_decimal::Decimal;
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -63,9 +64,9 @@ impl Doacao {
         limite: u16,
     ) -> Result<Vec<Doacao>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT id, valor, doador, candidato, ano
+
+        let query = format!(
+            "SELECT id, valor, doador, candidato, ano
             FROM doacao
             WHERE
                 ($1::INTEGER  IS NULL OR id        = $1) AND
@@ -74,7 +75,21 @@ impl Doacao {
                 ($4::NUMERIC  IS NULL OR valor    >= $4) AND
                 ($5::NUMERIC  IS NULL OR valor    <= $5) AND
                 ($6::SMALLINT IS NULL OR ano       = $6)
-            LIMIT $7 OFFSET $8",
+            {} LIMIT $7 OFFSET $8",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+
+        db.query(
+            &query,
             &[
                 &filtro.id,
                 &filtro.doador,
@@ -102,6 +117,8 @@ pub struct DoacaoFiltro {
     doador: Option<String>,
     candidato: Option<String>,
     ano: Option<i16>,
+    ordenacao: Option<DoacaoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl DoacaoFiltro {
     pub fn cleanup(self) -> Self {
@@ -111,4 +128,14 @@ impl DoacaoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum DoacaoOrdenacao {
+    Id,
+    Valor,
+    Doador,
+    Candidato,
+    Ano,
 }

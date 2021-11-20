@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 use time::Date;
 
 use crate::database::{Client, Row};
@@ -65,16 +66,29 @@ impl Julgamento {
         limite: u16,
     ) -> Result<Vec<Julgamento>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT processo, instancia, data, procedente
+
+        let query = format!(
+            "SELECT processo, instancia, data, procedente
             FROM julgamento
             WHERE
                 ($1::INTEGER IS NULL OR processo   = $1) AND
                 ($2::VARCHAR IS NULL OR instancia  = $2) AND
                 ($3::DATE    IS NULL OR data       = $3) AND
                 ($4::BOOLEAN IS NULL OR procedente = $4)
-            LIMIT $5 OFFSET $6",
+            {} LIMIT $5 OFFSET $6",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+        db.query(
+            &query,
             &[
                 &filtro.processo,
                 &filtro.instancia,
@@ -98,6 +112,8 @@ pub struct JulgamentoFiltro {
     instancia: Option<String>,
     data: Option<Date>,
     procedente: Option<bool>,
+    ordenacao: Option<JulgamentoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl JulgamentoFiltro {
     pub fn cleanup(self) -> Self {
@@ -106,4 +122,13 @@ impl JulgamentoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum JulgamentoOrdenacao {
+    Processo,
+    Instancia,
+    Data,
+    Procedente,
 }

@@ -6,7 +6,6 @@ use rocket::{
 };
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
-use std::str::FromStr;
 
 use crate::{
     database::Database,
@@ -18,10 +17,10 @@ use crate::{
 #[get("/<tipo>/<local>")]
 async fn get(
     db: Connection<Database>,
-    tipo: String,
+    tipo: TipoCargo,
     local: String,
 ) -> Result<Template, ServerError> {
-    let cargo = Cargo::obter(&db, TipoCargo::from_str(&tipo)?, &local).await?;
+    let cargo = Cargo::obter(&db, tipo, &local).await?;
 
     Ok(Template::render("routes/cargo", context! {cargo}))
 }
@@ -29,10 +28,10 @@ async fn get(
 #[delete("/<tipo>/<local>")]
 async fn delete(
     db: Connection<Database>,
-    tipo: String,
+    tipo: TipoCargo,
     local: String,
 ) -> Result<Flash<Redirect>, ServerError> {
-    let cargo = Cargo::obter(&db, TipoCargo::from_str(&tipo)?, &local).await?;
+    let cargo = Cargo::obter(&db, tipo, &local).await?;
     cargo.remover(&db).await?;
 
     Ok(Flash::success(

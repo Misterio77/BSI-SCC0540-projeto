@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -58,15 +59,28 @@ impl Processo {
         limite: u16,
     ) -> Result<Vec<Processo>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT id, reu, crime
+
+        let query = format!(
+            "SELECT id, reu, crime
             FROM processo
             WHERE
                 ($1::INTEGER IS NULL OR id        = $1) AND
                 ($2::VARCHAR IS NULL OR reu       = $2) AND
                 ($3::VARCHAR IS NULL OR crime ILIKE $3)
-            LIMIT $4 OFFSET $5",
+            {} LIMIT $4 OFFSET $5",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+        db.query(
+            &query,
             &[
                 &filtro.id,
                 &filtro.reu,
@@ -88,6 +102,8 @@ pub struct ProcessoFiltro {
     id: Option<i32>,
     reu: Option<String>,
     crime: Option<String>,
+    ordenacao: Option<ProcessoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl ProcessoFiltro {
     pub fn cleanup(self) -> Self {
@@ -100,4 +116,12 @@ impl ProcessoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum ProcessoOrdenacao {
+    Id,
+    Reu,
+    Crime,
 }

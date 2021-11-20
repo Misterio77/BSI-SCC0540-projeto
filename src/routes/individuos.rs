@@ -22,10 +22,7 @@ async fn get(db: Connection<Database>, cpfcnpj: String) -> Result<Template, Serv
 }
 
 #[delete("/<cpfcnpj>")]
-async fn delete(
-    db: Connection<Database>,
-    cpfcnpj: String,
-) -> Result<Flash<Redirect>, ServerError> {
+async fn delete(db: Connection<Database>, cpfcnpj: String) -> Result<Flash<Redirect>, ServerError> {
     let individuo = Individuo::obter(&db, &cpfcnpj).await?;
     individuo.remover(&db).await?;
 

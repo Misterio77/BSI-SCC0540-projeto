@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 
 use crate::database::{Client, Row};
 use crate::error::ServerError;
@@ -70,14 +71,28 @@ impl Partido {
         limite: u16,
     ) -> Result<Vec<Partido>, ServerError> {
         let filtro = filtro.cleanup();
-        db.query(
-            "
-            SELECT numero, nome, programa
+
+        let query = format!(
+            "SELECT numero, nome, programa
             FROM partido
             WHERE
                 ($1::SMALLINT IS NULL OR numero   = $1) AND
                 ($2::VARCHAR  IS NULL OR nome ILIKE $2)
-            LIMIT $3 OFFSET $4",
+            {} LIMIT $3 OFFSET $4",
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
+            },
+        );
+
+        db.query(
+            &query,
             &[
                 &filtro.numero,
                 &filtro.nome,
@@ -97,6 +112,8 @@ impl Partido {
 pub struct PartidoFiltro {
     numero: Option<i16>,
     nome: Option<String>,
+    ordenacao: Option<PartidoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl PartidoFiltro {
     pub fn cleanup(self) -> Self {
@@ -108,4 +125,11 @@ impl PartidoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum PartidoOrdenacao {
+    Numero,
+    Nome,
 }

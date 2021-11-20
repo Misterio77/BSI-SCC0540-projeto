@@ -1,6 +1,7 @@
-use rocket::form::FromForm;
+use rocket::form::{FromForm, FromFormField};
 use serde::Serialize;
 use std::convert::{TryFrom, TryInto};
+use strum::Display;
 use time::Date;
 
 use crate::database::{Client, Row};
@@ -60,6 +61,17 @@ impl Individuo {
     ) -> Result<Vec<Individuo>, ServerError> {
         let filtro = filtro.cleanup();
 
+        let ficha_suja = "
+            SELECT cpfcnpj, nome, nascimento
+            FROM individuo
+            INNER JOIN processo
+                ON processo.reu = individuo.cpfcnpj
+            INNER JOIN julgamento
+                ON julgamento.processo = processo.id
+            WHERE
+                julgamento.procedente IS true AND
+                julgamento.data >= (CURRENT_DATE - interval '5 years')";
+
         let query = format!(
             "SELECT cpfcnpj, nome, nascimento
             FROM individuo
@@ -68,22 +80,23 @@ impl Individuo {
                 ($2::VARCHAR IS NULL OR nome    ILIKE $2) AND
                 ($3::DATE    IS NULL OR nascimento  = $3)
             {}
-            LIMIT $4 OFFSET $5
+            {} LIMIT $4 OFFSET $5
             ",
+            // Caso seja apenas ficha limpa, tirar os ficha suja
             if filtro.ficha_limpa {
-                "EXCEPT (
-                    SELECT cpfcnpj, nome, nascimento
-                    FROM individuo
-                    INNER JOIN processo
-                        ON processo.reu = individuo.cpfcnpj
-                    INNER JOIN julgamento
-                        ON julgamento.processo = processo.id
-                    WHERE
-                        julgamento.procedente IS true AND
-                        julgamento.data >= (CURRENT_DATE - interval '5 years')
-                )"
+                format!("EXCEPT ({})", ficha_suja)
             } else {
-                ""
+                "".to_string()
+            },
+            // Caso tenha ordenação, adicionar ORDER BY nome
+            if let Some(ord) = filtro.ordenacao {
+                format!(
+                    "ORDER BY {} {}",
+                    ord,
+                    if filtro.ordenacao_desc { "DESC" } else { "" }
+                )
+            } else {
+                "".to_string()
             },
         );
 
@@ -111,6 +124,8 @@ pub struct IndividuoFiltro {
     nome: Option<String>,
     nascimento: Option<Date>,
     ficha_limpa: bool,
+    ordenacao: Option<IndividuoOrdenacao>,
+    ordenacao_desc: bool,
 }
 impl IndividuoFiltro {
     pub fn cleanup(self) -> Self {
@@ -123,4 +138,13 @@ impl IndividuoFiltro {
             ..self
         }
     }
+}
+
+#[derive(Clone, Debug, Copy, Serialize, FromFormField, Display)]
+#[strum(serialize_all = "snake_case")]
+enum IndividuoOrdenacao {
+    Cpfcnpj,
+    Nome,
+    Nascimento,
+    Funcao,
 }
