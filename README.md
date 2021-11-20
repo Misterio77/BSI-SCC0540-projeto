@@ -18,7 +18,7 @@ Compile com `cargo build --release`. Caso queira compilar no modo desenvolviment
 
 ### Banco de dados
 
-Crie um banco de dados no PostgreSQL (dê preferência a versão 13, mas a 12 deve funcionar também), e configure um usuário corretamente para ter acesso à ele.
+Crie um banco de dados no PostgreSQL (de preferência a versão 13, mas a 12 deve funcionar também), e configure um usuário corretamente para ter acesso à ele.
 
 ### Configuração
 
@@ -79,10 +79,10 @@ Também temos alguns outros templates:
 
 ### Outros arquivos fonte
 
-O Rocket, framework que usamos, é bastante barebones e minimalista. Não contendo facilidades prontas encontradas comumente em frameworks maiores (com o Django). Então algumas funcionalidades nescessárias para manter o modelo e as rotas limpas foram implementadas por nós e colocadas na pasta `src/common`. Essas incluem:
+O Rocket, framework que usamos, é bastante barebones e minimalista. Não contendo facilidades prontas encontradas comumente em frameworks maiores (como o Django). Então algumas funcionalidades nescessárias para manter o modelo e as rotas limpas foram implementadas por nós e colocadas na pasta `src/common`. Essas incluem:
 
 - `error.rs` - Erro personalizado, que facilita levantar "exceções" sem muito código adicional.
 - `pagination.rs` - Permite determinar a página atual, e cria link baseado nas adjacentes, sem alterar as outras query strings presentes.
-- `assets.rs` - Implementa um fairing (middleware) que permite servir assets estáticos (como CSS) com uma política de chachê.
+- `assets.rs` - Implementa um fairing (middleware) que permite servir assets estáticos (como CSS) com uma política de cachê.
 - `database.rs` - Boilerplate para se conectar ao banco de forma assíncrona utilizando o `tokio-postgres`.
 - `post_as_delete.rs` - Como formulários HTML só suportam GET e POST, esse fairing permite transformar requests do tipo POST `blabla/delete` em DELETE `blabla`.
