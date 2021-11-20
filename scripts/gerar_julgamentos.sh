@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 processos="$(psql -c "COPY (SELECT id FROM processo) TO STDOUT WITH CSV")"
 
-for i in {1..300}; do
+for i in {1..600}; do
     processo="'$(shuf -n 1 <<< "$processos")'"
     instancia="$(shuf -n 1 -e "'Primeira Instância'" "'Segunda Instância'" "'Tribunal Superior'")"
     data="'$(shuf -n 1 -i 1980-2021)-$(shuf -n 1 -i 01-12)-$(shuf -n 1 -i 01-28)'"
