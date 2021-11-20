@@ -27,7 +27,7 @@
     </div>
     <label>
       Exibir apenas ficha limpa
-      <input type="checkbox" name="filtro.ficha_limpa" {% if filtro.ficha_limpa %}checked{% endif %}/>
+      <input type="checkbox" role="switch" name="filtro.ficha_limpa" {% if filtro.ficha_limpa %}checked{% endif %}/>
     </label>
 
     <hr />
