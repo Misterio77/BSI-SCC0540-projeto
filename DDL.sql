@@ -27,8 +27,8 @@ CREATE TABLE partido (
     CONSTRAINT partido_pk PRIMARY KEY (numero),
     -- Nenhum partido pode ter nome igual, também
     CONSTRAINT partido_un UNIQUE (nome),
-    -- E o número eleitoral começa em 10
-    CONSTRAINT partido_numero CHECK (numero >= 10)
+    -- E o número eleitoral tem sempre 2 dígitos, começando em 10
+    CONSTRAINT partido_numero CHECK (numero >= 10 AND numero <= 99)
 );
 
 
@@ -59,7 +59,7 @@ CREATE TABLE cargo (
 
     -- As cadeiras e os salários devem ser maiores que 0
     CONSTRAINT cargo_ck_cadeiras CHECK (cadeiras > 0),
-    CONSTRAINT cargo_ck_salario CHECK (salario > 0)
+    CONSTRAINT cargo_ck_salario CHECK (salario >= 0)
 );
 
 
@@ -116,7 +116,7 @@ CREATE TABLE candidatura (
         UNIQUE (vice_candidato, ano),
     -- Garante que, para cada ano e cargo, só existe 1 candidatura com dado número
     CONSTRAINT candidatura_un_numero_ano_cargo
-        UNIQUE (cargo_tipo, cargo_local, numero, ano),
+        UNIQUE (cargo_local, ano, numero),
 
     -- Verifica que os dois primeiros dígitos do número representam o partido
     CONSTRAINT candidatura_ck_partido
