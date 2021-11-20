@@ -23,7 +23,7 @@ features = ["serde-human-readable"]
 
 [dependencies.rust_decimal]
 version = "1.17"
-features = ["db-tokio-postgres", "rocket-fromform"]
+features = ["db-tokio-postgres", "rocket-traits"]
 
 [dependencies.serde]
 version = "1.0"
@@ -47,4 +47,4 @@ version = "0.7"
 rocket = { git = "https://github.com/SergioBenitez/Rocket" }
 rocket_db_pools = { git = "https://github.com/SergioBenitez/Rocket" }
 rocket_dyn_templates = { git = "https://github.com/SergioBenitez/Rocket" }
-rust_decimal = { git = "https://github.com/Misterio77/rust-decimal", branch = "rocket-fromform" }
+rust_decimal = { git = "https://github.com/paupino/rust-decimal" }

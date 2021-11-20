@@ -26,10 +26,10 @@ async fn main() -> Result<(), ServerError> {
         .attach(Database::init())
         // Middleware pra gerir templates html
         .attach(Template::fairing())
+        // Middleware para gerir assets (style.css)
+        .attach(Assets::fairing())
         // Middleware pra reescrever POST de deleções em DELETE
         .attach(PostAsDelete)
-        // Servir assets da pasta assets (style.css)
-        .attach(Assets)
         // Páginas de erro
         .register("/", errors::catchers())
         // Página inicial

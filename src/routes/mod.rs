@@ -12,14 +12,20 @@ pub mod home {
     /// Página inicial do site
     use rocket::{get, request::FlashMessage, routes, Route};
     use rocket_dyn_templates::{context, Template};
+    use crate::assets::{Assets, Asset};
 
     #[get("/")]
     fn index(flash: Option<FlashMessage<'_>>) -> Template {
         Template::render("base", context! {flash})
     }
 
+    #[get("/assets/style.css")]
+    async fn style_css(assets: &Assets) -> Option<Asset> {
+        assets.open("style.css").await.ok()
+    }
+
     pub fn routes() -> Vec<Route> {
-        routes![index]
+        routes![index, style_css]
     }
 }
 

@@ -10,7 +10,7 @@ rustPlatform.buildRustPackage rec {
     lockFile = ./Cargo.lock;
     outputHashes = {
       "rocket-0.5.0-rc.1" = "sha256-wmC/nekpOx7Dwy4dRVoEWxrznnlw9r3Nmq8J9X+Kbmo=";
-      "rust_decimal-1.17.0" = "sha256-YMdY8M00ZGWHnhVypyuOBJzu1fm6lyu+96Y/Jjg338g=";
+      "rust_decimal-1.17.0" = "sha256-RjDMWS/F82HVHmSxy/JCSDoyBEFb3U0ux8LiZpOiX1M=";
     };
   };
 

@@ -1605,7 +1605,7 @@ dependencies = [
 [[package]]
 name = "rust_decimal"
 version = "1.17.0"
-source = "git+https://github.com/Misterio77/rust-decimal?branch=rocket-fromform#23a921a7cd64496d334058cc371bb6011c02a590"
+source = "git+https://github.com/paupino/rust-decimal#9b6a1cefe0d95823571666775624008de2ed914c"
 dependencies = [
  "arrayvec",
  "byteorder",

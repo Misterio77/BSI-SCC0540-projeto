@@ -8,23 +8,68 @@ use rocket::{
     error,
     fairing::{self, Fairing, Info, Kind},
     fs::NamedFile,
-    http::{Method, Status},
     info, info_,
-    response::Responder,
-    Build, Orbit, Request, Response, Rocket,
+    outcome::IntoOutcome,
+    request::{self, FromRequest, Request},
+    response::{self, Responder, Response},
+    Build, Orbit, Rocket,
 };
-use std::path::PathBuf;
+use std::io;
+use std::path::{Path, PathBuf};
 
-pub struct Assets;
-
+/// Representa o estado de configuração dos assets
 #[derive(Debug)]
-struct AssetsContext {
+pub struct Assets {
     path: PathBuf,
-    max_age: i32,
+    cache_max_age: i32,
 }
 
+impl Assets {
+    pub fn fairing() -> AssetsFairing {
+        AssetsFairing
+    }
+    pub async fn open<P: AsRef<Path>>(&self, path: P) -> io::Result<Asset> {
+        let mut asset_path = self.path.clone();
+        asset_path.push(path);
+        let file = NamedFile::open(Path::new(&asset_path)).await?;
+        let cache_max_age = self.cache_max_age;
+        Ok(Asset {
+            file,
+            cache_max_age,
+        })
+    }
+}
+
+/// Obtém o estado num request
 #[rocket::async_trait]
-impl Fairing for Assets {
+impl<'r> FromRequest<'r> for &'r Assets {
+    type Error = ();
+    async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, ()> {
+        req.rocket().state::<Assets>().or_forward(())
+    }
+}
+
+/// Representa um asset a ser servido (criado com Assets::open)
+pub struct Asset {
+    file: NamedFile,
+    cache_max_age: i32,
+}
+
+/// Resposta de um request
+impl<'r> Responder<'r, 'static> for Asset {
+    fn respond_to(self, req: &'r Request<'_>) -> response::Result<'static> {
+        let cache_control = format!("max-age={}", self.cache_max_age);
+        Response::build_from(self.file.respond_to(req)?)
+            .raw_header("Cache-control", cache_control)
+            .ok()
+    }
+}
+
+/// Fairing para buscar e gerir a configuração
+pub struct AssetsFairing;
+
+#[rocket::async_trait]
+impl Fairing for AssetsFairing {
     fn info(&self) -> Info {
         let kind = Kind::Response | Kind::Ignite | Kind::Liftoff;
         Info {
@@ -62,59 +107,26 @@ impl Fairing for Assets {
             }
         };
 
-        let max_age = rocket
+        let cache_max_age = rocket
             .figment()
             .extract_inner::<i32>("assets_max_age")
             .unwrap_or(86400);
 
-        Ok(rocket.manage(AssetsContext { path, max_age }))
+        Ok(rocket.manage(Assets {
+            path,
+            cache_max_age,
+        }))
     }
 
     async fn on_liftoff(&self, rocket: &Rocket<Orbit>) {
         use rocket::{figment::Source, log::PaintExt, yansi::Paint};
 
-        let cm = rocket
-            .state::<AssetsContext>()
+        let state = rocket
+            .state::<Assets>()
             .expect("Template AssetsContext registered in on_ignite");
 
         info!("{}{}:", Paint::emoji("📐 "), Paint::magenta("Assets"));
-        info_!("directory: {}", Paint::white(Source::from(&*cm.path)));
-        info_!("cache max age: {}", Paint::white(cm.max_age));
-    }
-
-    async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
-        if response.status() != Status::NotFound {
-            return;
-        }
-
-        let configuration = request.rocket().state::<AssetsContext>().unwrap();
-        let mut path = configuration.path.clone();
-
-        let mut segments = request.uri().path().segments();
-        let first = segments.next();
-
-        if request.method() == Method::Get && first == Some("assets") {
-            let file_path = match segments.to_path_buf(false) {
-                Ok(p) => p,
-                Err(_) => return,
-            };
-            path.push(file_path);
-
-            let file_response = match NamedFile::open(path).await {
-                Ok(p) => p,
-                Err(_) => return,
-            };
-
-            let new = Response::build_from(file_response.respond_to(request).unwrap())
-                .raw_header(
-                    "Cache-control",
-                    format!("max-age={}", configuration.max_age),
-                )
-                .finalize();
-
-            let status = new.status();
-            response.set_status(status);
-            response.merge(new);
-        }
+        info_!("directory: {}", Paint::white(Source::from(&*state.path)));
+        info_!("cache max age: {}", Paint::white(state.cache_max_age));
     }
 }
