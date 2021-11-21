@@ -1,6 +1,8 @@
 BEGIN;
 
 -- Limpar tabelas antes de criar
+DROP FUNCTION IF EXISTS individuo_ficha_suja;
+DROP VIEW IF EXISTS candidatura_eleita;
 DROP TABLE IF EXISTS doacao, apoio, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
 
@@ -246,5 +248,97 @@ CREATE TABLE doacao (
 ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
 -- 1 doação por indivíduo com cnpj por candidatura
 CREATE UNIQUE INDEX doacao_un_juridica ON doacao (doador, candidato, ano) WHERE (doador SIMILAR TO '[0-9]{14}');
+
+
+/*
+    Views
+*/
+
+-- Essa função toma como argumento uma data, e retorna uma "view" de indivíduos
+-- que tem ficha suja naquela data (julgamentos procedentes até 5 anos atrás).
+CREATE OR REPLACE FUNCTION individuo_ficha_suja(data DATE)
+    RETURNS TABLE (cpfcnpj VARCHAR, nome VARCHAR, nascimento DATE)
+    LANGUAGE plpgsql AS
+$individuo_ficha_suja$
+BEGIN
+    RETURN QUERY
+    SELECT individuo.cpfcnpj, individuo.nome, individuo.nascimento
+    FROM individuo
+    INNER JOIN processo
+        ON processo.reu = individuo.cpfcnpj
+    INNER JOIN julgamento
+        ON julgamento.processo = processo.id
+    WHERE
+        julgamento.procedente IS true AND
+        julgamento.data <= ($1) AND
+        julgamento.data >= ($1 - interval '5 years');
+END
+$individuo_ficha_suja$;
+
+-- View com apenas os candidatos eleitos
+CREATE VIEW candidatura_eleita AS
+    SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
+    FROM (
+        SELECT
+            c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
+            -- Particiona por cargo e ano, e ordena por turno e votos
+            -- Adicionando um numero baseado nesses criterios, que poderemos usar
+            -- no WHERE para filtrar.
+            row_number() OVER(
+                PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
+                ORDER BY p.turno DESC, p.votos DESC
+            ) AS rownum
+        FROM
+            candidatura c
+        INNER JOIN pleito p
+            ON p.candidato = c.candidato
+            AND p.ano = c.ano
+    )
+    AS eleicao
+    INNER JOIN cargo
+        ON cargo.local = eleicao.cargo_local
+        AND cargo.tipo = eleicao.cargo_tipo
+    WHERE rownum <= cargo.cadeiras;
+
+/*
+    Triggers
+*/
+
+-- Permite que apenas indivíduos ficha limpa (no ano da candidatura) se candidatem
+CREATE OR REPLACE FUNCTION check_ficha_limpa()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql AS
+$check_ficha_limpa$
+DECLARE
+    ficha_suja VARCHAR;
+    vice_ficha_suja VARCHAR;
+BEGIN
+    -- Procura o cpf do candidato na view de ficha suja
+    SELECT cpfcnpj INTO ficha_suja
+    FROM individuo_ficha_suja(MAKE_DATE(NEW.ano, 12, 31))
+    WHERE cpfcnpj = NEW.candidato;
+
+    IF (ficha_suja IS NOT NULL) THEN
+        RAISE EXCEPTION 'O candidato deve ser ficha limpa.';
+    END IF;
+
+    -- Verificar o mesmo para o vice candidato
+    -- (Caso o vice candidato seja NULL, essa query não
+    -- retornará fileira alguma, logo não levantará erro)
+    SELECT cpfcnpj INTO vice_ficha_suja
+    FROM individuo_ficha_suja(MAKE_DATE(NEW.ano, 12, 31))
+    WHERE cpfcnpj = NEW.vice_candidato;
+
+    IF (vice_ficha_suja IS NOT NULL) THEN
+        RAISE EXCEPTION 'O vice candidato deve ser ficha limpa.';
+    END IF;
+
+    RETURN NEW;
+END
+$check_ficha_limpa$;
+
+CREATE TRIGGER check_ficha_limpa
+    BEFORE INSERT ON candidatura
+    FOR EACH ROW EXECUTE PROCEDURE check_ficha_limpa();
 
 COMMIT;

@@ -10,9 +10,9 @@ pub mod processos;
 
 pub mod home {
     /// Página inicial do site
+    use crate::assets::{Asset, Assets};
     use rocket::{get, request::FlashMessage, routes, Route};
     use rocket_dyn_templates::{context, Template};
-    use crate::assets::{Assets, Asset};
 
     #[get("/")]
     fn index(flash: Option<FlashMessage<'_>>) -> Template {

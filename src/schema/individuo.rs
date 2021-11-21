@@ -61,17 +61,6 @@ impl Individuo {
     ) -> Result<Vec<Individuo>, ServerError> {
         let filtro = filtro.cleanup();
 
-        let ficha_suja = "
-            SELECT cpfcnpj, nome, nascimento
-            FROM individuo
-            INNER JOIN processo
-                ON processo.reu = individuo.cpfcnpj
-            INNER JOIN julgamento
-                ON julgamento.processo = processo.id
-            WHERE
-                julgamento.procedente IS true AND
-                julgamento.data >= (CURRENT_DATE - interval '5 years')";
-
         let query = format!(
             "SELECT cpfcnpj, nome, nascimento
             FROM individuo
@@ -84,9 +73,12 @@ impl Individuo {
             ",
             // Caso seja apenas ficha limpa, tirar os ficha suja
             if filtro.ficha_limpa {
-                format!("EXCEPT ({})", ficha_suja)
+                "EXCEPT(
+                    SELECT cpfcnpj, nome, nascimento
+                    FROM individuo_ficha_suja(CURRENT_DATE)
+                )"
             } else {
-                "".to_string()
+                ""
             },
             // Caso tenha ordenação, adicionar ORDER BY nome
             if let Some(ord) = filtro.ordenacao {

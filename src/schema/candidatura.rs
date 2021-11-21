@@ -101,33 +101,10 @@ impl Candidatura {
     ) -> Result<Vec<Candidatura>, ServerError> {
         let filtro = filtro.cleanup();
 
-        // Se é apenas os eleitos, usar view function para extrair
-        let tabela = if filtro.eleitos {
-            "FROM (SELECT
-                c.candidato, c.vice_candidato, c.ano, c.cargo_tipo, c.cargo_local, c.numero, c.partido,
-                row_number() OVER(
-                    PARTITION BY c.cargo_tipo, c.cargo_local, c.ano
-                    ORDER BY p.turno DESC, p.votos DESC
-                ) AS rownum
-            FROM
-                candidatura c
-            INNER JOIN pleito p
-                ON p.candidato = c.candidato
-                AND p.ano = c.ano
-            ) AS eleicao
-            INNER JOIN cargo
-                ON cargo.local = eleicao.cargo_local
-                AND cargo.tipo = eleicao.cargo_tipo"
-        } else {
-            "FROM candidatura"
-        };
-
         let query = format!(
-            "
-            SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
-            {}
+            "SELECT candidato, vice_candidato, ano, cargo_tipo, cargo_local, numero, partido
+            FROM {}
             WHERE
-                {}
                 ($1::VARCHAR    IS NULL OR candidato       = $1) AND
                 ($2::VARCHAR    IS NULL OR vice_candidato  = $2) AND
                 ($3::SMALLINT   IS NULL OR ano             = $3) AND
@@ -136,12 +113,11 @@ impl Candidatura {
                 ($6::INTEGER    IS NULL OR numero          = $6) AND
                 ($7::SMALLINT   IS NULL OR partido         = $7)
             {} LIMIT $8 OFFSET $9",
-            tabela,
-            // Se é apenas os eleitos, colocar a condição da view function
+            // Se é apenas os eleitos, acessar nossa view que só pega os eleitos
             if filtro.eleitos {
-                "rownum <= cargo.cadeiras AND"
+                "candidatura_eleita"
             } else {
-                ""
+                "candidatura"
             },
             // Caso tenha ordenação, adicionar ORDER BY nome
             if let Some(ord) = filtro.ordenacao {
