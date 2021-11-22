@@ -66,9 +66,8 @@ CREATE TABLE cargo (
 
 
 -- Representa um processo judicial
-CREATE SEQUENCE processo_id_seq;
 CREATE TABLE processo (
-    id INTEGER NOT NULL DEFAULT nextval('processo_id_seq'),
+    id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
     reu VARCHAR NOT NULL,
     crime VARCHAR NOT NULL,
 
@@ -79,7 +78,6 @@ CREATE TABLE processo (
         REFERENCES individuo (cpfcnpj)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-ALTER SEQUENCE processo_id_seq OWNED BY processo.id;
 
 -- Representa o julgamento de um processo
 CREATE TABLE julgamento (
@@ -223,9 +221,8 @@ CREATE TABLE apoio (
 
 
 -- Representa as doações de campanha
-CREATE SEQUENCE doacao_id_seq;
 CREATE TABLE doacao (
-    id INTEGER NOT NULL DEFAULT nextval('doacao_id_seq'),
+    id INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
     valor NUMERIC NOT NULL,
     doador VARCHAR NOT NULL,
     candidato VARCHAR NOT NULL,
@@ -245,7 +242,6 @@ CREATE TABLE doacao (
         ON DELETE CASCADE ON UPDATE CASCADE
 
 );
-ALTER SEQUENCE doacao_id_seq OWNED BY doacao.id;
 -- 1 doação por indivíduo com cnpj por candidatura
 CREATE UNIQUE INDEX doacao_un_juridica ON doacao (doador, candidato, ano) WHERE (doador SIMILAR TO '[0-9]{14}');
 
