@@ -61,7 +61,7 @@
       <tr>
         <td>#{{ processo.id }}</td>
         <td>
-          <a href="/individuo/{{ processo.reu }}">
+          <a href="/individuos/{{ processo.reu }}">
             {{ processo.reu }}
           </a>
         </td>
