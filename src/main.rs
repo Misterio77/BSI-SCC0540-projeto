@@ -17,6 +17,8 @@ use projeto_bd::{
     },
     // Páginas de erro, e home
     routes::{errors, home},
+    // Funções customs do tera
+    tera::customize,
 };
 
 #[rocket::main]
@@ -25,7 +27,7 @@ async fn main() -> Result<(), ServerError> {
         // Middleware pra conexões de database
         .attach(Database::init())
         // Middleware pra gerir templates html
-        .attach(Template::fairing())
+        .attach(Template::custom(customize))
         // Middleware para gerir assets (style.css)
         .attach(Assets::fairing())
         // Middleware pra reescrever POST de deleções em DELETE

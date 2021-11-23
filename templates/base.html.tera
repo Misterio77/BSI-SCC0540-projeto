@@ -45,6 +45,7 @@
         Projeto para a disciplina de Bases de Dados -
         <a href="https://git.sr.ht/~misterio/BSI-SCC0540-projeto">Código fonte</a>
       </p>
+      <p>Servido de: <em>{{ exec_path() }}</em></p>
     </footer>
   </body>
 </html>
