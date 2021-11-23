@@ -79,6 +79,7 @@ As telas de informação são simples. Apenas contém elementos para exibir info
 As telas de listagem são um pouco mais complexas. Elas contém uma tabela, que renderiza cada resultado como uma fileira. Além disso, há um formulário utilizado para definir filtragem e ordenação.
 
 Também temos alguns outros templates:
+
 - `base.html.tera` - barra de navegação, rodapé, e meta-dados, usado por todos os outros
 - `error.html.tera` - exibe um erro que pode ter ocorrido
 - `flash.html.tera` - aviso que aparece após um redirecionamento (por exemplo, remoção)
@@ -92,4 +93,4 @@ O Rocket, framework que usamos, é bastante barebones e minimalista. Não conten
 - `pagination.rs` - Permite determinar a página atual, e cria link baseado nas adjacentes, sem alterar as outras query strings presentes.
 - `assets.rs` - Implementa um fairing (middleware) que permite servir assets estáticos (como CSS) com uma política de cachê.
 - `database.rs` - Boilerplate para se conectar ao banco de forma assíncrona utilizando o `tokio-postgres`.
-- `post_as_delete.rs` - Como formulários HTML só suportam GET e POST, esse fairing permite transformar requests do tipo POST `blabla/delete` em DELETE `blabla`.
+- `post_as_delete.rs` - Como formulários HTML só suportam GET e POST, esse fairing permite reescrever requests do tipo POST `blabla/delete` em DELETE `blabla`.

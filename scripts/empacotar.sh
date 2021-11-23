@@ -21,7 +21,7 @@ cp DML.sql "$DIR"/06-DML.sql
 
 zip "$DIR"/07-Prototipo.zip README.md assets templates Rocket.toml Cargo.* src -r
 
-pandoc README.md -o "$DIR"/README.pdf
+pandoc README.md -o "$DIR"/README.pdf -V colorlinks=true
 
 rm plantuml-images -r 2> /dev/null
 
