@@ -14,26 +14,24 @@ use crate::{
     schema::{Apoio, ApoioFiltro},
 };
 
-#[get("/<apoiador>/<candidato>/<ano>")]
+#[get("/<apoiador>/<ano>")]
 async fn get(
     db: Connection<Database>,
     apoiador: String,
-    candidato: String,
     ano: i16,
 ) -> Result<Template, ServerError> {
-    let apoio = Apoio::obter(&db, &apoiador, &candidato, ano).await?;
+    let apoio = Apoio::obter(&db, &apoiador, ano).await?;
 
     Ok(Template::render("routes/apoio", context! {apoio}))
 }
 
-#[delete("/<apoiador>/<candidato>/<ano>")]
+#[delete("/<apoiador>/<ano>")]
 async fn delete(
     db: Connection<Database>,
     apoiador: String,
-    candidato: String,
     ano: i16,
 ) -> Result<Flash<Redirect>, ServerError> {
-    let apoio = Apoio::obter(&db, &apoiador, &candidato, ano).await?;
+    let apoio = Apoio::obter(&db, &apoiador, ano).await?;
     apoio.remover(&db).await?;
 
     Ok(Flash::success(

@@ -30,18 +30,13 @@ impl TryFrom<Row> for Apoio {
 
 impl Apoio {
     /// Obtém apoio, dado apoiador, candidato, e ano
-    pub async fn obter(
-        db: &Client,
-        apoiador: &str,
-        candidato: &str,
-        ano: i16,
-    ) -> Result<Apoio, ServerError> {
+    pub async fn obter(db: &Client, apoiador: &str, ano: i16) -> Result<Apoio, ServerError> {
         db.query_one(
             "
             SELECT apoiador, candidato, ano, funcao
             FROM apoio
-            WHERE apoiador = $1 AND candidato = $2 AND ano = $3",
-            &[&apoiador, &candidato, &ano],
+            WHERE apoiador = $1 AND ano = $2",
+            &[&apoiador, &ano],
         )
         .await?
         .try_into()

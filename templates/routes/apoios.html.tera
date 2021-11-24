@@ -84,7 +84,7 @@
         </td>
         <td>{{ apoio.funcao }}</td>
         <td>
-          <a href="/apoios/{{ apoio.apoiador }}/{{ apoio.candidato }}/{{ apoio.ano }}">
+          <a href="/apoios/{{ apoio.apoiador }}/{{ apoio.ano }}">
             Mais info →
           </a>
         </td>
