@@ -1,6 +1,3 @@
-:root {
-  --accordion-close-summary-color: var(--color);
-}
 /* Tema claro */
 [data-theme="light"],
 :root:not([data-theme="dark"]) {
@@ -139,4 +136,12 @@ nav.breadcrumb {
 .delete {
     background-color: var(--del-color);
     border-color: var(--color);
+}
+
+details summary {
+    color: var(--accordion-active-summary-color)
+}
+
+details summary:focus {
+    color: var(--primary-hover)
 }
