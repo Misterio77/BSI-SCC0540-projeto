@@ -12,6 +12,8 @@ drawio --export -o "$DIR"/03-ER.pdf ER.drawio
 echo '```plantuml' > "$DIR"/Relacional.md
 cat Relacional.uml >> "$DIR"/Relacional.md
 echo '```' >> "$DIR"/Relacional.md
+echo 'Exceto `vice_candidato` em `Candidatura`, todos os campos são `NOT NULL`' >> "$DIR"/Relacional.md
+
 pandoc "$DIR"/Relacional.md -o "$DIR"/04-Relacional.pdf --filter pandoc-plantuml
 rm "$DIR"/Relacional.md
 

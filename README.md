@@ -4,6 +4,10 @@ Todo o código do projeto está disponível no [meu repositório](https://git.sr
 
 Caso queira experimentar, existe uma versão live rodando na minha Raspberry Pi, [disponível publicamente](https://bd.misterio.me) (nota: caso tenha problemas em acessar, certifique-se de que está conectando por HTTPS e não HTTP)
 
+## Sobre os dados
+
+Todos os dados do UML (com exceção dos cargos, que colhemos manualmente) foram gerados com scripts (que nós mesmos construímos). Tentamos torná-los relativamente coerentes (todos cumprem os requisitos de integridade, etc), mas nem todos levam em consideração 100% das possibilidades (por exemplo: podem existir pleitos municipais com milhões de votos).
+
 ## Ferramentas usadas
 - Banco de dados: PostgreSQL (Versão 13)
 - Linguagem: Rust
