@@ -10,7 +10,7 @@ Caso queira experimentar, existe uma versão live rodando na minha Raspberry Pi,
 
 ## Sobre os dados
 
-Todos os dados do UML (com exceção dos cargos, que colhemos manualmente) foram gerados com scripts (que nós mesmos construímos). Tentamos torná-los relativamente coerentes (todos cumprem os requisitos de integridade, etc), mas nem todos levam em tantos detalhes em consideração (por exemplo: podem existir pleitos municipais com milhões de votos).
+Todos os dados do UML (com exceção dos cargos, que colhemos manualmente) foram gerados com scripts (que nós mesmos construímos). Tentamos torná-los relativamente coerentes (todos cumprem os requisitos de integridade, etc), mas nem todos detalhes são levados em consideração (por exemplo: os votos são aleatórios e não consideram a população de onde ocorreu).
 
 ## Ferramentas usadas
 - Banco de dados: PostgreSQL (Versão 13)
