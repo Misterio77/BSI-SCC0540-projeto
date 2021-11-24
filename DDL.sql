@@ -1,10 +1,12 @@
 BEGIN;
 
 -- Limpar tabelas antes de criar
-DROP FUNCTION IF EXISTS individuo_ficha_suja;
+/*
 DROP VIEW IF EXISTS candidatura_eleita;
 DROP TABLE IF EXISTS doacao, apoio, pleito, candidatura, julgamento, processo, cargo, partido, individuo;
 DROP TYPE IF EXISTS tipo_cargo;
+DROP FUNCTION IF EXISTS individuo_ficha_suja, check_ficha_limpa;
+*/
 
 -- Representa um indivíduo
 CREATE TABLE individuo (
