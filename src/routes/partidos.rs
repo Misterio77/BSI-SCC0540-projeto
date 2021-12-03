@@ -2,7 +2,9 @@ use rocket::{
     delete, get,
     request::FlashMessage,
     response::{Flash, Redirect},
-    routes, Route,
+    routes,
+    serde::json::Json,
+    Route,
 };
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
@@ -12,13 +14,19 @@ use crate::{
     error::ServerError,
     pagination::Pages,
     schema::{Partido, PartidoFiltro},
+    template_or_json::TemplateOrJson,
 };
 
 #[get("/<numero>")]
-async fn get(db: Connection<Database>, numero: i16) -> Result<Template, ServerError> {
+async fn get(
+    db: Connection<Database>,
+    numero: i16,
+) -> Result<TemplateOrJson<Partido>, ServerError> {
     let partido = Partido::obter(&db, numero).await?;
 
-    Ok(Template::render("routes/partido", context! {partido}))
+    let json = Json(partido.clone());
+    let template = Template::render("routes/partido", context! {partido});
+    Ok(TemplateOrJson(template, json))
 }
 
 #[delete("/<numero>")]
@@ -38,13 +46,15 @@ async fn list(
     flash: Option<FlashMessage<'_>>,
     filtro: PartidoFiltro,
     paginas: Pages,
-) -> Result<Template, ServerError> {
+) -> Result<TemplateOrJson<Vec<Partido>>, ServerError> {
     let partidos = Partido::listar(&db, filtro.clone(), paginas.current, 50).await?;
 
-    Ok(Template::render(
+    let json = Json(partidos.clone());
+    let template = Template::render(
         "routes/partidos",
         context! {partidos, filtro, paginas, flash},
-    ))
+    );
+    Ok(TemplateOrJson(template, json))
 }
 
 pub fn routes() -> Vec<Route> {

@@ -2,7 +2,9 @@ use rocket::{
     delete, get,
     request::FlashMessage,
     response::{Flash, Redirect},
-    routes, Route,
+    routes,
+    serde::json::Json,
+    Route,
 };
 use rocket_db_pools::Connection;
 use rocket_dyn_templates::{context, Template};
@@ -12,6 +14,7 @@ use crate::{
     error::ServerError,
     pagination::Pages,
     schema::{Pleito, PleitoFiltro},
+    template_or_json::TemplateOrJson,
 };
 
 #[get("/<candidato>/<ano>/<turno>")]
@@ -20,10 +23,12 @@ async fn get(
     candidato: String,
     ano: i16,
     turno: i16,
-) -> Result<Template, ServerError> {
+) -> Result<TemplateOrJson<Pleito>, ServerError> {
     let pleito = Pleito::obter(&db, &candidato, ano, turno).await?;
 
-    Ok(Template::render("routes/pleito", context! {pleito}))
+    let json = Json(pleito.clone());
+    let template = Template::render("routes/pleito", context! {pleito});
+    Ok(TemplateOrJson(template, json))
 }
 
 #[delete("/<candidato>/<ano>/<turno>")]
@@ -48,13 +53,12 @@ async fn list(
     flash: Option<FlashMessage<'_>>,
     filtro: PleitoFiltro,
     paginas: Pages,
-) -> Result<Template, ServerError> {
+) -> Result<TemplateOrJson<Vec<Pleito>>, ServerError> {
     let pleitos = Pleito::listar(&db, filtro.clone(), paginas.current, 50).await?;
 
-    Ok(Template::render(
-        "routes/pleitos",
-        context! {pleitos, filtro, paginas, flash},
-    ))
+    let json = Json(pleitos.clone());
+    let template = Template::render("routes/pleitos", context! {pleitos, filtro, paginas, flash});
+    Ok(TemplateOrJson(template, json))
 }
 
 pub fn routes() -> Vec<Route> {

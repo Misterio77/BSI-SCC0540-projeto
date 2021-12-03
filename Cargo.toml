@@ -1,7 +1,7 @@
 [package]
 name = "projeto-bd"
 description = "Projeto da disciplina de Banco de Dados"
-version = "1.3.7"
+version = "1.4.0"
 authors = [ "Gabriel Fontes <g.fontes@usp.br>", "Lucas Carneiro <lcarneiro5992@usp.br>", "Victor Kenji <victorkenji12@usp.br>" ]
 readme = "README.md"
 edition = "2018"
