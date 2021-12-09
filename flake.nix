@@ -12,8 +12,9 @@
     } //
     (utils.lib.eachDefaultSystem (system:
       let pkgs = import nixpkgs { inherit system; overlays = [ self.overlay ]; };
-      in {
-        defaultPackage = pkgs.callPackage ./default.nix { };
+      in rec {
+        packages.projeto-bd = pkgs.callPackage ./default.nix { };
+        defaultPackage = packages.projeto-bd;
 
         devShell = pkgs.mkShell {
           nativeBuildInputs = with pkgs; [
